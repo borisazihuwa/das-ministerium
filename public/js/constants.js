@@ -28,6 +28,8 @@ export const MIN_BESTECHUNG_ANZEIGE = 2;
 export const MIN_BESTECHUNG_STURZ = 1;
 export const WINNER_CAP = 10;
 export const REDISTRIBUTION = 1;
+export const RUNDENSTEUER = 1;        // each loser pays this to round winner
+export const RUNDENSTEUER_DUEL = 2;   // when only 2 players remain
 
 // Actions
 export const ACTIONS = {

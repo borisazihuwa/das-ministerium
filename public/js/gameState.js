@@ -4,7 +4,7 @@
 
 import {
   ROLES, ROLE_LIST, CARDS_PER_ROLE, START_COINS, TOTAL_COINS,
-  ABGABE_COST, WINNER_CAP, REDISTRIBUTION, REACTION_STATES
+  ABGABE_COST, WINNER_CAP, REDISTRIBUTION, RUNDENSTEUER, RUNDENSTEUER_DUEL, REACTION_STATES
 } from './constants.js';
 
 // Create a fresh deck of 15 cards (3 per role)
@@ -172,7 +172,7 @@ export function executeAbgabe(state) {
   return eliminated;
 }
 
-// Phase 3: Pot distribution
+// Phase 3: Pot distribution + Rundensteuer
 export function distributePot(state, roundWinnerId) {
   const winner = state.players.find(p => p.id === roundWinnerId);
   if (!winner) return;
@@ -183,17 +183,24 @@ export function distributePot(state, roundWinnerId) {
 
   const aliveCount = activeMeta.length + 1; // +1 for winner
 
-  if (aliveCount <= 2) {
-    // 2 players: winner gets max 10, no redistribution
-    const winnerAmount = Math.min(WINNER_CAP, state.pot);
-    transferCoins(state, 'pot', roundWinnerId, winnerAmount);
-    addLog(state, `${winner.name} erhält ${winnerAmount} Münzen aus dem Pot (Rundengewinner).`);
-  } else {
-    // 3+ players: winner gets max 10, others get 1 each
-    const winnerAmount = Math.min(WINNER_CAP, state.pot);
-    transferCoins(state, 'pot', roundWinnerId, winnerAmount);
-    addLog(state, `${winner.name} erhält ${winnerAmount} Münzen aus dem Pot (Rundengewinner).`);
+  // 1. Winner gets max 10 from pot
+  const winnerAmount = Math.min(WINNER_CAP, state.pot);
+  transferCoins(state, 'pot', roundWinnerId, winnerAmount);
+  addLog(state, `${winner.name} erhält ${winnerAmount} Münzen aus dem Pot (Rundengewinner).`);
 
+  // 2. Rundensteuer: each loser pays winner directly
+  const taxAmount = aliveCount <= 2 ? RUNDENSTEUER_DUEL : RUNDENSTEUER;
+  let totalTax = 0;
+  for (const player of activeMeta) {
+    const paid = transferCoins(state, player.id, roundWinnerId, taxAmount);
+    if (paid > 0) totalTax += paid;
+  }
+  if (totalTax > 0) {
+    addLog(state, `Rundensteuer: ${winner.name} erhält ${totalTax} Münzen von den Verlierern.`);
+  }
+
+  // 3. Redistribution (only with 3+ players)
+  if (aliveCount >= 3) {
     for (const player of activeMeta) {
       const redistAmount = Math.min(REDISTRIBUTION, state.pot);
       if (redistAmount > 0) {
@@ -207,12 +214,12 @@ export function distributePot(state, roundWinnerId) {
     addLog(state, `${state.pot} Münzen verbleiben im Pot.`);
   }
 
-  // Check for meta-elimination after pot distribution
+  // 4. Eliminate players with 0 coins
   for (const player of state.players) {
     if (player.coins === 0 && !state.metaEliminated.includes(player.id)) {
       player.eliminated = true;
       state.metaEliminated.push(player.id);
-      addLog(state, `${player.name} hat 0 Münzen nach der Pot-Verteilung und scheidet aus!`);
+      addLog(state, `${player.name} hat 0 Münzen und scheidet aus dem Spiel aus!`);
     }
   }
 }
