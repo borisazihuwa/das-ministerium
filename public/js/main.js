@@ -7,7 +7,7 @@ import {
 } from './constants.js';
 import {
   createGameState, createPlayer, createDeck, shuffle,
-  executeAbgabe, distributePot, setupNewRound, checkGameOver,
+  executeAbgabe, distributePot, checkGameOver,
   findNextActivePlayer, getActivePlayers, getAlivePlayersInGame,
   getInfluence, loseCard, addLog, getPlayerById, reshuffleDeck, transferCoins
 } from './gameState.js';
@@ -142,73 +142,103 @@ function startSoloGame() {
 }
 
 // ---- GAME LOOP ----
+// PRD flow per round:
+//   1. Abgabe (Ante) — each alive player pays 1 coin to pot
+//   2. Eliminate players with 0 coins (no cards dealt to them)
+//   3. Deal cards — 2 per remaining player
+//   4. Actions — clockwise turns until someone loses both cards
+//   5. Pot distribution — winner gets max 10, others get 1 each
+//   6. Eliminate players with 0 coins after distribution
+//   7. Next round (or game over if ≤1 player left)
 
 async function runGameLoop() {
+  // Round 1: cards already dealt in createGameState, skip to abgabe
+  addLog(state, `--- Runde ${state.round} beginnt ---`);
+  renderGameState(state);
+
   while (!state.gameOver) {
-    // Setup round
-    if (state.phase === 'round_setup') {
-      if (state.round > 1) {
-        setupNewRound(state);
-      } else {
-        state.phase = 'abgabe';
-        addLog(state, `--- Runde ${state.round} beginnt ---`);
-      }
+    // === PHASE 1: ABGABE ===
+    showNotification(`Runde ${state.round} — Abgabe`, 1500);
+    await delay(1200);
+
+    executeAbgabe(state);
+    renderGameState(state);
+    await delay(1000);
+
+    if (checkGameOver(state)) break;
+
+    // === PHASE 2: KARTENAUSGABE ===
+    // Round 1: already dealt. Round 2+: deal new cards.
+    if (state.round > 1) {
+      dealNewCards(state);
       renderGameState(state);
-      await delay(800);
-    }
-
-    // Phase 1: Abgabe
-    if (state.phase === 'abgabe') {
-      showNotification('Phase 1 — Abgabe', 1500);
-      await delay(1000);
-      executeAbgabe(state);
-      renderGameState(state);
-      await delay(1000);
-
-      if (checkGameOver(state)) {
-        state.phase = 'game_over';
-        break;
-      }
-
-      state.phase = 'actions';
-      state.currentPlayerIndex = findNextActivePlayer(state, 0);
-      state.turnIndex = 0;
-      renderGameState(state);
-    }
-
-    // Phase 2: Actions
-    if (state.phase === 'actions') {
-      showNotification('Phase 2 — Aktionen', 1500);
       await delay(500);
-
-      await runActionsPhase();
-
-      if (state.gameOver) break;
     }
 
-    // Phase 3: Pot distribution
-    if (state.phase === 'pot_distribution') {
-      showNotification('Phase 3 — Pot-Verteilung', 1500);
-      await delay(1000);
+    // === PHASE 3: AKTIONSPHASE ===
+    state.phase = 'actions';
+    state.currentPlayerIndex = findNextActivePlayer(state, 0);
+    showNotification(`Runde ${state.round} — Aktionen`, 1500);
+    renderGameState(state);
+    await delay(500);
 
-      if (state.roundWinner !== null) {
-        distributePot(state, state.roundWinner);
-      }
-      renderGameState(state);
-      await delay(1500);
+    await runActionsPhase();
+    if (state.gameOver) break;
 
-      if (checkGameOver(state)) {
-        state.phase = 'game_over';
-        break;
-      }
+    // === PHASE 4: POT-VERTEILUNG ===
+    state.phase = 'pot_distribution';
+    showNotification(`Runde ${state.round} — Pot-Verteilung`, 1500);
+    renderGameState(state);
+    await delay(1000);
 
-      state.phase = 'round_setup';
+    if (state.roundWinner !== null) {
+      distributePot(state, state.roundWinner);
     }
+    renderGameState(state);
+    await delay(1500);
+
+    if (checkGameOver(state)) break;
+
+    // === NÄCHSTE RUNDE ===
+    state.round++;
+    state.roundWinner = null;
+    state.phase = 'abgabe';
+    addLog(state, `--- Runde ${state.round} beginnt ---`);
+    renderGameState(state);
+    await delay(800);
   }
 
   // Game over
   renderGameState(state);
   showGameOver(state.winner);
+}
+
+// Deal new cards for a new round (Round 2+)
+function dealNewCards(state) {
+  // Collect all cards back
+  const allCards = [];
+  for (const player of state.players) {
+    for (const card of player.cards) {
+      allCards.push(card.role);
+    }
+    player.cards = [];
+  }
+  allCards.push(...state.discardPile, ...state.deck);
+
+  state.deck = shuffle(allCards);
+  state.discardPile = [];
+
+  // Deal 2 cards only to players still in the game (not meta-eliminated)
+  const alive = state.players.filter(p => !state.metaEliminated.includes(p.id));
+  for (const player of alive) {
+    player.cards = [
+      { role: state.deck.pop(), revealed: false },
+      { role: state.deck.pop(), revealed: false }
+    ];
+    player.eliminated = false;
+  }
+
+  addLog(state, `Karten ausgeteilt an ${alive.length} Spieler.`);
 }
 
 async function runActionsPhase() {
