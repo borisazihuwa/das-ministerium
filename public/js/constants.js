@@ -17,7 +17,7 @@ export const CARDS_PER_ROLE = 3;
 export const TOTAL_CARDS = ROLE_LIST.length * CARDS_PER_ROLE; // 15
 
 // Economy
-export const START_COINS = 10;
+export const START_COINS = 7;
 export const TOTAL_COINS = 50;
 export const ABGABE_COST = 2;
 export const STURZ_COST = 5;
