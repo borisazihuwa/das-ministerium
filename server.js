@@ -575,7 +575,7 @@ function serverDelay(ms) {
 
 // ---- Start Server ----
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 http.listen(PORT, () => {
   console.log(`Das Ministerium Server läuft auf Port ${PORT}`);
   console.log(`Öffne http://localhost:${PORT} im Browser`);
