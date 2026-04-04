@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Das Ministerium — Täuschung ist Gesetz</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background:#0a0a0f;color:#e8e8e8;font-family:sans-serif;">
+
+  <!-- MENU SCREEN -->
+  <div id="menu-screen" class="screen">
+    <div class="menu-container">
+      <h1 class="title">Das Ministerium</h1>
+      <p class="subtitle">Täuschung ist Gesetz</p>
+
+      <div class="menu-buttons">
+        <button id="btn-solo" class="menu-btn">Solo vs. Bots</button>
+        <button id="btn-online" class="menu-btn">Online Multiplayer</button>
+      </div>
+
+      <!-- Solo Setup -->
+      <div id="solo-setup" class="setup-panel hidden">
+        <h2>Solo-Spiel konfigurieren</h2>
+
+        <div class="form-group">
+          <label for="player-name">Dein Name:</label>
+          <input type="text" id="player-name" value="Spieler" maxlength="20">
+        </div>
+
+        <div class="form-group">
+          <label for="bot-count">Anzahl Bots: <span id="bot-count-label">3</span></label>
+          <input type="range" id="bot-count" min="1" max="5" value="3">
+        </div>
+
+        <div class="form-group">
+          <label for="bot-difficulty">Bot-Schwierigkeit:</label>
+          <select id="bot-difficulty">
+            <option value="schwach">Schwach</option>
+            <option value="mittel" selected>Mittel</option>
+            <option value="stark">Stark</option>
+            <option value="gemischt">Gemischt</option>
+          </select>
+        </div>
+
+        <button id="btn-start-solo" class="menu-btn start-btn">Spiel starten</button>
+      </div>
+
+      <!-- Online Setup -->
+      <div id="online-setup" class="setup-panel hidden">
+        <h2>Online Multiplayer</h2>
+
+        <div class="form-group">
+          <label for="online-name">Dein Name:</label>
+          <input type="text" id="online-name" value="Spieler" maxlength="20">
+        </div>
+
+        <div class="online-options">
+          <button id="btn-create-lobby" class="menu-btn">Lobby erstellen</button>
+          <div class="join-group">
+            <input type="text" id="room-code" placeholder="Raum-Code" maxlength="4" style="text-transform: uppercase">
+            <button id="btn-join-lobby" class="menu-btn">Beitreten</button>
+          </div>
+        </div>
+
+        <div id="lobby-area" class="hidden">
+          <h3>Lobby: <span id="lobby-code"></span></h3>
+          <div id="lobby-players"></div>
+          <div class="form-group">
+            <label for="lobby-bots">Bots hinzufügen:</label>
+            <select id="lobby-bot-difficulty">
+              <option value="schwach">Schwach</option>
+              <option value="mittel">Mittel</option>
+              <option value="stark">Stark</option>
+            </select>
+            <button id="btn-add-bot" class="menu-btn small-btn">+ Bot</button>
+          </div>
+          <button id="btn-start-online" class="menu-btn start-btn">Spiel starten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="screen hidden">
+    <div class="game-layout">
+      <!-- Header -->
+      <div class="game-header">
+        <div id="round-display" class="stat-display">Runde: 1</div>
+        <div id="phase-info" class="phase-display">Vorbereitung</div>
+        <div class="economy-display">
+          <div id="pot-display" class="stat-display pot">Pot: 0</div>
+          <div id="bank-display" class="stat-display bank">Bank: 0</div>
+        </div>
+      </div>
+
+      <!-- Players Area -->
+      <div id="players-area" class="players-area"></div>
+
+      <!-- Action Panel -->
+      <div id="action-panel" class="action-panel hidden"></div>
+
+      <!-- Game Log -->
+      <div class="log-container">
+        <h3>Spielverlauf</h3>
+        <div id="game-log" class="game-log"></div>
+      </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification hidden"></div>
+  </div>
+
+  <!-- GAME OVER SCREEN -->
+  <div id="game-over-screen" class="screen hidden">
+    <div class="game-over-container">
+      <h1>Spiel beendet!</h1>
+      <div class="winner-display">
+        <p class="winner-label">Gewinner:</p>
+        <h2 id="winner-name"></h2>
+        <p id="winner-coins" class="winner-coins"></p>
+      </div>
+      <button id="btn-new-game" class="menu-btn" onclick="location.reload()">Neues Spiel</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
