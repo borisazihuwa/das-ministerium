@@ -46,7 +46,7 @@ export const ACTION_INFO = {
     description: '+1 Münze aus dem Pot',
     requiresRole: null,
     requiresTarget: false,
-    potCost: 0,
+
     potMin: 1,
     coinCost: 0,
     challengeable: false,
@@ -57,7 +57,7 @@ export const ACTION_INFO = {
     description: '+2 Münzen aus dem Pot',
     requiresRole: null,
     requiresTarget: false,
-    potCost: 0,
+
     potMin: 2,
     coinCost: 0,
     challengeable: false,
@@ -70,7 +70,7 @@ export const ACTION_INFO = {
     description: '+3 Münzen aus dem Pot (Finanzamt)',
     requiresRole: ROLES.FINANZAMT,
     requiresTarget: false,
-    potCost: 0,
+
     potMin: 3,
     coinCost: 0,
     challengeable: true,
@@ -78,10 +78,10 @@ export const ACTION_INFO = {
   },
   [ACTIONS.KARTEN_TAUSCHEN]: {
     name: 'Karten tauschen',
-    description: '4 Karten sehen, 2 behalten (Politiker)',
+    description: 'Karten ziehen und beste behalten (Politiker)',
     requiresRole: ROLES.POLITIKER,
     requiresTarget: false,
-    potCost: 0,
+
     potMin: 0,
     coinCost: 0,
     challengeable: true,
@@ -92,7 +92,7 @@ export const ACTION_INFO = {
     description: '2 Münzen von einem Spieler (Dieb)',
     requiresRole: ROLES.DIEB,
     requiresTarget: true,
-    potCost: 0,
+
     potMin: 0,
     coinCost: 0,
     challengeable: true,
@@ -105,7 +105,7 @@ export const ACTION_INFO = {
     description: 'Ziel verliert 1 Karte, kostet 3 Münzen (Gangster)',
     requiresRole: ROLES.GANGSTER,
     requiresTarget: true,
-    potCost: 0,
+
     potMin: 0,
     coinCost: AUFTRAG_COST,
     coinTarget: 'bank',
@@ -120,7 +120,7 @@ export const ACTION_INFO = {
     requiresRole: null,
     requiresTarget: true,
     requiresRoleGuess: true,
-    potCost: STURZ_COST,
+
     potMin: 0,
     coinCost: STURZ_COST,
     coinTarget: 'pot',

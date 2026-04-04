@@ -166,9 +166,10 @@ export function aiChooseAction(state, player) {
   if (info.requiresTarget) {
     result.targetId = chooseTarget(state, player, chosen.action);
     if (!result.targetId) {
-      // Fallback to non-targeted action
-      if (available.includes(ACTIONS.BUERGERGELD)) return { actionId: ACTIONS.BUERGERGELD };
-      return { actionId: available.find(a => !ACTION_INFO[a].requiresTarget) || available[0] };
+      // Fallback to non-targeted action only
+      const nonTargeted = available.find(a => !ACTION_INFO[a].requiresTarget);
+      if (nonTargeted) return { actionId: nonTargeted };
+      return { actionId: ACTIONS.KARTEN_TAUSCHEN }; // always available
     }
   }
 
@@ -186,6 +187,7 @@ function aiGuessRole(state, player, targetId) {
   const target = getPlayerById(state, targetId);
 
   // Track revealed cards to narrow down possibilities
+  // Only count from player cards (discardPile duplicates these)
   const revealedCounts = {};
   for (const role of ROLE_LIST) revealedCounts[role] = 0;
 
@@ -193,9 +195,6 @@ function aiGuessRole(state, player, targetId) {
     for (const c of p.cards) {
       if (c.revealed) revealedCounts[c.role]++;
     }
-  }
-  for (const role of state.discardPile || []) {
-    revealedCounts[role]++;
   }
 
   // Roles that still have unrevealed copies

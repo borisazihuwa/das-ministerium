@@ -295,12 +295,10 @@ async function runActionsPhase() {
     }
 
     // Handle pending card losses from Anzeige
+    // (Doppelgefahr: challenger loses card here, target already lost card
+    //  from the Auftrag execution above since actionSucceeds=true)
     if (pending._challengerMustLoseCard) {
       await handleLoseCard(state, pending.challengePlayerId);
-      // Doppelgefahr
-      if (pending.doppelgefahr && actionChoice.targetId) {
-        await handleAuftragLoseCard(state, actionChoice.targetId);
-      }
     }
     if (pending._targetMustLoseCard) {
       await handleLoseCard(state, pending.challengeTarget);

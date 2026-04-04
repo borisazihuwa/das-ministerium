@@ -373,12 +373,6 @@ export function startReactionFlow(state, pending) {
     return;
   }
 
-  // Subvention: not challengeable but blockable
-  if (info.blockable) {
-    state.reactionState = REACTION_STATES.AWAITING_REACTIONS;
-    return;
-  }
-
   // Default: action succeeds immediately
   state.reactionState = REACTION_STATES.RESOLVING;
   pending.actionSucceeds = true;

@@ -6,7 +6,7 @@ import {
   ACTIONS, ACTION_INFO, AUFTRAG_COST, STURZ_COST
 } from './constants.js';
 import {
-  transferCoins, getInfluence, reshuffleDeck, addLog, getPlayerById
+  transferCoins, getInfluence, reshuffleDeck, addLog, getPlayerById, shuffle
 } from './gameState.js';
 
 // All actions + their availability reason (for greyed-out tooltips)
@@ -199,7 +199,7 @@ export function completePolitikerSwap(state, playerId, keptCards, returnedCards)
   for (const role of actualReturned) {
     state.deck.push(role);
   }
-  state.deck = [...state.deck].sort(() => Math.random() - 0.5);
+  state.deck = shuffle(state.deck);
 
   addLog(state, `${player.name} hat Karten getauscht und ${actualKept.length} behalten.`);
 }
