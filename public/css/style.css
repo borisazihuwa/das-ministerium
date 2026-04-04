@@ -2,6 +2,7 @@
    Das Ministerium — Dark Ministry Theme
    ============================================================ */
 
+/* Google Fonts — falls nicht erreichbar, Fallback-Fonts greifen */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
