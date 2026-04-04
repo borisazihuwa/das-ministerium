@@ -29,8 +29,10 @@ export function canPerformAction(state, player, actionId) {
   // Check coin cost (Auftrag=3, Sturz=7) — can't spend what you don't have
   if (info.coinCost > 0 && player.coins < info.coinCost) return false;
 
-  // No potMin check — all actions are always available (bluffing is allowed).
-  // If pot is low, you simply get fewer coins.
+  // Steuern (Finanzamt) requires coins in the pot — can't collect from empty pot
+  if (actionId === ACTIONS.STEUERN && state.pot < 1) return false;
+
+  // All other actions are always available (bluffing any role is allowed).
 
   // Check target availability for targeted actions
   if (info.requiresTarget) {
@@ -145,33 +147,41 @@ export function drawCardsForPolitiker(state, playerId) {
   const player = getPlayerById(state, playerId);
   if (!player) return [];
 
+  const unrevealedCount = player.cards.filter(c => !c.revealed).length;
+
   reshuffleDeck(state);
   const drawn = [];
-  for (let i = 0; i < 2 && state.deck.length > 0; i++) {
+  // Draw same number of cards as unrevealed cards (1 or 2)
+  const drawCount = Math.min(unrevealedCount, 2);
+  for (let i = 0; i < drawCount && state.deck.length > 0; i++) {
     drawn.push(state.deck.pop());
   }
-  return drawn; // Returns drawn cards; player sees all 4 (own 2 + drawn 2)
+  return drawn;
 }
 
-// Complete Karten tauschen — player chose which 2 to keep
+// Complete Karten tauschen — player chose which to keep
 export function completePolitikerSwap(state, playerId, keptCards, returnedCards) {
   const player = getPlayerById(state, playerId);
   if (!player) return;
 
-  // Replace player's cards with kept ones
-  const unrevealed = player.cards.filter(c => !c.revealed);
+  const unrevealedCount = player.cards.filter(c => !c.revealed).length;
   const revealed = player.cards.filter(c => c.revealed);
 
+  // Keep exactly as many cards as the player had unrevealed (1 or 2)
+  const actualKept = keptCards.slice(0, unrevealedCount);
+  const actualReturned = [...keptCards.slice(unrevealedCount), ...returnedCards];
+
+  // Player always has exactly 2 card slots total
   player.cards = [
-    ...keptCards.map(role => ({ role, revealed: false })),
+    ...actualKept.map(role => ({ role, revealed: false })),
     ...revealed
   ];
 
-  // Return cards to deck
-  for (const role of returnedCards) {
+  // Return unused cards to deck
+  for (const role of actualReturned) {
     state.deck.push(role);
   }
   state.deck = [...state.deck].sort(() => Math.random() - 0.5);
 
-  addLog(state, `${player.name} hat 2 Karten behalten und 2 zurückgelegt.`);
+  addLog(state, `${player.name} hat Karten getauscht und ${actualKept.length} behalten.`);
 }

@@ -298,33 +298,37 @@ async function runActionsPhase() {
     state.reactionState = REACTION_STATES.IDLE;
     renderGameState(state);
 
-    // Check if someone lost their last card → end round
-    const roundLoser = state.players.find(p =>
-      !state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) === 0
-    );
-    if (roundLoser) {
-      roundLoser.eliminated = true;
-      addLog(state, `${roundLoser.name} hat beide Karten verloren und ist raus aus dieser Runde!`);
-
-      // Find round winner (last with cards)
-      const withCards = state.players.filter(p =>
-        !state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) > 0
-      );
-
-      if (withCards.length <= 1) {
-        state.roundWinner = withCards[0]?.id ?? null;
-        if (state.roundWinner !== null) {
-          addLog(state, `${getPlayerById(state, state.roundWinner).name} gewinnt die Runde!`);
-        }
-        state.phase = 'pot_distribution';
-        renderGameState(state);
-        return;
+    // Mark ALL players who lost their last card as eliminated this round
+    for (const p of state.players) {
+      if (!state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) === 0) {
+        p.eliminated = true;
+        addLog(state, `${p.name} hat beide Karten verloren und ist raus aus dieser Runde!`);
       }
+    }
+
+    // Check: how many players still have cards?
+    const withCards = state.players.filter(p =>
+      !state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) > 0
+    );
+
+    if (withCards.length <= 1) {
+      // Round over — last player with cards wins
+      state.roundWinner = withCards[0]?.id ?? null;
+      if (state.roundWinner !== null) {
+        addLog(state, `${getPlayerById(state, state.roundWinner).name} gewinnt die Runde!`);
+      }
+      state.phase = 'pot_distribution';
+      renderGameState(state);
+      return;
     }
 
     // Next player (clockwise, loops around)
     state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
-    if (state.currentPlayerIndex < 0) break;
+    if (state.currentPlayerIndex < 0) {
+      // No active player found — shouldn't happen, but end round safely
+      state.phase = 'pot_distribution';
+      return;
+    }
 
     await delay(500);
   }

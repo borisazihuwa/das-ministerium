@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Das Ministerium — Täuschung ist Gesetz</title>
+  <title>Das Ministerium</title>
   <style>
 /* ============================================================
    Das Ministerium — Dark Ministry Theme
@@ -1320,8 +1320,10 @@ function canPerformAction(state, player, actionId) {
   // Check coin cost (Auftrag=3, Sturz=7) — can't spend what you don't have
   if (info.coinCost > 0 && player.coins < info.coinCost) return false;
 
-  // No potMin check — all actions are always available (bluffing is allowed).
-  // If pot is low, you simply get fewer coins.
+  // Steuern (Finanzamt) requires coins in the pot — can't collect from empty pot
+  if (actionId === ACTIONS.STEUERN && state.pot < 1) return false;
+
+  // All other actions are always available (bluffing any role is allowed).
 
   // Check target availability for targeted actions
   if (info.requiresTarget) {
@@ -1436,35 +1438,43 @@ function drawCardsForPolitiker(state, playerId) {
   const player = getPlayerById(state, playerId);
   if (!player) return [];
 
+  const unrevealedCount = player.cards.filter(c => !c.revealed).length;
+
   reshuffleDeck(state);
   const drawn = [];
-  for (let i = 0; i < 2 && state.deck.length > 0; i++) {
+  // Draw same number of cards as unrevealed cards (1 or 2)
+  const drawCount = Math.min(unrevealedCount, 2);
+  for (let i = 0; i < drawCount && state.deck.length > 0; i++) {
     drawn.push(state.deck.pop());
   }
-  return drawn; // Returns drawn cards; player sees all 4 (own 2 + drawn 2)
+  return drawn;
 }
 
-// Complete Karten tauschen — player chose which 2 to keep
+// Complete Karten tauschen — player chose which to keep
 function completePolitikerSwap(state, playerId, keptCards, returnedCards) {
   const player = getPlayerById(state, playerId);
   if (!player) return;
 
-  // Replace player's cards with kept ones
-  const unrevealed = player.cards.filter(c => !c.revealed);
+  const unrevealedCount = player.cards.filter(c => !c.revealed).length;
   const revealed = player.cards.filter(c => c.revealed);
 
+  // Keep exactly as many cards as the player had unrevealed (1 or 2)
+  const actualKept = keptCards.slice(0, unrevealedCount);
+  const actualReturned = [...keptCards.slice(unrevealedCount), ...returnedCards];
+
+  // Player always has exactly 2 card slots total
   player.cards = [
-    ...keptCards.map(role => ({ role, revealed: false })),
+    ...actualKept.map(role => ({ role, revealed: false })),
     ...revealed
   ];
 
-  // Return cards to deck
-  for (const role of returnedCards) {
+  // Return unused cards to deck
+  for (const role of actualReturned) {
     state.deck.push(role);
   }
   state.deck = [...state.deck].sort(() => Math.random() - 0.5);
 
-  addLog(state, `${player.name} hat 2 Karten behalten und 2 zurückgelegt.`);
+  addLog(state, `${player.name} hat Karten getauscht und ${actualKept.length} behalten.`);
 }
 
 
@@ -2154,14 +2164,15 @@ function aiChooseCardToLose(player) {
   return unrevealed[0].index;
 }
 
-// AI chooses cards for Politiker swap (from 4 cards, keep 2)
+// AI chooses cards for Politiker swap — keep best N (where N = unrevealed count)
 function aiChoosePolitikerCards(player, currentRoles, drawnRoles) {
+  const keepCount = currentRoles.length; // 1 or 2 depending on influence
+
   const allCards = [
     ...currentRoles.map((role, i) => ({ role, source: 'hand', index: i })),
     ...drawnRoles.map((role, i) => ({ role, source: 'drawn', index: i }))
   ];
 
-  // Rank roles by usefulness
   const rolePriority = {
     [ROLES.GANGSTER]: 5,
     [ROLES.DIEB]: 4,
@@ -2170,10 +2181,9 @@ function aiChoosePolitikerCards(player, currentRoles, drawnRoles) {
     [ROLES.POLIZIST]: 1
   };
 
-  // Pick best 2
   allCards.sort((a, b) => (rolePriority[b.role] || 0) - (rolePriority[a.role] || 0));
-  const kept = allCards.slice(0, 2).map(c => c.role);
-  const returned = allCards.slice(2).map(c => c.role);
+  const kept = allCards.slice(0, keepCount).map(c => c.role);
+  const returned = allCards.slice(keepCount).map(c => c.role);
 
   return { kept, returned };
 }
@@ -2598,13 +2608,14 @@ function showCardSelection(player, message = 'Welche Karte verlieren?') {
   });
 }
 
-// Politiker swap: show all 4 cards, pick 2 to keep
+// Politiker swap: show cards, pick N to keep (N = unrevealed count)
 function showPolitikerSwap(player, drawnRoles) {
   return new Promise((resolve) => {
-    const modal = showModal('Karten tauschen (Politiker): Wähle 2 Karten zum Behalten');
+    const currentRoles = player.cards.filter(c => !c.revealed).map(c => c.role);
+    const keepCount = currentRoles.length; // 1 or 2
+    const modal = showModal(`Karten tauschen (Politiker): Wähle ${keepCount} Karte${keepCount > 1 ? 'n' : ''} zum Behalten`);
     const content = modal.querySelector('.modal-content');
 
-    const currentRoles = player.cards.filter(c => !c.revealed).map(c => c.role);
     const allCards = [
       ...currentRoles.map(r => ({ role: r, source: 'hand' })),
       ...drawnRoles.map(r => ({ role: r, source: 'drawn' }))
@@ -2617,7 +2628,7 @@ function showPolitikerSwap(player, drawnRoles) {
       buttons.forEach((btn, i) => {
         btn.classList.toggle('selected', selected.has(i));
       });
-      confirmBtn.disabled = selected.size !== 2;
+      confirmBtn.disabled = selected.size !== keepCount;
     };
 
     for (let i = 0; i < allCards.length; i++) {
@@ -2628,7 +2639,7 @@ function showPolitikerSwap(player, drawnRoles) {
       btn.onclick = () => {
         if (selected.has(i)) {
           selected.delete(i);
-        } else if (selected.size < 2) {
+        } else if (selected.size < keepCount) {
           selected.add(i);
         }
         updateButtons();
@@ -2757,7 +2768,10 @@ function setupMenuHandlers() {
       label.textContent = slider.value;
     });
   }
+
+  // Online not available in standalone
 }
+
 
 function startSoloGame() {
   const botCount = parseInt(document.getElementById('bot-count').value) || 3;
@@ -2948,33 +2962,37 @@ async function runActionsPhase() {
     state.reactionState = REACTION_STATES.IDLE;
     renderGameState(state);
 
-    // Check if someone lost their last card → end round
-    const roundLoser = state.players.find(p =>
-      !state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) === 0
-    );
-    if (roundLoser) {
-      roundLoser.eliminated = true;
-      addLog(state, `${roundLoser.name} hat beide Karten verloren und ist raus aus dieser Runde!`);
-
-      // Find round winner (last with cards)
-      const withCards = state.players.filter(p =>
-        !state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) > 0
-      );
-
-      if (withCards.length <= 1) {
-        state.roundWinner = withCards[0]?.id ?? null;
-        if (state.roundWinner !== null) {
-          addLog(state, `${getPlayerById(state, state.roundWinner).name} gewinnt die Runde!`);
-        }
-        state.phase = 'pot_distribution';
-        renderGameState(state);
-        return;
+    // Mark ALL players who lost their last card as eliminated this round
+    for (const p of state.players) {
+      if (!state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) === 0) {
+        p.eliminated = true;
+        addLog(state, `${p.name} hat beide Karten verloren und ist raus aus dieser Runde!`);
       }
+    }
+
+    // Check: how many players still have cards?
+    const withCards = state.players.filter(p =>
+      !state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) > 0
+    );
+
+    if (withCards.length <= 1) {
+      // Round over — last player with cards wins
+      state.roundWinner = withCards[0]?.id ?? null;
+      if (state.roundWinner !== null) {
+        addLog(state, `${getPlayerById(state, state.roundWinner).name} gewinnt die Runde!`);
+      }
+      state.phase = 'pot_distribution';
+      renderGameState(state);
+      return;
     }
 
     // Next player (clockwise, loops around)
     state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
-    if (state.currentPlayerIndex < 0) break;
+    if (state.currentPlayerIndex < 0) {
+      // No active player found — shouldn't happen, but end round safely
+      state.phase = 'pot_distribution';
+      return;
+    }
 
     await delay(500);
   }
@@ -3113,11 +3131,7 @@ function delay(ms) {
 
 
 
-
-// Stub online button
-document.getElementById('btn-online').addEventListener('click', function() {
-  alert('Online-Multiplayer ist nur im Server-Modus verfügbar (npm start).');
-});
+document.getElementById("btn-online").addEventListener("click", function() { alert("Online-Multiplayer nur im Server-Modus (npm start)."); });
   </script>
 </body>
 </html>

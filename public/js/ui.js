@@ -374,13 +374,14 @@ export function showCardSelection(player, message = 'Welche Karte verlieren?') {
   });
 }
 
-// Politiker swap: show all 4 cards, pick 2 to keep
+// Politiker swap: show cards, pick N to keep (N = unrevealed count)
 export function showPolitikerSwap(player, drawnRoles) {
   return new Promise((resolve) => {
-    const modal = showModal('Karten tauschen (Politiker): Wähle 2 Karten zum Behalten');
+    const currentRoles = player.cards.filter(c => !c.revealed).map(c => c.role);
+    const keepCount = currentRoles.length; // 1 or 2
+    const modal = showModal(`Karten tauschen (Politiker): Wähle ${keepCount} Karte${keepCount > 1 ? 'n' : ''} zum Behalten`);
     const content = modal.querySelector('.modal-content');
 
-    const currentRoles = player.cards.filter(c => !c.revealed).map(c => c.role);
     const allCards = [
       ...currentRoles.map(r => ({ role: r, source: 'hand' })),
       ...drawnRoles.map(r => ({ role: r, source: 'drawn' }))
@@ -393,7 +394,7 @@ export function showPolitikerSwap(player, drawnRoles) {
       buttons.forEach((btn, i) => {
         btn.classList.toggle('selected', selected.has(i));
       });
-      confirmBtn.disabled = selected.size !== 2;
+      confirmBtn.disabled = selected.size !== keepCount;
     };
 
     for (let i = 0; i < allCards.length; i++) {
@@ -404,7 +405,7 @@ export function showPolitikerSwap(player, drawnRoles) {
       btn.onclick = () => {
         if (selected.has(i)) {
           selected.delete(i);
-        } else if (selected.size < 2) {
+        } else if (selected.size < keepCount) {
           selected.add(i);
         }
         updateButtons();

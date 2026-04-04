@@ -308,14 +308,15 @@ export function aiChooseCardToLose(player) {
   return unrevealed[0].index;
 }
 
-// AI chooses cards for Politiker swap (from 4 cards, keep 2)
+// AI chooses cards for Politiker swap — keep best N (where N = unrevealed count)
 export function aiChoosePolitikerCards(player, currentRoles, drawnRoles) {
+  const keepCount = currentRoles.length; // 1 or 2 depending on influence
+
   const allCards = [
     ...currentRoles.map((role, i) => ({ role, source: 'hand', index: i })),
     ...drawnRoles.map((role, i) => ({ role, source: 'drawn', index: i }))
   ];
 
-  // Rank roles by usefulness
   const rolePriority = {
     [ROLES.GANGSTER]: 5,
     [ROLES.DIEB]: 4,
@@ -324,10 +325,9 @@ export function aiChoosePolitikerCards(player, currentRoles, drawnRoles) {
     [ROLES.POLIZIST]: 1
   };
 
-  // Pick best 2
   allCards.sort((a, b) => (rolePriority[b.role] || 0) - (rolePriority[a.role] || 0));
-  const kept = allCards.slice(0, 2).map(c => c.role);
-  const returned = allCards.slice(2).map(c => c.role);
+  const kept = allCards.slice(0, keepCount).map(c => c.role);
+  const returned = allCards.slice(keepCount).map(c => c.role);
 
   return { kept, returned };
 }
