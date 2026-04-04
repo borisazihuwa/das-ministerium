@@ -1,0 +1,3122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Das Ministerium — Täuschung ist Gesetz</title>
+  <style>
+/* ============================================================
+   Das Ministerium — Dark Ministry Theme
+   ============================================================ */
+
+/* Google Fonts — falls nicht erreichbar, Fallback-Fonts greifen */
+
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --bg-accent: #16213e;
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --gold-dark: #8a6d2b;
+  --red: #c0392b;
+  --red-light: #e74c3c;
+  --green: #27ae60;
+  --green-light: #2ecc71;
+  --blue: #2980b9;
+  --text-primary: #e8e8e8;
+  --text-secondary: #a0a0b0;
+  --text-muted: #606070;
+  --border: #2a2a3e;
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  font-family: 'Playfair Display', serif;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---- SCREENS ---- */
+
+.screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- MENU ---- */
+
+.menu-container {
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  padding: 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  color: var(--gold);
+  text-shadow: 0 2px 20px rgba(201, 168, 76, 0.3);
+  margin-bottom: 0.25rem;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-bottom: 3rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.menu-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.menu-btn {
+  background: var(--bg-card);
+  color: var(--gold);
+  border: 1px solid var(--gold-dark);
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-family: 'Playfair Display', serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+
+.menu-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--gold);
+  box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
+}
+
+.menu-btn.start-btn {
+  background: var(--gold-dark);
+  color: var(--bg-primary);
+  font-weight: 700;
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+}
+
+.menu-btn.start-btn:hover {
+  background: var(--gold);
+}
+
+.menu-btn.small-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.setup-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.setup-panel h2 {
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.form-group input[type="text"],
+.form-group select {
+  width: 100%;
+  padding: 0.6rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.form-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--gold);
+}
+
+.online-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.join-group {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.join-group input {
+  flex: 1;
+  padding: 0.6rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  text-align: center;
+  letter-spacing: 4px;
+}
+
+/* ---- GAME LAYOUT ---- */
+
+.game-layout {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.stat-display {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.stat-display.pot {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.stat-display.bank {
+  color: var(--text-muted);
+}
+
+.phase-display {
+  color: var(--gold-light);
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.economy-display {
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* ---- PLAYERS AREA ---- */
+
+.players-area {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.player-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.player-card.active-turn {
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.15);
+}
+
+.player-card.human {
+  border-left: 3px solid var(--gold);
+}
+
+.player-card.eliminated {
+  opacity: 0.35;
+  filter: grayscale(0.8);
+}
+
+.player-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  color: var(--gold-light);
+  margin-bottom: 0.5rem;
+}
+
+.player-coins {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.player-cards-display {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.card-mini {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+  text-align: center;
+  min-width: 70px;
+}
+
+.card-mini.own-card {
+  background: var(--bg-accent);
+  border-color: var(--gold-dark);
+  color: var(--gold-light);
+  font-weight: 500;
+}
+
+.card-mini.hidden-card {
+  background: var(--bg-primary);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.card-mini.revealed {
+  background: var(--red);
+  color: #fff;
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+.player-influence {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ---- ACTION PANEL ---- */
+
+.action-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--gold-dark);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.action-panel h3 {
+  color: var(--gold);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.action-btn {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.action-btn:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--gold-dark);
+}
+
+.action-btn strong {
+  color: var(--gold-light);
+}
+
+.action-btn small {
+  color: var(--text-secondary);
+}
+
+.action-btn.passive-btn {
+  border-color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.action-btn.passive-btn:hover {
+  opacity: 1;
+}
+
+.action-btn.danger-btn {
+  border-color: var(--red);
+  color: var(--red-light);
+}
+
+.action-btn.danger-btn:hover {
+  background: rgba(192, 57, 43, 0.15);
+}
+
+.action-btn.role-btn {
+  text-align: center;
+  font-weight: 500;
+  color: var(--gold-light);
+}
+
+.action-btn.role-btn.selected {
+  background: var(--gold-dark);
+  color: var(--bg-primary);
+  border-color: var(--gold);
+}
+
+.action-btn.cancel-btn {
+  text-align: center;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.action-btn.confirm-btn {
+  text-align: center;
+  background: var(--gold-dark);
+  color: var(--bg-primary);
+  font-weight: 600;
+  margin-top: 0.8rem;
+}
+
+.action-btn.confirm-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.action-btn.confirm-btn:not(:disabled):hover {
+  background: var(--gold);
+}
+
+/* ---- LOG ---- */
+
+.log-container {
+  flex: 1;
+  min-height: 150px;
+}
+
+.log-container h3 {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.game-log {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  padding: 0.8rem;
+  max-height: 250px;
+  overflow-y: auto;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.log-entry {
+  padding: 0.15rem 0;
+  border-bottom: 1px solid rgba(42, 42, 62, 0.5);
+  color: var(--text-secondary);
+}
+
+.log-entry.log-round {
+  color: var(--gold);
+  font-weight: 600;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--gold-dark);
+}
+
+.log-entry.log-positive {
+  color: var(--green-light);
+}
+
+.log-entry.log-negative {
+  color: var(--red-light);
+}
+
+.log-entry.log-reaction {
+  color: var(--blue);
+}
+
+/* ---- NOTIFICATION ---- */
+
+.notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-card);
+  border: 2px solid var(--gold);
+  color: var(--gold-light);
+  padding: 1.5rem 3rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 0 40px rgba(201, 168, 76, 0.3);
+  animation: fadeInOut 2s ease-in-out;
+  pointer-events: none;
+}
+
+.notification.show {
+  display: block;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* ---- MODAL ---- */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--gold-dark);
+  padding: 2rem;
+  max-width: 450px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal h3 {
+  color: var(--gold);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+/* ---- GAME OVER ---- */
+
+.game-over-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.game-over-container h1 {
+  color: var(--gold);
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 2px 20px rgba(201, 168, 76, 0.3);
+}
+
+.winner-display {
+  background: var(--bg-card);
+  border: 2px solid var(--gold);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.winner-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 0.5rem;
+}
+
+.winner-display h2 {
+  color: var(--gold-light);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.winner-coins {
+  color: var(--gold);
+  font-size: 1.2rem;
+}
+
+/* ---- SCROLLBAR ---- */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-dark);
+}
+
+/* ---- RESPONSIVE ---- */
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+  }
+
+  .players-area {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .game-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .notification {
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .players-area {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-buttons {
+    flex-direction: column;
+  }
+}
+
+  </style>
+</head>
+<body style="background:#0a0a0f;color:#e8e8e8;font-family:sans-serif;">
+
+
+  <!-- MENU SCREEN -->
+  <div id="menu-screen" class="screen">
+    <div class="menu-container">
+      <h1 class="title">Das Ministerium</h1>
+      <p class="subtitle">Täuschung ist Gesetz</p>
+
+      <div class="menu-buttons">
+        <button id="btn-solo" class="menu-btn">Solo vs. Bots</button>
+        <button id="btn-online" class="menu-btn">Online Multiplayer</button>
+      </div>
+
+      <!-- Solo Setup -->
+      <div id="solo-setup" class="setup-panel hidden">
+        <h2>Solo-Spiel konfigurieren</h2>
+
+        <div class="form-group">
+          <label for="player-name">Dein Name:</label>
+          <input type="text" id="player-name" value="Spieler" maxlength="20">
+        </div>
+
+        <div class="form-group">
+          <label for="bot-count">Anzahl Bots: <span id="bot-count-label">3</span></label>
+          <input type="range" id="bot-count" min="1" max="5" value="3">
+        </div>
+
+        <div class="form-group">
+          <label for="bot-difficulty">Bot-Schwierigkeit:</label>
+          <select id="bot-difficulty">
+            <option value="schwach">Schwach</option>
+            <option value="mittel" selected>Mittel</option>
+            <option value="stark">Stark</option>
+            <option value="gemischt">Gemischt</option>
+          </select>
+        </div>
+
+        <button id="btn-start-solo" class="menu-btn start-btn">Spiel starten</button>
+      </div>
+
+      <!-- Online Setup -->
+      <div id="online-setup" class="setup-panel hidden">
+        <h2>Online Multiplayer</h2>
+
+        <div class="form-group">
+          <label for="online-name">Dein Name:</label>
+          <input type="text" id="online-name" value="Spieler" maxlength="20">
+        </div>
+
+        <div class="online-options">
+          <button id="btn-create-lobby" class="menu-btn">Lobby erstellen</button>
+          <div class="join-group">
+            <input type="text" id="room-code" placeholder="Raum-Code" maxlength="4" style="text-transform: uppercase">
+            <button id="btn-join-lobby" class="menu-btn">Beitreten</button>
+          </div>
+        </div>
+
+        <div id="lobby-area" class="hidden">
+          <h3>Lobby: <span id="lobby-code"></span></h3>
+          <div id="lobby-players"></div>
+          <div class="form-group">
+            <label for="lobby-bots">Bots hinzufügen:</label>
+            <select id="lobby-bot-difficulty">
+              <option value="schwach">Schwach</option>
+              <option value="mittel">Mittel</option>
+              <option value="stark">Stark</option>
+            </select>
+            <button id="btn-add-bot" class="menu-btn small-btn">+ Bot</button>
+          </div>
+          <button id="btn-start-online" class="menu-btn start-btn">Spiel starten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen" class="screen hidden">
+    <div class="game-layout">
+      <!-- Header -->
+      <div class="game-header">
+        <div id="round-display" class="stat-display">Runde: 1</div>
+        <div id="phase-info" class="phase-display">Vorbereitung</div>
+        <div class="economy-display">
+          <div id="pot-display" class="stat-display pot">Pot: 0</div>
+          <div id="bank-display" class="stat-display bank">Bank: 0</div>
+        </div>
+      </div>
+
+      <!-- Players Area -->
+      <div id="players-area" class="players-area"></div>
+
+      <!-- Action Panel -->
+      <div id="action-panel" class="action-panel hidden"></div>
+
+      <!-- Game Log -->
+      <div class="log-container">
+        <h3>Spielverlauf</h3>
+        <div id="game-log" class="game-log"></div>
+      </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification hidden"></div>
+  </div>
+
+  <!-- GAME OVER SCREEN -->
+  <div id="game-over-screen" class="screen hidden">
+    <div class="game-over-container">
+      <h1>Spiel beendet!</h1>
+      <div class="winner-display">
+        <p class="winner-label">Gewinner:</p>
+        <h2 id="winner-name"></h2>
+        <p id="winner-coins" class="winner-coins"></p>
+      </div>
+      <button id="btn-new-game" class="menu-btn" onclick="location.reload()">Neues Spiel</button>
+    </div>
+  </div>
+
+  
+
+  <script>
+// --- constants.js ---
+// ============================================================
+// Das Ministerium — Constants & Game Rules
+// ============================================================
+
+const ROLES = {
+  FINANZAMT: 'Finanzamt',
+  POLITIKER: 'Politiker',
+  DIEB: 'Dieb',
+  GANGSTER: 'Gangster',
+  POLIZIST: 'Polizist'
+};
+
+const ROLE_LIST = Object.values(ROLES);
+
+// 15 cards total: 3 of each role
+const CARDS_PER_ROLE = 3;
+const TOTAL_CARDS = ROLE_LIST.length * CARDS_PER_ROLE; // 15
+
+// Economy
+const START_COINS = 10;
+const TOTAL_COINS = 50;
+const ABGABE_COST = 1;
+const STURZ_COST = 7;
+const AUFTRAG_COST = 3;
+const ANZEIGE_COST = 1;
+const ANZEIGE_FAIL_EXTRA_COST = 1; // additional 1 coin on failed Anzeige
+const MIN_BESTECHUNG_ANZEIGE = 2;
+const MIN_BESTECHUNG_STURZ = 1;
+const WINNER_CAP = 10;
+const REDISTRIBUTION = 1;
+
+// Actions
+const ACTIONS = {
+  BUERGERGELD: 'buergergeld',
+  SUBVENTION: 'subvention',
+  STEUERN: 'steuern',
+  KARTEN_TAUSCHEN: 'karten_tauschen',
+  STEHLEN: 'stehlen',
+  AUFTRAG: 'auftrag',
+  STURZ: 'sturz'
+};
+
+const ACTION_INFO = {
+  [ACTIONS.BUERGERGELD]: {
+    name: 'Bürgergeld',
+    description: '+1 Münze aus dem Pot',
+    requiresRole: null,
+    requiresTarget: false,
+    potCost: 0,
+    potMin: 1,
+    coinCost: 0,
+    challengeable: false,
+    blockable: false
+  },
+  [ACTIONS.SUBVENTION]: {
+    name: 'Subvention',
+    description: '+2 Münzen aus dem Pot',
+    requiresRole: null,
+    requiresTarget: false,
+    potCost: 0,
+    potMin: 2,
+    coinCost: 0,
+    challengeable: false,
+    blockable: true,
+    blockedBy: [ROLES.FINANZAMT],
+    anyoneCanBlock: true
+  },
+  [ACTIONS.STEUERN]: {
+    name: 'Steuern eintreiben',
+    description: '+3 Münzen aus dem Pot (Finanzamt)',
+    requiresRole: ROLES.FINANZAMT,
+    requiresTarget: false,
+    potCost: 0,
+    potMin: 3,
+    coinCost: 0,
+    challengeable: true,
+    blockable: false
+  },
+  [ACTIONS.KARTEN_TAUSCHEN]: {
+    name: 'Karten tauschen',
+    description: '4 Karten sehen, 2 behalten (Politiker)',
+    requiresRole: ROLES.POLITIKER,
+    requiresTarget: false,
+    potCost: 0,
+    potMin: 0,
+    coinCost: 0,
+    challengeable: true,
+    blockable: false
+  },
+  [ACTIONS.STEHLEN]: {
+    name: 'Stehlen',
+    description: '2 Münzen von einem Spieler (Dieb)',
+    requiresRole: ROLES.DIEB,
+    requiresTarget: true,
+    potCost: 0,
+    potMin: 0,
+    coinCost: 0,
+    challengeable: true,
+    blockable: true,
+    blockedBy: [ROLES.DIEB, ROLES.POLITIKER],
+    anyoneCanBlock: false // only target
+  },
+  [ACTIONS.AUFTRAG]: {
+    name: 'Auftrag erteilen',
+    description: 'Ziel verliert 1 Karte, kostet 3 Münzen (Gangster)',
+    requiresRole: ROLES.GANGSTER,
+    requiresTarget: true,
+    potCost: 0,
+    potMin: 0,
+    coinCost: AUFTRAG_COST,
+    coinTarget: 'bank',
+    challengeable: true,
+    blockable: true,
+    blockedBy: [ROLES.POLIZIST],
+    anyoneCanBlock: false // only target
+  },
+  [ACTIONS.STURZ]: {
+    name: 'Sturz',
+    description: 'Rolle einer Karte des Ziels erraten (7 Münzen)',
+    requiresRole: null,
+    requiresTarget: true,
+    requiresRoleGuess: true,
+    potCost: STURZ_COST,
+    potMin: 0,
+    coinCost: STURZ_COST,
+    coinTarget: 'pot',
+    challengeable: false,
+    blockable: false,
+    bribeable: true
+  }
+};
+
+// Block matrix: which roles can block which actions
+const BLOCK_MATRIX = {
+  [ACTIONS.SUBVENTION]: { roles: [ROLES.FINANZAMT], anyoneCanBlock: true },
+  [ACTIONS.STEHLEN]: { roles: [ROLES.DIEB, ROLES.POLITIKER], anyoneCanBlock: false },
+  [ACTIONS.AUFTRAG]: { roles: [ROLES.POLIZIST], anyoneCanBlock: false }
+};
+
+// Reaction state machine states
+const REACTION_STATES = {
+  IDLE: 'idle',
+  AWAITING_REACTIONS: 'awaiting_reactions',
+  BLOCK_ANNOUNCED: 'block_announced',
+  AWAITING_ANZEIGE_ON_BLOCK: 'awaiting_anzeige_on_block',
+  ANZEIGE_RAISED: 'anzeige_raised',
+  AWAITING_BESTECHUNG: 'awaiting_bestechung',
+  AWAITING_BESTECHUNG_DECISION: 'awaiting_bestechung_decision',
+  STURZ_ANNOUNCED: 'sturz_announced',
+  AWAITING_STURZ_BESTECHUNG: 'awaiting_sturz_bestechung',
+  AWAITING_STURZ_BESTECHUNG_DECISION: 'awaiting_sturz_bestechung_decision',
+  RESOLVING: 'resolving'
+};
+
+// AI Profiles from PRD simulation
+const AI_PROFILES = {
+  schwach: {
+    name: 'Schwach',
+    anzeigeRate: 0.22,
+    anzeigeTrefferquote: 0.33,
+    bluffRate: 0.28,
+    blockRate: 0.28,
+    auftragRate: 0.38,
+    sturzRate: 0.30,
+    sturzTrefferquote: 0.25,
+    bestechungAnbieten: 0.28,
+    bestechungBluffHoch: 0.08,
+    bestechungBluffNiedrig: 0.06,
+    bestechungAnnehmen: 0.58,
+    zieltAufSchwächsten: 0.45
+  },
+  mittel: {
+    name: 'Mittel',
+    anzeigeRate: 0.40,
+    anzeigeTrefferquote: 0.52,
+    bluffRate: 0.44,
+    blockRate: 0.48,
+    auftragRate: 0.58,
+    sturzRate: 0.48,
+    sturzTrefferquote: 0.42,
+    bestechungAnbieten: 0.48,
+    bestechungBluffHoch: 0.18,
+    bestechungBluffNiedrig: 0.16,
+    bestechungAnnehmen: 0.44,
+    zieltAufSchwächsten: 0.68
+  },
+  stark: {
+    name: 'Stark',
+    anzeigeRate: 0.56,
+    anzeigeTrefferquote: 0.68,
+    bluffRate: 0.58,
+    blockRate: 0.68,
+    auftragRate: 0.72,
+    sturzRate: 0.62,
+    sturzTrefferquote: 0.56,
+    bestechungAnbieten: 0.62,
+    bestechungBluffHoch: 0.30,
+    bestechungBluffNiedrig: 0.26,
+    bestechungAnnehmen: 0.36,
+    zieltAufSchwächsten: 0.80
+  }
+};
+
+const MIN_PLAYERS = 2;
+const MAX_PLAYERS = 6;
+
+
+// --- gameState.js ---
+// ============================================================
+// Das Ministerium — Game State Management
+// ============================================================
+
+
+// Create a fresh deck of 15 cards (3 per role)
+function createDeck() {
+  const deck = [];
+  for (const role of ROLE_LIST) {
+    for (let i = 0; i < CARDS_PER_ROLE; i++) {
+      deck.push(role);
+    }
+  }
+  return shuffle(deck);
+}
+
+// Fisher-Yates shuffle
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Create a player
+function createPlayer(id, name, isHuman = false, aiProfile = null) {
+  return {
+    id,
+    name,
+    coins: START_COINS,
+    cards: [], // { role, revealed }
+    isHuman,
+    isBot: !isHuman,
+    aiProfile, // 'schwach' | 'mittel' | 'stark' | null
+    eliminated: false,
+    socketId: null
+  };
+}
+
+// Create initial game state
+function createGameState(players) {
+  const deck = createDeck();
+  const totalPlayerCoins = players.length * START_COINS;
+  const bankCoins = TOTAL_COINS - totalPlayerCoins;
+
+  // Deal 2 cards to each player
+  const gamePlayers = players.map(p => {
+    const player = { ...p, cards: [] };
+    player.cards.push({ role: deck.pop(), revealed: false });
+    player.cards.push({ role: deck.pop(), revealed: false });
+    return player;
+  });
+
+  return {
+    players: gamePlayers,
+    bank: bankCoins,
+    pot: 0,
+    deck,
+    discardPile: [],
+    currentPlayerIndex: 0,
+    phase: 'round_setup',
+    round: 1,
+    roundWinner: null,
+    turnIndex: 0,
+    reactionState: REACTION_STATES.IDLE,
+    pendingAction: null,
+    pendingReaction: null,
+    log: [],
+    gameOver: false,
+    winner: null,
+    metaEliminated: [] // players eliminated from the entire game (0 coins)
+  };
+}
+
+// Get active players (still in the current round — have unrevealed cards)
+function getActivePlayers(state) {
+  return state.players.filter(p => !p.eliminated && getInfluence(p) > 0);
+}
+
+// Get players still in the game (have coins or cards)
+function getAlivePlayersInGame(state) {
+  return state.players.filter(p => !state.metaEliminated.includes(p.id));
+}
+
+// Get influence count (unrevealed cards)
+function getInfluence(player) {
+  return player.cards.filter(c => !c.revealed).length;
+}
+
+// Player loses a card (reveals one of their choice)
+function loseCard(state, playerId, cardIndex) {
+  const player = state.players.find(p => p.id === playerId);
+  if (!player) return;
+  const unrevealed = player.cards.filter(c => !c.revealed);
+  if (unrevealed.length === 0) return;
+
+  // cardIndex refers to which unrevealed card (0 or 1)
+  const actualIndex = cardIndex !== undefined
+    ? player.cards.findIndex((c, i) => !c.revealed && i === cardIndex)
+    : player.cards.findIndex(c => !c.revealed);
+
+  if (actualIndex >= 0) {
+    player.cards[actualIndex].revealed = true;
+    state.discardPile.push(player.cards[actualIndex].role);
+    addLog(state, `${player.name} verliert Einfluss: ${player.cards[actualIndex].role} aufgedeckt.`);
+  }
+}
+
+// Transfer coins between entities
+function transferCoins(state, from, to, amount) {
+  if (amount <= 0) return 0;
+
+  let actualAmount = amount;
+  let source, dest;
+
+  // Resolve source
+  if (from === 'bank') {
+    actualAmount = Math.min(amount, state.bank);
+    state.bank -= actualAmount;
+  } else if (from === 'pot') {
+    actualAmount = Math.min(amount, state.pot);
+    state.pot -= actualAmount;
+  } else {
+    const player = state.players.find(p => p.id === from);
+    if (!player) return 0;
+    actualAmount = Math.min(amount, player.coins);
+    player.coins -= actualAmount;
+  }
+
+  // Resolve destination
+  if (to === 'bank') {
+    state.bank += actualAmount;
+  } else if (to === 'pot') {
+    state.pot += actualAmount;
+  } else {
+    const player = state.players.find(p => p.id === to);
+    if (player) player.coins += actualAmount;
+  }
+
+  return actualAmount;
+}
+
+// Phase 1: Abgabe — each player pays 1 coin to pot
+function executeAbgabe(state) {
+  const alive = getAlivePlayersInGame(state);
+  for (const player of alive) {
+    if (player.coins > 0) {
+      const paid = transferCoins(state, player.id, 'pot', ABGABE_COST);
+      if (paid > 0) {
+        addLog(state, `${player.name} zahlt ${paid} Münze Abgabe in den Pot.`);
+      }
+    }
+  }
+
+  // Eliminate players with 0 coins after Abgabe
+  const eliminated = [];
+  for (const player of alive) {
+    if (player.coins === 0 && !state.metaEliminated.includes(player.id)) {
+      player.eliminated = true;
+      state.metaEliminated.push(player.id);
+      eliminated.push(player);
+      addLog(state, `${player.name} hat 0 Münzen nach der Abgabe und scheidet aus!`);
+    }
+  }
+
+  return eliminated;
+}
+
+// Phase 3: Pot distribution
+function distributePot(state, roundWinnerId) {
+  const winner = state.players.find(p => p.id === roundWinnerId);
+  if (!winner) return;
+
+  const activeMeta = state.players.filter(p =>
+    !state.metaEliminated.includes(p.id) && p.id !== roundWinnerId
+  );
+
+  const aliveCount = activeMeta.length + 1; // +1 for winner
+
+  if (aliveCount <= 2) {
+    // 2 players: winner gets max 10, no redistribution
+    const winnerAmount = Math.min(WINNER_CAP, state.pot);
+    transferCoins(state, 'pot', roundWinnerId, winnerAmount);
+    addLog(state, `${winner.name} erhält ${winnerAmount} Münzen aus dem Pot (Rundengewinner).`);
+  } else {
+    // 3+ players: winner gets max 10, others get 1 each
+    const winnerAmount = Math.min(WINNER_CAP, state.pot);
+    transferCoins(state, 'pot', roundWinnerId, winnerAmount);
+    addLog(state, `${winner.name} erhält ${winnerAmount} Münzen aus dem Pot (Rundengewinner).`);
+
+    for (const player of activeMeta) {
+      const redistAmount = Math.min(REDISTRIBUTION, state.pot);
+      if (redistAmount > 0) {
+        transferCoins(state, 'pot', player.id, redistAmount);
+        addLog(state, `${player.name} erhält ${redistAmount} Münze Redistribution.`);
+      }
+    }
+  }
+
+  if (state.pot > 0) {
+    addLog(state, `${state.pot} Münzen verbleiben im Pot.`);
+  }
+
+  // Check for meta-elimination after pot distribution
+  for (const player of state.players) {
+    if (player.coins === 0 && !state.metaEliminated.includes(player.id)) {
+      player.eliminated = true;
+      state.metaEliminated.push(player.id);
+      addLog(state, `${player.name} hat 0 Münzen nach der Pot-Verteilung und scheidet aus!`);
+    }
+  }
+}
+
+// Setup new round
+function setupNewRound(state) {
+  state.round++;
+  state.roundWinner = null;
+  state.turnIndex = 0;
+  state.currentPlayerIndex = 0;
+
+  // Reshuffle all cards
+  const allCards = [];
+  for (const player of state.players) {
+    for (const card of player.cards) {
+      allCards.push(card.role);
+    }
+    player.cards = [];
+  }
+  // Add discard pile
+  allCards.push(...state.discardPile);
+  // Add remaining deck
+  allCards.push(...state.deck);
+
+  state.deck = shuffle(allCards);
+  state.discardPile = [];
+
+  // Deal 2 cards to each active player
+  const alive = state.players.filter(p => !state.metaEliminated.includes(p.id));
+  for (const player of alive) {
+    player.cards = [
+      { role: state.deck.pop(), revealed: false },
+      { role: state.deck.pop(), revealed: false }
+    ];
+    player.eliminated = false;
+  }
+
+  // Find first non-eliminated player
+  state.currentPlayerIndex = findNextActivePlayer(state, 0);
+  state.phase = 'abgabe';
+  addLog(state, `--- Runde ${state.round} beginnt ---`);
+}
+
+// Check if game is over
+function checkGameOver(state) {
+  const alive = state.players.filter(p => !state.metaEliminated.includes(p.id));
+  if (alive.length <= 1) {
+    state.gameOver = true;
+    state.winner = alive[0] || null;
+    if (state.winner) {
+      addLog(state, `🏆 ${state.winner.name} gewinnt das Spiel!`);
+    }
+    return true;
+  }
+  return false;
+}
+
+// Find next active player index (has cards and not eliminated)
+function findNextActivePlayer(state, fromIndex) {
+  const n = state.players.length;
+  for (let i = 0; i < n; i++) {
+    const idx = (fromIndex + i) % n;
+    const p = state.players[idx];
+    if (!p.eliminated && !state.metaEliminated.includes(p.id) && getInfluence(p) > 0) {
+      return idx;
+    }
+  }
+  return -1;
+}
+
+// Reshuffle discard pile into deck when deck is empty
+function reshuffleDeck(state) {
+  if (state.deck.length === 0 && state.discardPile.length > 0) {
+    state.deck = shuffle([...state.discardPile]);
+    state.discardPile = [];
+    addLog(state, 'Nachziehstapel wurde neu gemischt.');
+  }
+}
+
+// Swap a player's card back into deck and draw a new one
+function swapCard(state, playerId, cardIndex) {
+  const player = state.players.find(p => p.id === playerId);
+  if (!player) return;
+
+  reshuffleDeck(state);
+  if (state.deck.length === 0) return;
+
+  const oldRole = player.cards[cardIndex].role;
+  state.deck.push(oldRole);
+  state.deck = shuffle(state.deck);
+  player.cards[cardIndex].role = state.deck.pop();
+}
+
+function addLog(state, message) {
+  state.log.push(message);
+}
+
+function getPlayerById(state, id) {
+  return state.players.find(p => p.id === id);
+}
+
+
+// --- actions.js ---
+// ============================================================
+// Das Ministerium — Action Execution
+// ============================================================
+
+
+
+// Check if an action is available for a player
+function getAvailableActions(state, player) {
+  const available = [];
+
+  for (const [actionId, info] of Object.entries(ACTION_INFO)) {
+    if (canPerformAction(state, player, actionId)) {
+      available.push(actionId);
+    }
+  }
+
+  return available;
+}
+
+function canPerformAction(state, player, actionId) {
+  const info = ACTION_INFO[actionId];
+  if (!info) return false;
+
+  // Check coin cost
+  if (info.coinCost > 0 && player.coins < info.coinCost) return false;
+
+  // Check pot minimum
+  if (info.potMin > 0 && state.pot < info.potMin) return false;
+
+  // Check target availability for targeted actions
+  if (info.requiresTarget) {
+    const targets = getValidTargets(state, player, actionId);
+    if (targets.length === 0) return false;
+  }
+
+  return true;
+}
+
+// Get valid targets for a targeted action
+function getValidTargets(state, player, actionId) {
+  return state.players.filter(p => {
+    if (p.id === player.id) return false;
+    if (p.eliminated || state.metaEliminated.includes(p.id)) return false;
+    if (getInfluence(p) === 0) return false;
+
+    // Stehlen: target must have at least 1 coin
+    if (actionId === ACTIONS.STEHLEN && p.coins < 1) return false;
+
+    return true;
+  });
+}
+
+// Execute an action (after all reactions resolved, action confirmed)
+function executeAction(state, playerId, actionId, targetId, roleGuess) {
+  const player = getPlayerById(state, playerId);
+  if (!player) return false;
+
+  const info = ACTION_INFO[actionId];
+  const target = targetId ? getPlayerById(state, targetId) : null;
+
+  switch (actionId) {
+    case ACTIONS.BUERGERGELD: {
+      const amount = transferCoins(state, 'pot', playerId, 1);
+      addLog(state, `${player.name} nimmt Bürgergeld: +${amount} Münze aus dem Pot.`);
+      return true;
+    }
+
+    case ACTIONS.SUBVENTION: {
+      const amount = transferCoins(state, 'pot', playerId, 2);
+      addLog(state, `${player.name} erhält Subvention: +${amount} Münzen aus dem Pot.`);
+      return true;
+    }
+
+    case ACTIONS.STEUERN: {
+      const amount = transferCoins(state, 'pot', playerId, 3);
+      addLog(state, `${player.name} treibt Steuern ein (Finanzamt): +${amount} Münzen aus dem Pot.`);
+      return true;
+    }
+
+    case ACTIONS.KARTEN_TAUSCHEN: {
+      // Draw 2, see all 4, keep 2, return 2 — handled via UI/AI
+      addLog(state, `${player.name} tauscht Karten (Politiker).`);
+      return true; // actual swap handled separately
+    }
+
+    case ACTIONS.STEHLEN: {
+      if (!target) return false;
+      const amount = transferCoins(state, targetId, playerId, 2);
+      addLog(state, `${player.name} stiehlt ${amount} Münzen von ${target.name} (Dieb).`);
+      return true;
+    }
+
+    case ACTIONS.AUFTRAG: {
+      // 3 coins already paid to bank during announcement
+      if (!target) return false;
+      addLog(state, `${player.name} erteilt Auftrag gegen ${target.name} (Gangster).`);
+      // Target loses a card — handled by caller (card choice needed)
+      return true;
+    }
+
+    case ACTIONS.STURZ: {
+      // 7 coins already paid to pot during announcement
+      if (!target || !roleGuess) return false;
+      // Check if target has the guessed role
+      const matchingCard = target.cards.find(c => !c.revealed && c.role === roleGuess);
+      if (matchingCard) {
+        matchingCard.revealed = true;
+        state.discardPile.push(matchingCard.role);
+        addLog(state, `${player.name} stürzt ${target.name} — ${roleGuess} erraten! Karte verloren.`);
+        return true;
+      } else {
+        addLog(state, `${player.name} stürzt ${target.name} — ${roleGuess} falsch geraten. Keine Strafe.`);
+        return false; // 7 coins stay in pot regardless
+      }
+    }
+
+    default:
+      return false;
+  }
+}
+
+// Pay action costs upfront (before reactions)
+function payActionCost(state, playerId, actionId) {
+  const info = ACTION_INFO[actionId];
+  const player = getPlayerById(state, playerId);
+
+  if (info.coinCost > 0) {
+    if (info.coinTarget === 'bank') {
+      transferCoins(state, playerId, 'bank', info.coinCost);
+      addLog(state, `${player.name} zahlt ${info.coinCost} Münzen in die Bank.`);
+    } else if (info.coinTarget === 'pot') {
+      transferCoins(state, playerId, 'pot', info.coinCost);
+      addLog(state, `${player.name} zahlt ${info.coinCost} Münzen in den Pot.`);
+    }
+  }
+}
+
+// Execute Karten tauschen (Politiker) — draw phase
+function drawCardsForPolitiker(state, playerId) {
+  const player = getPlayerById(state, playerId);
+  if (!player) return [];
+
+  reshuffleDeck(state);
+  const drawn = [];
+  for (let i = 0; i < 2 && state.deck.length > 0; i++) {
+    drawn.push(state.deck.pop());
+  }
+  return drawn; // Returns drawn cards; player sees all 4 (own 2 + drawn 2)
+}
+
+// Complete Karten tauschen — player chose which 2 to keep
+function completePolitikerSwap(state, playerId, keptCards, returnedCards) {
+  const player = getPlayerById(state, playerId);
+  if (!player) return;
+
+  // Replace player's cards with kept ones
+  const unrevealed = player.cards.filter(c => !c.revealed);
+  const revealed = player.cards.filter(c => c.revealed);
+
+  player.cards = [
+    ...keptCards.map(role => ({ role, revealed: false })),
+    ...revealed
+  ];
+
+  // Return cards to deck
+  for (const role of returnedCards) {
+    state.deck.push(role);
+  }
+  state.deck = [...state.deck].sort(() => Math.random() - 0.5);
+
+  addLog(state, `${player.name} hat 2 Karten behalten und 2 zurückgelegt.`);
+}
+
+
+// --- reactions.js ---
+// ============================================================
+// Das Ministerium — Reaction System (State Machine)
+// ============================================================
+//
+// Flow:
+// 1. Action announced → AWAITING_REACTIONS
+//    - Players can: Block, Anzeige, or Pass
+// 2. Block announced → AWAITING_ANZEIGE_ON_BLOCK
+//    - Action player can: Anzeige the block, or Accept (action fails)
+// 3. Anzeige raised → AWAITING_BESTECHUNG
+//    - Target can: offer Bestechung, or reveal card
+// 4. Bestechung offered → AWAITING_BESTECHUNG_DECISION
+//    - Challenger decides: accept (anzeige dropped) or decline (card reveal)
+// 5. Sturz announced → AWAITING_STURZ_BESTECHUNG
+//    - Target can bribe attacker
+//
+// Resolution determines if action succeeds or fails.
+
+
+
+// Create a pending action context
+function createPendingAction(playerId, actionId, targetId = null, roleGuess = null, claimedRole = null) {
+  return {
+    playerId,
+    actionId,
+    targetId,
+    roleGuess,
+    claimedRole: claimedRole || ACTION_INFO[actionId]?.requiresRole || null,
+    blocked: false,
+    blockPlayerId: null,
+    blockClaimedRole: null,
+    challenged: false,
+    challengePlayerId: null,
+    challengeTarget: null, // 'action' or 'block'
+    bestechungOffer: 0,
+    actionSucceeds: true,
+    resolved: false,
+    // Track who has passed reactions
+    passedPlayers: new Set(),
+    // For Doppelgefahr tracking
+    doppelgefahr: false
+  };
+}
+
+// Get players who can react to the current action (clockwise from actor)
+function getReactingPlayers(state, pending) {
+  const info = ACTION_INFO[pending.actionId];
+  const players = [];
+  const n = state.players.length;
+  const startIdx = state.players.findIndex(p => p.id === pending.playerId);
+
+  for (let i = 1; i < n; i++) {
+    const idx = (startIdx + i) % n;
+    const p = state.players[idx];
+    if (p.eliminated || state.metaEliminated.includes(p.id) || getInfluence(p) === 0) continue;
+    if (pending.passedPlayers.has(p.id)) continue;
+    players.push(p);
+  }
+  return players;
+}
+
+// Get available reactions for a player
+function getAvailableReactions(state, pending, playerId) {
+  const reactions = [];
+  const player = getPlayerById(state, playerId);
+  if (!player || player.eliminated || getInfluence(player) === 0) return reactions;
+
+  const info = ACTION_INFO[pending.actionId];
+
+  if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
+    // Can Anzeige if action is challengeable and player has coins
+    if (info.challengeable && player.coins >= ANZEIGE_COST) {
+      reactions.push('anzeige');
+    }
+
+    // Can Block if action is blockable
+    if (info.blockable) {
+      const blockInfo = BLOCK_MATRIX[pending.actionId];
+      if (blockInfo) {
+        if (blockInfo.anyoneCanBlock) {
+          reactions.push('block');
+        } else if (pending.targetId === playerId) {
+          reactions.push('block');
+        }
+      }
+    }
+
+    reactions.push('pass');
+  }
+
+  if (state.reactionState === REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK) {
+    // Only action player can challenge the block
+    if (playerId === pending.playerId && player.coins >= ANZEIGE_COST) {
+      reactions.push('anzeige_block');
+    }
+    reactions.push('accept_block');
+  }
+
+  if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG) {
+    // Anzeige target can offer Bestechung
+    if (playerId === pending.challengeTarget) {
+      const minBribe = MIN_BESTECHUNG_ANZEIGE;
+      if (player.coins >= minBribe) {
+        reactions.push('bestechung');
+      }
+      reactions.push('reveal_card');
+    }
+  }
+
+  if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG_DECISION) {
+    // Challenger decides on bribe
+    if (playerId === pending.challengePlayerId) {
+      reactions.push('accept_bestechung');
+      reactions.push('decline_bestechung');
+    }
+  }
+
+  if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG) {
+    // Sturz target can bribe
+    if (playerId === pending.targetId) {
+      if (player.coins >= MIN_BESTECHUNG_STURZ) {
+        reactions.push('sturz_bestechung');
+      }
+      reactions.push('accept_sturz');
+    }
+  }
+
+  if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG_DECISION) {
+    if (playerId === pending.playerId) {
+      reactions.push('accept_sturz_bestechung');
+      reactions.push('decline_sturz_bestechung');
+    }
+  }
+
+  return reactions;
+}
+
+// Process a reaction
+function processReaction(state, pending, playerId, reaction, params = {}) {
+  const player = getPlayerById(state, playerId);
+
+  switch (reaction) {
+    case 'pass':
+      pending.passedPlayers.add(playerId);
+      // Check if all eligible players passed
+      const reactors = getReactingPlayers(state, pending);
+      if (reactors.length === 0) {
+        // All passed — action succeeds
+        state.reactionState = REACTION_STATES.RESOLVING;
+        pending.actionSucceeds = true;
+      }
+      break;
+
+    case 'anzeige':
+      handleAnzeige(state, pending, playerId, 'action');
+      break;
+
+    case 'block': {
+      const blockRole = params.blockRole;
+      pending.blocked = true;
+      pending.blockPlayerId = playerId;
+      pending.blockClaimedRole = blockRole;
+      state.reactionState = REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK;
+      addLog(state, `${player.name} blockiert mit ${blockRole}!`);
+      break;
+    }
+
+    case 'anzeige_block':
+      handleAnzeige(state, pending, playerId, 'block');
+      break;
+
+    case 'accept_block':
+      // Action fails due to uncontested block
+      pending.actionSucceeds = false;
+      state.reactionState = REACTION_STATES.RESOLVING;
+      addLog(state, `${getPlayerById(state, pending.playerId).name} akzeptiert den Block.`);
+      break;
+
+    case 'bestechung': {
+      const amount = params.amount || MIN_BESTECHUNG_ANZEIGE;
+      pending.bestechungOffer = amount;
+      state.reactionState = REACTION_STATES.AWAITING_BESTECHUNG_DECISION;
+      addLog(state, `${player.name} bietet ${amount} Münzen Bestechung an.`);
+      break;
+    }
+
+    case 'accept_bestechung':
+      handleAcceptBestechung(state, pending);
+      break;
+
+    case 'decline_bestechung':
+      handleDeclineBestechung(state, pending);
+      break;
+
+    case 'reveal_card':
+      // Anzeige target chooses to reveal (no bribe)
+      handleRevealCard(state, pending);
+      break;
+
+    case 'sturz_bestechung': {
+      const amount = params.amount || MIN_BESTECHUNG_STURZ;
+      pending.bestechungOffer = amount;
+      state.reactionState = REACTION_STATES.AWAITING_STURZ_BESTECHUNG_DECISION;
+      addLog(state, `${player.name} bietet ${amount} Münzen Bestechung gegen den Sturz an.`);
+      break;
+    }
+
+    case 'accept_sturz_bestechung': {
+      // Attacker accepts bribe, Sturz cancelled
+      const target = getPlayerById(state, pending.targetId);
+      const attacker = getPlayerById(state, pending.playerId);
+      transferCoins(state, pending.targetId, pending.playerId, pending.bestechungOffer);
+      addLog(state, `${attacker.name} nimmt die Bestechung an. Sturz abgewendet.`);
+      pending.actionSucceeds = false;
+      state.reactionState = REACTION_STATES.RESOLVING;
+      break;
+    }
+
+    case 'decline_sturz_bestechung': {
+      // Attacker declines, Sturz proceeds
+      addLog(state, `${getPlayerById(state, pending.playerId).name} lehnt die Bestechung ab.`);
+      pending.actionSucceeds = true;
+      state.reactionState = REACTION_STATES.RESOLVING;
+      break;
+    }
+
+    case 'accept_sturz':
+      // Target accepts Sturz (no bribe)
+      pending.actionSucceeds = true;
+      state.reactionState = REACTION_STATES.RESOLVING;
+      break;
+  }
+
+  return pending;
+}
+
+function handleAnzeige(state, pending, challengerId, target) {
+  const challenger = getPlayerById(state, challengerId);
+
+  // Pay 1 coin to pot
+  transferCoins(state, challengerId, 'pot', ANZEIGE_COST);
+
+  pending.challenged = true;
+  pending.challengePlayerId = challengerId;
+
+  if (target === 'action') {
+    pending.challengeTarget = pending.playerId;
+    addLog(state, `${challenger.name} zeigt ${getPlayerById(state, pending.playerId).name} an! (Bezweifelt: ${pending.claimedRole})`);
+  } else {
+    pending.challengeTarget = pending.blockPlayerId;
+    addLog(state, `${challenger.name} zeigt ${getPlayerById(state, pending.blockPlayerId).name} an! (Bezweifelt Block: ${pending.blockClaimedRole})`);
+  }
+
+  state.reactionState = REACTION_STATES.AWAITING_BESTECHUNG;
+}
+
+function handleAcceptBestechung(state, pending) {
+  const challenger = getPlayerById(state, pending.challengePlayerId);
+  const target = getPlayerById(state, pending.challengeTarget);
+
+  // Transfer bribe
+  transferCoins(state, pending.challengeTarget, pending.challengePlayerId, pending.bestechungOffer);
+  addLog(state, `${challenger.name} nimmt die Bestechung (${pending.bestechungOffer} Münzen) an. Anzeige zurückgezogen.`);
+
+  // Anzeige dropped — what happens to the action?
+  if (pending.blocked && pending.challengeTarget === pending.blockPlayerId) {
+    // Was challenging a block, bribe accepted → block stands, action fails
+    pending.actionSucceeds = false;
+  } else {
+    // Was challenging an action, bribe accepted → action proceeds
+    pending.actionSucceeds = true;
+  }
+
+  state.reactionState = REACTION_STATES.RESOLVING;
+}
+
+function handleDeclineBestechung(state, pending) {
+  addLog(state, `Bestechung abgelehnt. Karte wird aufgedeckt.`);
+  handleRevealCard(state, pending);
+}
+
+function handleRevealCard(state, pending) {
+  const targetId = pending.challengeTarget;
+  const target = getPlayerById(state, targetId);
+  const challenger = getPlayerById(state, pending.challengePlayerId);
+
+  const claimedRole = pending.blocked && targetId === pending.blockPlayerId
+    ? pending.blockClaimedRole
+    : pending.claimedRole;
+
+  // Does target actually have the claimed role?
+  const hasRole = target.cards.some(c => !c.revealed && c.role === claimedRole);
+
+  if (hasRole) {
+    // Anzeige FALSCH — challenger loses card + extra coin
+    addLog(state, `Anzeige FALSCH! ${target.name} hat tatsächlich ${claimedRole}.`);
+    transferCoins(state, pending.challengePlayerId, 'pot', ANZEIGE_FAIL_EXTRA_COST);
+
+    // Challenger loses a card (will be chosen by player/AI)
+    pending._challengerMustLoseCard = true;
+
+    // Target swaps the revealed card for a new one from deck
+    const cardIdx = target.cards.findIndex(c => !c.revealed && c.role === claimedRole);
+    if (cardIdx >= 0 && state.deck.length > 0) {
+      const oldRole = target.cards[cardIdx].role;
+      state.deck.push(oldRole);
+      state.deck = shuffle(state.deck);
+      target.cards[cardIdx].role = state.deck.pop();
+      addLog(state, `${target.name} tauscht die aufgedeckte Karte gegen eine neue.`);
+    }
+
+    if (pending.blocked && targetId === pending.blockPlayerId) {
+      // False challenge on block → block stands, action fails
+      pending.actionSucceeds = false;
+      // Doppelgefahr: if action was Auftrag, it still goes through
+      if (pending.actionId === ACTIONS.AUFTRAG) {
+        pending.doppelgefahr = true;
+        pending.actionSucceeds = true;
+        addLog(state, `Doppelgefahr! Falsche Anzeige gegen Polizist — Auftrag geht trotzdem durch.`);
+      }
+    } else {
+      // False challenge on action → action proceeds
+      pending.actionSucceeds = true;
+    }
+  } else {
+    // Anzeige RICHTIG — target loses a card
+    addLog(state, `Anzeige RICHTIG! ${target.name} hat ${claimedRole} nicht.`);
+
+    pending._targetMustLoseCard = true;
+
+    if (pending.blocked && targetId === pending.blockPlayerId) {
+      // Correct challenge on block → block fails, action succeeds
+      pending.actionSucceeds = true;
+    } else {
+      // Correct challenge on action → action fails
+      pending.actionSucceeds = false;
+    }
+  }
+
+  state.reactionState = REACTION_STATES.RESOLVING;
+}
+
+// Start reaction flow for an action
+function startReactionFlow(state, pending) {
+  const info = ACTION_INFO[pending.actionId];
+
+  // Bürgergeld is never challengeable or blockable
+  if (pending.actionId === ACTIONS.BUERGERGELD) {
+    state.reactionState = REACTION_STATES.RESOLVING;
+    pending.actionSucceeds = true;
+    return;
+  }
+
+  // Sturz has special bribery flow
+  if (pending.actionId === ACTIONS.STURZ) {
+    state.reactionState = REACTION_STATES.AWAITING_STURZ_BESTECHUNG;
+    return;
+  }
+
+  // If action is challengeable or blockable, await reactions
+  if (info.challengeable || info.blockable) {
+    state.reactionState = REACTION_STATES.AWAITING_REACTIONS;
+    return;
+  }
+
+  // Subvention: not challengeable but blockable
+  if (info.blockable) {
+    state.reactionState = REACTION_STATES.AWAITING_REACTIONS;
+    return;
+  }
+
+  // Default: action succeeds immediately
+  state.reactionState = REACTION_STATES.RESOLVING;
+  pending.actionSucceeds = true;
+}
+
+
+// --- ai.js ---
+// ============================================================
+// Das Ministerium — AI Bot Decision Making
+// ============================================================
+
+
+
+
+
+function rand() { return Math.random(); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function getProfile(player) {
+  return AI_PROFILES[player.aiProfile] || AI_PROFILES.mittel;
+}
+
+function getUnrevealedRoles(player) {
+  return player.cards.filter(c => !c.revealed).map(c => c.role);
+}
+
+function hasRole(player, role) {
+  return player.cards.some(c => !c.revealed && c.role === role);
+}
+
+// Find the weakest opponent (fewest coins, then fewest influence)
+function findWeakest(state, excludeId) {
+  const opponents = state.players.filter(p =>
+    p.id !== excludeId && !p.eliminated && !state.metaEliminated.includes(p.id) && getInfluence(p) > 0
+  );
+  if (opponents.length === 0) return null;
+  return opponents.sort((a, b) => {
+    if (a.coins !== b.coins) return a.coins - b.coins;
+    return getInfluence(a) - getInfluence(b);
+  })[0];
+}
+
+function findStrongest(state, excludeId) {
+  const opponents = state.players.filter(p =>
+    p.id !== excludeId && !p.eliminated && !state.metaEliminated.includes(p.id) && getInfluence(p) > 0
+  );
+  if (opponents.length === 0) return null;
+  return opponents.sort((a, b) => {
+    if (b.coins !== a.coins) return b.coins - a.coins;
+    return getInfluence(b) - getInfluence(a);
+  })[0];
+}
+
+// Choose a target based on profile
+function chooseTarget(state, player, actionId) {
+  const profile = getProfile(player);
+  const targets = getValidTargets(state, player, actionId);
+  if (targets.length === 0) return null;
+
+  if (rand() < profile.zieltAufSchwächsten) {
+    const weakest = findWeakest(state, player.id);
+    if (weakest && targets.find(t => t.id === weakest.id)) return weakest.id;
+  }
+
+  return pick(targets).id;
+}
+
+// AI chooses an action
+function aiChooseAction(state, player) {
+  const profile = getProfile(player);
+  const available = getAvailableActions(state, player);
+  const roles = getUnrevealedRoles(player);
+
+  if (available.length === 0) return null;
+
+  // Build weighted action candidates
+  const candidates = [];
+
+  // Always consider income actions
+  if (available.includes(ACTIONS.BUERGERGELD)) {
+    candidates.push({ action: ACTIONS.BUERGERGELD, weight: 1 });
+  }
+  if (available.includes(ACTIONS.SUBVENTION)) {
+    candidates.push({ action: ACTIONS.SUBVENTION, weight: 2 });
+  }
+
+  // Steuern — if we have Finanzamt or willing to bluff
+  if (available.includes(ACTIONS.STEUERN)) {
+    if (hasRole(player, ROLES.FINANZAMT)) {
+      candidates.push({ action: ACTIONS.STEUERN, weight: 4 });
+    } else if (rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.STEUERN, weight: 2 });
+    }
+  }
+
+  // Karten tauschen — if we have Politiker or willing to bluff
+  if (available.includes(ACTIONS.KARTEN_TAUSCHEN)) {
+    if (hasRole(player, ROLES.POLITIKER)) {
+      candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 3 });
+    } else if (rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 1.5 });
+    }
+  }
+
+  // Stehlen — if we have Dieb or willing to bluff
+  if (available.includes(ACTIONS.STEHLEN)) {
+    if (hasRole(player, ROLES.DIEB)) {
+      candidates.push({ action: ACTIONS.STEHLEN, weight: 3.5 });
+    } else if (rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.STEHLEN, weight: 2 });
+    }
+  }
+
+  // Auftrag — aggressive action
+  if (available.includes(ACTIONS.AUFTRAG) && rand() < profile.auftragRate) {
+    if (hasRole(player, ROLES.GANGSTER)) {
+      candidates.push({ action: ACTIONS.AUFTRAG, weight: 4 });
+    } else if (rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.AUFTRAG, weight: 2.5 });
+    }
+  }
+
+  // Sturz — risky but powerful
+  if (available.includes(ACTIONS.STURZ) && rand() < profile.sturzRate) {
+    candidates.push({ action: ACTIONS.STURZ, weight: 2 });
+  }
+
+  // Fallback to Bürgergeld
+  if (candidates.length === 0) {
+    if (available.includes(ACTIONS.BUERGERGELD)) return { actionId: ACTIONS.BUERGERGELD };
+    return { actionId: available[0] };
+  }
+
+  // Weighted random selection
+  const totalWeight = candidates.reduce((sum, c) => sum + c.weight, 0);
+  let r = rand() * totalWeight;
+  let chosen = candidates[0];
+  for (const c of candidates) {
+    r -= c.weight;
+    if (r <= 0) { chosen = c; break; }
+  }
+
+  const result = { actionId: chosen.action };
+
+  // Choose target if needed
+  const info = ACTION_INFO[chosen.action];
+  if (info.requiresTarget) {
+    result.targetId = chooseTarget(state, player, chosen.action);
+    if (!result.targetId) {
+      // Fallback to non-targeted action
+      if (available.includes(ACTIONS.BUERGERGELD)) return { actionId: ACTIONS.BUERGERGELD };
+      return { actionId: available.find(a => !ACTION_INFO[a].requiresTarget) || available[0] };
+    }
+  }
+
+  // Role guess for Sturz
+  if (chosen.action === ACTIONS.STURZ && result.targetId) {
+    result.roleGuess = aiGuessRole(state, player, result.targetId);
+  }
+
+  return result;
+}
+
+// AI guesses a role for Sturz
+function aiGuessRole(state, player, targetId) {
+  const profile = getProfile(player);
+  const target = getPlayerById(state, targetId);
+
+  // Track revealed cards to narrow down possibilities
+  const revealedCounts = {};
+  for (const role of ROLE_LIST) revealedCounts[role] = 0;
+
+  for (const p of state.players) {
+    for (const c of p.cards) {
+      if (c.revealed) revealedCounts[c.role]++;
+    }
+  }
+  for (const role of state.discardPile || []) {
+    revealedCounts[role]++;
+  }
+
+  // Roles that still have unrevealed copies
+  const possibleRoles = ROLE_LIST.filter(r => revealedCounts[r] < 3);
+
+  if (possibleRoles.length === 0) return pick(ROLE_LIST);
+
+  // Slightly smarter: guess roles that haven't been seen much
+  if (rand() < profile.sturzTrefferquote) {
+    // "Smart" guess — weighted toward less-revealed roles
+    return pick(possibleRoles);
+  }
+  return pick(ROLE_LIST);
+}
+
+// AI decides on a reaction
+function aiChooseReaction(state, pending, player) {
+  const profile = getProfile(player);
+  const reactions = getAvailableReactions(state, pending, player.id);
+
+  if (reactions.length === 0) return null;
+  if (reactions.length === 1) return { reaction: reactions[0] };
+
+  // Anzeige decision
+  if (reactions.includes('anzeige')) {
+    if (rand() < profile.anzeigeRate) {
+      return { reaction: 'anzeige' };
+    }
+  }
+
+  // Block decision
+  if (reactions.includes('block')) {
+    const blockInfo = BLOCK_MATRIX[pending.actionId];
+    if (blockInfo) {
+      const myRoles = getUnrevealedRoles(player);
+      const canTrulyBlock = blockInfo.roles.some(r => myRoles.includes(r));
+
+      if (canTrulyBlock) {
+        if (rand() < profile.blockRate + 0.2) { // Higher chance if actually have the role
+          return { reaction: 'block', params: { blockRole: blockInfo.roles.find(r => myRoles.includes(r)) } };
+        }
+      } else if (rand() < profile.blockRate * profile.bluffRate) {
+        // Bluff block
+        return { reaction: 'block', params: { blockRole: pick(blockInfo.roles) } };
+      }
+    }
+  }
+
+  // Challenge on block
+  if (reactions.includes('anzeige_block')) {
+    if (rand() < profile.anzeigeRate) {
+      return { reaction: 'anzeige_block' };
+    }
+    return { reaction: 'accept_block' };
+  }
+
+  // Bestechung decisions
+  if (reactions.includes('bestechung')) {
+    if (rand() < profile.bestechungAnbieten) {
+      let amount = MIN_BESTECHUNG_ANZEIGE;
+      // Determine bribe amount
+      const roles = getUnrevealedRoles(player);
+      const claimedRole = pending.challengeTarget === pending.blockPlayerId
+        ? pending.blockClaimedRole
+        : pending.claimedRole;
+      const hasIt = roles.includes(claimedRole);
+
+      if (!hasIt && rand() < profile.bestechungBluffHoch) {
+        // High bribe bluff — pretend we have it
+        amount = Math.min(player.coins, Math.max(3, Math.floor(player.coins * 0.4)));
+      } else if (hasIt && rand() < profile.bestechungBluffNiedrig) {
+        // Low bribe with real card — try to seem weak
+        amount = MIN_BESTECHUNG_ANZEIGE;
+      } else if (hasIt) {
+        amount = Math.min(player.coins, Math.max(MIN_BESTECHUNG_ANZEIGE, Math.floor(player.coins * 0.25)));
+      } else {
+        amount = Math.min(player.coins, MIN_BESTECHUNG_ANZEIGE);
+      }
+
+      return { reaction: 'bestechung', params: { amount } };
+    }
+    return { reaction: 'reveal_card' };
+  }
+
+  // Accept/decline bestechung
+  if (reactions.includes('accept_bestechung')) {
+    if (rand() < profile.bestechungAnnehmen) {
+      return { reaction: 'accept_bestechung' };
+    }
+    return { reaction: 'decline_bestechung' };
+  }
+
+  // Sturz bestechung
+  if (reactions.includes('sturz_bestechung')) {
+    if (rand() < profile.bestechungAnbieten) {
+      const amount = Math.min(player.coins, Math.max(MIN_BESTECHUNG_STURZ, Math.floor(player.coins * 0.3)));
+      return { reaction: 'sturz_bestechung', params: { amount } };
+    }
+    return { reaction: 'accept_sturz' };
+  }
+
+  if (reactions.includes('accept_sturz_bestechung')) {
+    if (rand() < profile.bestechungAnnehmen) {
+      return { reaction: 'accept_sturz_bestechung' };
+    }
+    return { reaction: 'decline_sturz_bestechung' };
+  }
+
+  // Default: pass
+  if (reactions.includes('pass')) return { reaction: 'pass' };
+  return { reaction: reactions[0] };
+}
+
+// AI chooses which card to lose
+function aiChooseCardToLose(player) {
+  const unrevealed = player.cards
+    .map((c, i) => ({ ...c, index: i }))
+    .filter(c => !c.revealed);
+
+  if (unrevealed.length <= 1) return unrevealed[0]?.index ?? 0;
+
+  // Prefer losing less useful roles
+  const rolePriority = {
+    [ROLES.POLIZIST]: 1, // Defensive only
+    [ROLES.FINANZAMT]: 2,
+    [ROLES.POLITIKER]: 3,
+    [ROLES.DIEB]: 4,
+    [ROLES.GANGSTER]: 5 // Most valuable (offensive)
+  };
+
+  unrevealed.sort((a, b) => (rolePriority[a.role] || 0) - (rolePriority[b.role] || 0));
+  return unrevealed[0].index;
+}
+
+// AI chooses cards for Politiker swap (from 4 cards, keep 2)
+function aiChoosePolitikerCards(player, currentRoles, drawnRoles) {
+  const allCards = [
+    ...currentRoles.map((role, i) => ({ role, source: 'hand', index: i })),
+    ...drawnRoles.map((role, i) => ({ role, source: 'drawn', index: i }))
+  ];
+
+  // Rank roles by usefulness
+  const rolePriority = {
+    [ROLES.GANGSTER]: 5,
+    [ROLES.DIEB]: 4,
+    [ROLES.POLITIKER]: 3,
+    [ROLES.FINANZAMT]: 2,
+    [ROLES.POLIZIST]: 1
+  };
+
+  // Pick best 2
+  allCards.sort((a, b) => (rolePriority[b.role] || 0) - (rolePriority[a.role] || 0));
+  const kept = allCards.slice(0, 2).map(c => c.role);
+  const returned = allCards.slice(2).map(c => c.role);
+
+  return { kept, returned };
+}
+
+// AI delay (milliseconds) to feel natural
+function getAiDelay() {
+  return 600 + Math.random() * 900;
+}
+
+
+// --- logger.js ---
+// ============================================================
+// Das Ministerium — Game Event Logger
+// ============================================================
+
+const MAX_LOG_ENTRIES = 200;
+
+let logContainer = null;
+
+function initLogger(container) {
+  logContainer = container;
+}
+
+function renderLog(entries) {
+  if (!logContainer) return;
+
+  logContainer.innerHTML = '';
+  const recentEntries = entries.slice(-50); // Show last 50
+
+  for (const entry of recentEntries) {
+    const div = document.createElement('div');
+    div.className = 'log-entry';
+
+    if (entry.startsWith('---')) {
+      div.classList.add('log-round');
+    } else if (entry.includes('verliert') || entry.includes('FALSCH') || entry.includes('scheidet aus')) {
+      div.classList.add('log-negative');
+    } else if (entry.includes('erhält') || entry.includes('nimmt') || entry.includes('RICHTIG') || entry.includes('gewinnt')) {
+      div.classList.add('log-positive');
+    } else if (entry.includes('blockiert') || entry.includes('zeigt') || entry.includes('Anzeige')) {
+      div.classList.add('log-reaction');
+    }
+
+    div.textContent = entry;
+    logContainer.appendChild(div);
+  }
+
+  logContainer.scrollTop = logContainer.scrollHeight;
+}
+
+
+// --- ui.js ---
+// ============================================================
+// Das Ministerium — UI Rendering
+// ============================================================
+
+
+
+
+
+
+let gameRef = null;
+let callbackRef = null;
+
+function initUI(game, callbacks) {
+  gameRef = game;
+  callbackRef = callbacks;
+}
+
+// ---- MENU SCREEN ----
+
+function showMenu() {
+  document.getElementById('menu-screen').classList.remove('hidden');
+  document.getElementById('game-screen').classList.add('hidden');
+  document.getElementById('game-over-screen').classList.add('hidden');
+}
+
+function hideMenu() {
+  document.getElementById('menu-screen').classList.add('hidden');
+}
+
+function showGameScreen() {
+  document.getElementById('game-screen').classList.remove('hidden');
+}
+
+// ---- GAME RENDERING ----
+
+function renderGameState(state) {
+  renderPlayers(state);
+  renderEconomy(state);
+  renderLog(state.log);
+  renderPhaseInfo(state);
+}
+
+function renderPlayers(state) {
+  const container = document.getElementById('players-area');
+  container.innerHTML = '';
+
+  for (const player of state.players) {
+    const div = document.createElement('div');
+    div.className = 'player-card';
+    if (player.eliminated || state.metaEliminated.includes(player.id)) {
+      div.classList.add('eliminated');
+    }
+    if (state.currentPlayerIndex !== undefined &&
+        state.players[state.currentPlayerIndex]?.id === player.id) {
+      div.classList.add('active-turn');
+    }
+    if (player.isHuman) {
+      div.classList.add('human');
+    }
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'player-name';
+    nameDiv.textContent = player.name + (player.isBot ? ` (${player.aiProfile})` : ' (Du)');
+    div.appendChild(nameDiv);
+
+    const coinsDiv = document.createElement('div');
+    coinsDiv.className = 'player-coins';
+    coinsDiv.textContent = `${player.coins} Münzen`;
+    div.appendChild(coinsDiv);
+
+    const cardsDiv = document.createElement('div');
+    cardsDiv.className = 'player-cards-display';
+
+    for (const card of player.cards) {
+      const cardEl = document.createElement('div');
+      cardEl.className = 'card-mini';
+      if (card.revealed) {
+        cardEl.classList.add('revealed');
+        cardEl.textContent = card.role;
+      } else if (player.isHuman) {
+        cardEl.classList.add('own-card');
+        cardEl.textContent = card.role;
+      } else {
+        cardEl.classList.add('hidden-card');
+        cardEl.textContent = '?';
+      }
+      cardsDiv.appendChild(cardEl);
+    }
+
+    div.appendChild(cardsDiv);
+
+    if (getInfluence(player) > 0 && !state.metaEliminated.includes(player.id)) {
+      const influenceDiv = document.createElement('div');
+      influenceDiv.className = 'player-influence';
+      influenceDiv.textContent = `Einfluss: ${getInfluence(player)}`;
+      div.appendChild(influenceDiv);
+    }
+
+    container.appendChild(div);
+  }
+}
+
+function renderEconomy(state) {
+  document.getElementById('pot-display').textContent = `Pot: ${state.pot}`;
+  document.getElementById('bank-display').textContent = `Bank: ${state.bank}`;
+  document.getElementById('round-display').textContent = `Runde: ${state.round}`;
+}
+
+function renderPhaseInfo(state) {
+  const phaseEl = document.getElementById('phase-info');
+  const phases = {
+    'round_setup': 'Runde wird vorbereitet...',
+    'abgabe': 'Phase 1 — Abgabe',
+    'actions': 'Phase 2 — Aktionen',
+    'pot_distribution': 'Phase 3 — Pot-Verteilung',
+    'game_over': 'Spiel beendet'
+  };
+  phaseEl.textContent = phases[state.phase] || state.phase;
+}
+
+// ---- ACTION SELECTION (Human Player) ----
+
+function showActionSelection(state, player) {
+  return new Promise((resolve) => {
+    const panel = document.getElementById('action-panel');
+    panel.innerHTML = '';
+    panel.classList.remove('hidden');
+
+    const title = document.createElement('h3');
+    title.textContent = 'Wähle eine Aktion:';
+    panel.appendChild(title);
+
+    const available = getAvailableActions(state, player);
+
+    for (const actionId of available) {
+      const info = ACTION_INFO[actionId];
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.innerHTML = `<strong>${info.name}</strong><br><small>${info.description}</small>`;
+
+      btn.onclick = async () => {
+        let targetId = null;
+        let roleGuess = null;
+
+        if (info.requiresTarget) {
+          targetId = await showTargetSelection(state, player, actionId);
+          if (targetId === null) return; // cancelled
+        }
+
+        if (info.requiresRoleGuess) {
+          roleGuess = await showRoleGuessSelection();
+          if (roleGuess === null) return; // cancelled
+        }
+
+        panel.classList.add('hidden');
+        resolve({ actionId, targetId, roleGuess });
+      };
+
+      panel.appendChild(btn);
+    }
+  });
+}
+
+function showTargetSelection(state, player, actionId) {
+  return new Promise((resolve) => {
+    const targets = getValidTargets(state, player, actionId);
+    const modal = showModal('Wähle ein Ziel:');
+
+    for (const target of targets) {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.textContent = `${target.name} (${target.coins} Münzen, ${getInfluence(target)} Einfluss)`;
+      btn.onclick = () => { closeModal(modal); resolve(target.id); };
+      modal.querySelector('.modal-content').appendChild(btn);
+    }
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'action-btn cancel-btn';
+    cancelBtn.textContent = 'Abbrechen';
+    cancelBtn.onclick = () => { closeModal(modal); resolve(null); };
+    modal.querySelector('.modal-content').appendChild(cancelBtn);
+  });
+}
+
+function showRoleGuessSelection() {
+  return new Promise((resolve) => {
+    const modal = showModal('Welche Rolle vermutest du?');
+
+    for (const role of ROLE_LIST) {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn role-btn';
+      btn.textContent = role;
+      btn.onclick = () => { closeModal(modal); resolve(role); };
+      modal.querySelector('.modal-content').appendChild(btn);
+    }
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'action-btn cancel-btn';
+    cancelBtn.textContent = 'Abbrechen';
+    cancelBtn.onclick = () => { closeModal(modal); resolve(null); };
+    modal.querySelector('.modal-content').appendChild(cancelBtn);
+  });
+}
+
+// ---- REACTION SELECTION (Human Player) ----
+
+function showReactionSelection(state, pending, player) {
+  return new Promise((resolve) => {
+    const reactions = getAvailableReactions(state, pending, player.id);
+    if (reactions.length === 0) { resolve(null); return; }
+
+    const panel = document.getElementById('action-panel');
+    panel.innerHTML = '';
+    panel.classList.remove('hidden');
+
+    const title = document.createElement('h3');
+
+    if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
+      const actor = getPlayerById(state, pending.playerId);
+      const info = ACTION_INFO[pending.actionId];
+      title.textContent = `${actor.name} spielt: ${info.name}. Deine Reaktion?`;
+    } else if (state.reactionState === REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK) {
+      const blocker = getPlayerById(state, pending.blockPlayerId);
+      title.textContent = `${blocker.name} blockiert mit ${pending.blockClaimedRole}. Anzeigen?`;
+    } else if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG) {
+      title.textContent = 'Du wurdest angezeigt! Bestechung anbieten oder Karte aufdecken?';
+    } else if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG_DECISION) {
+      title.textContent = `Bestechungsangebot: ${pending.bestechungOffer} Münzen. Annehmen?`;
+    } else if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG) {
+      title.textContent = 'Sturz gegen dich! Bestechung anbieten?';
+    } else if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG_DECISION) {
+      title.textContent = `Bestechung gegen Sturz: ${pending.bestechungOffer} Münzen. Annehmen?`;
+    }
+
+    panel.appendChild(title);
+
+    const reactionLabels = {
+      'anzeige': 'Anzeige! (1 Münze)',
+      'block': 'Blockieren',
+      'pass': 'Passen',
+      'anzeige_block': 'Block anzweifeln! (1 Münze)',
+      'accept_block': 'Block akzeptieren',
+      'bestechung': 'Bestechung anbieten',
+      'reveal_card': 'Karte aufdecken',
+      'accept_bestechung': 'Bestechung annehmen',
+      'decline_bestechung': 'Bestechung ablehnen',
+      'sturz_bestechung': 'Bestechung anbieten',
+      'accept_sturz': 'Sturz akzeptieren',
+      'accept_sturz_bestechung': 'Bestechung annehmen',
+      'decline_sturz_bestechung': 'Bestechung ablehnen'
+    };
+
+    for (const reaction of reactions) {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+      if (reaction === 'pass' || reaction === 'accept_block' || reaction === 'accept_sturz') {
+        btn.classList.add('passive-btn');
+      }
+      if (reaction === 'anzeige' || reaction === 'anzeige_block') {
+        btn.classList.add('danger-btn');
+      }
+
+      btn.textContent = reactionLabels[reaction] || reaction;
+
+      btn.onclick = async () => {
+        let params = {};
+
+        if (reaction === 'block') {
+          const blockInfo = BLOCK_MATRIX[pending.actionId];
+          if (blockInfo && blockInfo.roles.length > 1) {
+            const role = await showBlockRoleSelection(blockInfo.roles);
+            if (!role) return;
+            params.blockRole = role;
+          } else if (blockInfo) {
+            params.blockRole = blockInfo.roles[0];
+          }
+        }
+
+        if (reaction === 'bestechung') {
+          const amount = await showBribeAmountSelection(player, MIN_BESTECHUNG_ANZEIGE);
+          if (amount === null) return;
+          params.amount = amount;
+        }
+
+        if (reaction === 'sturz_bestechung') {
+          const amount = await showBribeAmountSelection(player, MIN_BESTECHUNG_STURZ);
+          if (amount === null) return;
+          params.amount = amount;
+        }
+
+        panel.classList.add('hidden');
+        resolve({ reaction, params });
+      };
+
+      panel.appendChild(btn);
+    }
+  });
+}
+
+function showBlockRoleSelection(roles) {
+  return new Promise((resolve) => {
+    const modal = showModal('Mit welcher Rolle blockieren?');
+    for (const role of roles) {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn role-btn';
+      btn.textContent = role;
+      btn.onclick = () => { closeModal(modal); resolve(role); };
+      modal.querySelector('.modal-content').appendChild(btn);
+    }
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'action-btn cancel-btn';
+    cancelBtn.textContent = 'Abbrechen';
+    cancelBtn.onclick = () => { closeModal(modal); resolve(null); };
+    modal.querySelector('.modal-content').appendChild(cancelBtn);
+  });
+}
+
+function showBribeAmountSelection(player, min) {
+  return new Promise((resolve) => {
+    const modal = showModal(`Bestechung: Wie viele Münzen? (Min: ${min}, Max: ${player.coins})`);
+    const content = modal.querySelector('.modal-content');
+
+    const amounts = [];
+    for (let i = min; i <= player.coins; i++) {
+      amounts.push(i);
+    }
+
+    // Show buttons for reasonable amounts
+    const displayAmounts = amounts.length <= 6 ? amounts : [
+      min, Math.floor(player.coins * 0.25), Math.floor(player.coins * 0.5), player.coins
+    ].filter((v, i, a) => v >= min && a.indexOf(v) === i).sort((a, b) => a - b);
+
+    for (const amount of displayAmounts) {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn';
+      btn.textContent = `${amount} Münzen`;
+      btn.onclick = () => { closeModal(modal); resolve(amount); };
+      content.appendChild(btn);
+    }
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'action-btn cancel-btn';
+    cancelBtn.textContent = 'Abbrechen';
+    cancelBtn.onclick = () => { closeModal(modal); resolve(null); };
+    content.appendChild(cancelBtn);
+  });
+}
+
+// ---- CARD SELECTION ----
+
+function showCardSelection(player, message = 'Welche Karte verlieren?') {
+  return new Promise((resolve) => {
+    const unrevealed = player.cards
+      .map((c, i) => ({ ...c, index: i }))
+      .filter(c => !c.revealed);
+
+    if (unrevealed.length <= 1) {
+      resolve(unrevealed[0]?.index ?? 0);
+      return;
+    }
+
+    const modal = showModal(message);
+    for (const card of unrevealed) {
+      const btn = document.createElement('button');
+      btn.className = 'action-btn role-btn';
+      btn.textContent = card.role;
+      btn.onclick = () => { closeModal(modal); resolve(card.index); };
+      modal.querySelector('.modal-content').appendChild(btn);
+    }
+  });
+}
+
+// Politiker swap: show all 4 cards, pick 2 to keep
+function showPolitikerSwap(player, drawnRoles) {
+  return new Promise((resolve) => {
+    const modal = showModal('Karten tauschen (Politiker): Wähle 2 Karten zum Behalten');
+    const content = modal.querySelector('.modal-content');
+
+    const currentRoles = player.cards.filter(c => !c.revealed).map(c => c.role);
+    const allCards = [
+      ...currentRoles.map(r => ({ role: r, source: 'hand' })),
+      ...drawnRoles.map(r => ({ role: r, source: 'drawn' }))
+    ];
+
+    const selected = new Set();
+    const buttons = [];
+
+    const updateButtons = () => {
+      buttons.forEach((btn, i) => {
+        btn.classList.toggle('selected', selected.has(i));
+      });
+      confirmBtn.disabled = selected.size !== 2;
+    };
+
+    for (let i = 0; i < allCards.length; i++) {
+      const card = allCards[i];
+      const btn = document.createElement('button');
+      btn.className = 'action-btn role-btn';
+      btn.textContent = `${card.role} (${card.source === 'hand' ? 'Hand' : 'Neu'})`;
+      btn.onclick = () => {
+        if (selected.has(i)) {
+          selected.delete(i);
+        } else if (selected.size < 2) {
+          selected.add(i);
+        }
+        updateButtons();
+      };
+      buttons.push(btn);
+      content.appendChild(btn);
+    }
+
+    const confirmBtn = document.createElement('button');
+    confirmBtn.className = 'action-btn confirm-btn';
+    confirmBtn.textContent = 'Bestätigen';
+    confirmBtn.disabled = true;
+    confirmBtn.onclick = () => {
+      const kept = [];
+      const returned = [];
+      allCards.forEach((card, i) => {
+        if (selected.has(i)) kept.push(card.role);
+        else returned.push(card.role);
+      });
+      closeModal(modal);
+      resolve({ kept, returned });
+    };
+    content.appendChild(confirmBtn);
+  });
+}
+
+// ---- NOTIFICATION ----
+
+function showNotification(text, duration = 2000) {
+  const notif = document.getElementById('notification');
+  notif.textContent = text;
+  notif.classList.remove('hidden');
+  notif.classList.add('show');
+  setTimeout(() => {
+    notif.classList.remove('show');
+    notif.classList.add('hidden');
+  }, duration);
+}
+
+// ---- GAME OVER ----
+
+function showGameOver(winner) {
+  document.getElementById('game-screen').classList.add('hidden');
+  const screen = document.getElementById('game-over-screen');
+  screen.classList.remove('hidden');
+  document.getElementById('winner-name').textContent = winner ? winner.name : 'Niemand';
+  document.getElementById('winner-coins').textContent = winner ? `${winner.coins} Münzen` : '';
+}
+
+// ---- MODAL SYSTEM ----
+
+function showModal(title) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+
+  const titleEl = document.createElement('h3');
+  titleEl.textContent = title;
+  modal.appendChild(titleEl);
+
+  const content = document.createElement('div');
+  content.className = 'modal-content';
+  modal.appendChild(content);
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+
+  return overlay;
+}
+
+function closeModal(overlay) {
+  if (overlay && overlay.parentNode) {
+    overlay.parentNode.removeChild(overlay);
+  }
+}
+
+function hideActionPanel() {
+  document.getElementById('action-panel').classList.add('hidden');
+}
+
+
+// --- main.js ---
+// ============================================================
+// Das Ministerium — Main Game Loop
+// ============================================================
+
+
+
+
+
+
+
+
+
+let state = null;
+let isOnline = false;
+
+// ---- INITIALIZATION ----
+
+document.addEventListener('DOMContentLoaded', () => {
+  initLogger(document.getElementById('game-log'));
+  setupMenuHandlers();
+  showMenu();
+});
+
+function setupMenuHandlers() {
+  document.getElementById('btn-solo').addEventListener('click', () => {
+    document.getElementById('solo-setup').classList.remove('hidden');
+    document.getElementById('online-setup').classList.add('hidden');
+  });
+
+  document.getElementById('btn-start-solo').addEventListener('click', startSoloGame);
+
+  // Bot count slider
+  const slider = document.getElementById('bot-count');
+  const label = document.getElementById('bot-count-label');
+  if (slider && label) {
+    slider.addEventListener('input', () => {
+      label.textContent = slider.value;
+    });
+  }
+
+  // Online multiplayer not available in standalone mode
+  document.getElementById('btn-online').addEventListener('click', () => {
+    alert('Online-Multiplayer ist nur im Server-Modus verfügbar (npm start).');
+  });
+}
+
+function startSoloGame() {
+  const botCount = parseInt(document.getElementById('bot-count').value) || 3;
+  const difficulty = document.getElementById('bot-difficulty').value || 'mittel';
+
+  const players = [];
+
+  // Human player
+  const playerName = document.getElementById('player-name').value.trim() || 'Spieler';
+  players.push(createPlayer(0, playerName, true, null));
+
+  // Bot names
+  const botNames = ['Minister Schmidt', 'Rätin Müller', 'Sekretär Weber', 'Beamtin Fischer', 'Inspektor Koch'];
+
+  for (let i = 0; i < botCount; i++) {
+    const profile = difficulty === 'gemischt'
+      ? ['schwach', 'mittel', 'stark'][i % 3]
+      : difficulty;
+    players.push(createPlayer(i + 1, botNames[i] || `Bot ${i + 1}`, false, profile));
+  }
+
+  state = createGameState(players);
+  isOnline = false;
+
+  hideMenu();
+  showGameScreen();
+
+  addLog(state, `=== Das Ministerium — Neues Spiel ===`);
+  addLog(state, `${players.length} Spieler. Viel Erfolg!`);
+
+  runGameLoop();
+}
+
+// ---- GAME LOOP ----
+
+async function runGameLoop() {
+  while (!state.gameOver) {
+    // Setup round
+    if (state.phase === 'round_setup') {
+      if (state.round > 1) {
+        setupNewRound(state);
+      } else {
+        state.phase = 'abgabe';
+        addLog(state, `--- Runde ${state.round} beginnt ---`);
+      }
+      renderGameState(state);
+      await delay(800);
+    }
+
+    // Phase 1: Abgabe
+    if (state.phase === 'abgabe') {
+      showNotification('Phase 1 — Abgabe', 1500);
+      await delay(1000);
+      executeAbgabe(state);
+      renderGameState(state);
+      await delay(1000);
+
+      if (checkGameOver(state)) {
+        state.phase = 'game_over';
+        break;
+      }
+
+      state.phase = 'actions';
+      state.currentPlayerIndex = findNextActivePlayer(state, 0);
+      state.turnIndex = 0;
+      renderGameState(state);
+    }
+
+    // Phase 2: Actions
+    if (state.phase === 'actions') {
+      showNotification('Phase 2 — Aktionen', 1500);
+      await delay(500);
+
+      await runActionsPhase();
+
+      if (state.gameOver) break;
+    }
+
+    // Phase 3: Pot distribution
+    if (state.phase === 'pot_distribution') {
+      showNotification('Phase 3 — Pot-Verteilung', 1500);
+      await delay(1000);
+
+      if (state.roundWinner !== null) {
+        distributePot(state, state.roundWinner);
+      }
+      renderGameState(state);
+      await delay(1500);
+
+      if (checkGameOver(state)) {
+        state.phase = 'game_over';
+        break;
+      }
+
+      state.phase = 'round_setup';
+    }
+  }
+
+  // Game over
+  renderGameState(state);
+  showGameOver(state.winner);
+}
+
+async function runActionsPhase() {
+  const alive = getAlivePlayersInGame(state);
+  const activePlayers = alive.filter(p => getInfluence(p) > 0);
+  const totalTurns = activePlayers.length;
+
+  for (let turn = 0; turn < totalTurns; turn++) {
+    if (state.gameOver) return;
+
+    const player = state.players[state.currentPlayerIndex];
+    if (!player || player.eliminated || state.metaEliminated.includes(player.id) || getInfluence(player) === 0) {
+      state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
+      if (state.currentPlayerIndex < 0) break;
+      continue;
+    }
+
+    renderGameState(state);
+
+    // Get action from player
+    let actionChoice;
+    if (player.isHuman) {
+      showNotification(`Dein Zug, ${player.name}!`, 1500);
+      actionChoice = await showActionSelection(state, player);
+    } else {
+      await delay(getAiDelay());
+      actionChoice = aiChooseAction(state, player);
+    }
+
+    if (!actionChoice) {
+      state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
+      if (state.currentPlayerIndex < 0) break;
+      continue;
+    }
+
+    // Announce action
+    const info = ACTION_INFO[actionChoice.actionId];
+    const target = actionChoice.targetId ? getPlayerById(state, actionChoice.targetId) : null;
+    let announcement = `${player.name} spielt: ${info.name}`;
+    if (target) announcement += ` gegen ${target.name}`;
+    if (actionChoice.roleGuess) announcement += ` (vermutet: ${actionChoice.roleGuess})`;
+    addLog(state, announcement);
+
+    // Pay upfront costs
+    payActionCost(state, player.id, actionChoice.actionId);
+    renderGameState(state);
+
+    // Create pending action and start reaction flow
+    const pending = createPendingAction(
+      player.id,
+      actionChoice.actionId,
+      actionChoice.targetId,
+      actionChoice.roleGuess,
+      info.requiresRole
+    );
+    state.pendingAction = pending;
+    startReactionFlow(state, pending);
+
+    // Process reactions
+    await processReactionChain(pending);
+
+    // Resolve action
+    if (pending.actionSucceeds) {
+      if (actionChoice.actionId === ACTIONS.KARTEN_TAUSCHEN) {
+        await handlePolitikerSwap(player);
+      } else if (actionChoice.actionId === ACTIONS.AUFTRAG) {
+        await handleAuftragLoseCard(state, actionChoice.targetId);
+      } else {
+        executeAction(state, player.id, actionChoice.actionId, actionChoice.targetId, actionChoice.roleGuess);
+      }
+    } else {
+      addLog(state, `Aktion von ${player.name} schlägt fehl.`);
+    }
+
+    // Handle pending card losses from Anzeige
+    if (pending._challengerMustLoseCard) {
+      await handleLoseCard(state, pending.challengePlayerId);
+      // Doppelgefahr
+      if (pending.doppelgefahr && actionChoice.targetId) {
+        await handleAuftragLoseCard(state, actionChoice.targetId);
+      }
+    }
+    if (pending._targetMustLoseCard) {
+      await handleLoseCard(state, pending.challengeTarget);
+    }
+
+    state.pendingAction = null;
+    state.reactionState = REACTION_STATES.IDLE;
+    renderGameState(state);
+
+    // Check if someone lost their last card → end round
+    const roundLoser = state.players.find(p =>
+      !state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) === 0
+    );
+    if (roundLoser) {
+      roundLoser.eliminated = true;
+      addLog(state, `${roundLoser.name} hat beide Karten verloren und ist raus aus dieser Runde!`);
+
+      // Find round winner (last with cards)
+      const withCards = state.players.filter(p =>
+        !state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) > 0
+      );
+
+      if (withCards.length <= 1) {
+        state.roundWinner = withCards[0]?.id ?? null;
+        if (state.roundWinner !== null) {
+          addLog(state, `${getPlayerById(state, state.roundWinner).name} gewinnt die Runde!`);
+        }
+        state.phase = 'pot_distribution';
+        renderGameState(state);
+        return;
+      }
+    }
+
+    // Next player
+    state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
+    if (state.currentPlayerIndex < 0) break;
+
+    await delay(300);
+  }
+
+  // If we get through all turns without a round ending, check for round completion
+  // All players took a turn, go back to abgabe
+  if (state.phase === 'actions') {
+    state.phase = 'abgabe';
+  }
+}
+
+async function processReactionChain(pending) {
+  while (state.reactionState !== REACTION_STATES.RESOLVING) {
+    const reactors = getReactorsForCurrentState(pending);
+
+    if (reactors.length === 0) {
+      // No one can react → resolve
+      if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
+        pending.actionSucceeds = true;
+      }
+      state.reactionState = REACTION_STATES.RESOLVING;
+      break;
+    }
+
+    let reactionOccurred = false;
+
+    for (const reactor of reactors) {
+      const reactions = getAvailableReactions(state, pending, reactor.id);
+      if (reactions.length === 0) continue;
+
+      let choice;
+      if (reactor.isHuman) {
+        choice = await showReactionSelection(state, pending, reactor);
+      } else {
+        await delay(getAiDelay());
+        choice = aiChooseReaction(state, pending, reactor);
+      }
+
+      if (!choice) continue;
+
+      processReaction(state, pending, reactor.id, choice.reaction, choice.params || {});
+      renderGameState(state);
+
+      if (choice.reaction !== 'pass') {
+        reactionOccurred = true;
+        break; // First reactor claims the reaction
+      }
+    }
+
+    if (!reactionOccurred && state.reactionState !== REACTION_STATES.RESOLVING) {
+      // Everyone passed
+      if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
+        pending.actionSucceeds = true;
+      } else if (state.reactionState === REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK) {
+        pending.actionSucceeds = false; // Block stands
+      }
+      state.reactionState = REACTION_STATES.RESOLVING;
+    }
+
+    await delay(400);
+  }
+}
+
+function getReactorsForCurrentState(pending) {
+  if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
+    return getReactingPlayers(state, pending);
+  }
+  if (state.reactionState === REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK) {
+    const actor = getPlayerById(state, pending.playerId);
+    return actor && getInfluence(actor) > 0 ? [actor] : [];
+  }
+  if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG) {
+    const target = getPlayerById(state, pending.challengeTarget);
+    return target && getInfluence(target) > 0 ? [target] : [];
+  }
+  if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG_DECISION) {
+    const challenger = getPlayerById(state, pending.challengePlayerId);
+    return challenger ? [challenger] : [];
+  }
+  if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG) {
+    const target = getPlayerById(state, pending.targetId);
+    return target && getInfluence(target) > 0 ? [target] : [];
+  }
+  if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG_DECISION) {
+    const attacker = getPlayerById(state, pending.playerId);
+    return attacker ? [attacker] : [];
+  }
+  return [];
+}
+
+async function handlePolitikerSwap(player) {
+  const currentRoles = player.cards.filter(c => !c.revealed).map(c => c.role);
+  const drawnRoles = drawCardsForPolitiker(state, player.id);
+
+  if (drawnRoles.length === 0) {
+    addLog(state, 'Kein Kartenstapel vorhanden zum Tauschen.');
+    return;
+  }
+
+  let result;
+  if (player.isHuman) {
+    result = await showPolitikerSwap(player, drawnRoles);
+  } else {
+    await delay(getAiDelay());
+    result = aiChoosePolitikerCards(player, currentRoles, drawnRoles);
+  }
+
+  completePolitikerSwap(state, player.id, result.kept, result.returned);
+  renderGameState(state);
+}
+
+async function handleAuftragLoseCard(state, targetId) {
+  const target = getPlayerById(state, targetId);
+  if (!target || getInfluence(target) === 0) return;
+
+  await handleLoseCard(state, targetId);
+}
+
+async function handleLoseCard(state, playerId) {
+  const player = getPlayerById(state, playerId);
+  if (!player || getInfluence(player) === 0) return;
+
+  let cardIndex;
+  if (player.isHuman) {
+    cardIndex = await showCardSelection(player, `${player.name}: Welche Karte verlieren?`);
+  } else {
+    await delay(getAiDelay());
+    cardIndex = aiChooseCardToLose(player);
+  }
+
+  loseCard(state, playerId, cardIndex);
+  renderGameState(state);
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Export for online mode
+
+
+
+  </script>
+</body>
+</html>
