@@ -1317,11 +1317,11 @@ function canPerformAction(state, player, actionId) {
   const info = ACTION_INFO[actionId];
   if (!info) return false;
 
-  // Check coin cost
+  // Check coin cost (Auftrag=3, Sturz=7) — can't spend what you don't have
   if (info.coinCost > 0 && player.coins < info.coinCost) return false;
 
-  // Check pot minimum
-  if (info.potMin > 0 && state.pot < info.potMin) return false;
+  // No potMin check — all actions are always available (bluffing is allowed).
+  // If pot is low, you simply get fewer coins.
 
   // Check target availability for targeted actions
   if (info.requiresTarget) {
@@ -1770,14 +1770,15 @@ function handleRevealCard(state, pending) {
     // Challenger loses a card (will be chosen by player/AI)
     pending._challengerMustLoseCard = true;
 
-    // Target swaps the revealed card for a new one from deck
+    // Target swaps the proven card for a new one from deck (card stays HIDDEN)
     const cardIdx = target.cards.findIndex(c => !c.revealed && c.role === claimedRole);
     if (cardIdx >= 0 && state.deck.length > 0) {
       const oldRole = target.cards[cardIdx].role;
       state.deck.push(oldRole);
       state.deck = shuffle(state.deck);
       target.cards[cardIdx].role = state.deck.pop();
-      addLog(state, `${target.name} tauscht die aufgedeckte Karte gegen eine neue.`);
+      // Card remains unrevealed — player keeps full influence
+      addLog(state, `${target.name} beweist ${claimedRole} und tauscht die Karte verdeckt gegen eine neue.`);
     }
 
     if (pending.blocked && targetId === pending.blockPlayerId) {
@@ -2177,9 +2178,9 @@ function aiChoosePolitikerCards(player, currentRoles, drawnRoles) {
   return { kept, returned };
 }
 
-// AI delay (milliseconds) to feel natural
+// AI delay (milliseconds) — slow enough to follow each step
 function getAiDelay() {
-  return 600 + Math.random() * 900;
+  return 1200 + Math.random() * 1000;
 }
 
 
@@ -2741,6 +2742,11 @@ function setupMenuHandlers() {
     document.getElementById('online-setup').classList.add('hidden');
   });
 
+  document.getElementById('btn-online').addEventListener('click', () => {
+    document.getElementById('online-setup').classList.remove('hidden');
+    document.getElementById('solo-setup').classList.add('hidden');
+  });
+
   document.getElementById('btn-start-solo').addEventListener('click', startSoloGame);
 
   // Bot count slider
@@ -2752,11 +2758,7 @@ function setupMenuHandlers() {
     });
   }
 
-  // Online multiplayer not available in standalone mode
-  document.getElementById('btn-online').addEventListener('click', () => {
-    alert('Online-Multiplayer ist nur im Server-Modus verfügbar (npm start).');
-  });
-}
+  
 
 function startSoloGame() {
   const botCount = parseInt(document.getElementById('bot-count').value) || 3;
@@ -2861,11 +2863,8 @@ async function runGameLoop() {
 }
 
 async function runActionsPhase() {
-  const alive = getAlivePlayersInGame(state);
-  const activePlayers = alive.filter(p => getInfluence(p) > 0);
-  const totalTurns = activePlayers.length;
-
-  for (let turn = 0; turn < totalTurns; turn++) {
+  // Actions continue in a loop until someone loses both cards (round ends)
+  while (true) {
     if (state.gameOver) return;
 
     const player = state.players[state.currentPlayerIndex];
@@ -2883,7 +2882,9 @@ async function runActionsPhase() {
       showNotification(`Dein Zug, ${player.name}!`, 1500);
       actionChoice = await showActionSelection(state, player);
     } else {
-      await delay(getAiDelay());
+      // Slower AI actions with announcement delay
+      showNotification(`${player.name} überlegt...`, 1200);
+      await delay(1200 + Math.random() * 800);
       actionChoice = aiChooseAction(state, player);
     }
 
@@ -2972,17 +2973,11 @@ async function runActionsPhase() {
       }
     }
 
-    // Next player
+    // Next player (clockwise, loops around)
     state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
     if (state.currentPlayerIndex < 0) break;
 
-    await delay(300);
-  }
-
-  // If we get through all turns without a round ending, check for round completion
-  // All players took a turn, go back to abgabe
-  if (state.phase === 'actions') {
-    state.phase = 'abgabe';
+    await delay(500);
   }
 }
 
@@ -3020,6 +3015,8 @@ async function processReactionChain(pending) {
 
       if (choice.reaction !== 'pass') {
         reactionOccurred = true;
+        // Pause so player can read what happened
+        await delay(1500);
         break; // First reactor claims the reaction
       }
     }
@@ -3034,7 +3031,7 @@ async function processReactionChain(pending) {
       state.reactionState = REACTION_STATES.RESOLVING;
     }
 
-    await delay(400);
+    await delay(800);
   }
 }
 
@@ -3117,6 +3114,11 @@ function delay(ms) {
 
 
 
+
+// Stub online button
+document.getElementById('btn-online').addEventListener('click', function() {
+  alert('Online-Multiplayer ist nur im Server-Modus verfügbar (npm start).');
+});
   </script>
 </body>
 </html>
