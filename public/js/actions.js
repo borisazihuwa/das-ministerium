@@ -9,7 +9,7 @@ import {
   transferCoins, getInfluence, reshuffleDeck, addLog, getPlayerById
 } from './gameState.js';
 
-// Check if an action is available for a player
+// All actions + their availability reason (for greyed-out tooltips)
 export function getAvailableActions(state, player) {
   const available = [];
 
@@ -22,17 +22,35 @@ export function getAvailableActions(state, player) {
   return available;
 }
 
+// Returns { available: bool, reason: string } for tooltip display
+export function getActionAvailability(state, player, actionId) {
+  const info = ACTION_INFO[actionId];
+  if (!info) return { available: false, reason: 'Unbekannte Aktion' };
+
+  if (info.coinCost > 0 && player.coins < info.coinCost)
+    return { available: false, reason: `Nicht genug Münzen (${info.coinCost} benötigt)` };
+
+  if (info.potMin > 0 && state.pot < info.potMin)
+    return { available: false, reason: `Pot zu leer (${info.potMin} benötigt)` };
+
+  if (info.requiresTarget) {
+    const targets = getValidTargets(state, player, actionId);
+    if (targets.length === 0)
+      return { available: false, reason: 'Kein gültiges Ziel' };
+  }
+
+  return { available: true, reason: '' };
+}
+
 export function canPerformAction(state, player, actionId) {
   const info = ACTION_INFO[actionId];
   if (!info) return false;
 
-  // Check coin cost (Auftrag=3, Sturz=7) — can't spend what you don't have
+  // Check coin cost (Auftrag=3, Sturz=7)
   if (info.coinCost > 0 && player.coins < info.coinCost) return false;
 
-  // Steuern (Finanzamt) requires coins in the pot — can't collect from empty pot
-  if (actionId === ACTIONS.STEUERN && state.pot < 1) return false;
-
-  // All other actions are always available (bluffing any role is allowed).
+  // Check pot minimum — Bürgergeld needs 1, Subvention needs 2, Steuern needs 3
+  if (info.potMin > 0 && state.pot < info.potMin) return false;
 
   // Check target availability for targeted actions
   if (info.requiresTarget) {

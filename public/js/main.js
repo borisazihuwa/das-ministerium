@@ -3,13 +3,13 @@
 // ============================================================
 
 import {
-  ACTIONS, ACTION_INFO, REACTION_STATES, MIN_PLAYERS, MAX_PLAYERS
+  ACTIONS, ACTION_INFO, REACTION_STATES, MIN_PLAYERS, MAX_PLAYERS, AUFTRAG_COST
 } from './constants.js';
 import {
   createGameState, createPlayer, createDeck, shuffle,
   executeAbgabe, distributePot, setupNewRound, checkGameOver,
   findNextActivePlayer, getActivePlayers, getAlivePlayersInGame,
-  getInfluence, loseCard, addLog, getPlayerById, reshuffleDeck
+  getInfluence, loseCard, addLog, getPlayerById, reshuffleDeck, transferCoins
 } from './gameState.js';
 import {
   getAvailableActions, executeAction, payActionCost,
@@ -21,7 +21,7 @@ import {
 } from './reactions.js';
 import {
   aiChooseAction, aiChooseReaction, aiChooseCardToLose,
-  aiChoosePolitikerCards, getAiDelay
+  aiChoosePolitikerCards, getAiDelay, getAiComment
 } from './ai.js';
 import {
   initUI, showMenu, hideMenu, showGameScreen, renderGameState,
@@ -251,6 +251,12 @@ async function runActionsPhase() {
     if (actionChoice.roleGuess) announcement += ` (vermutet: ${actionChoice.roleGuess})`;
     addLog(state, announcement);
 
+    // AI comment
+    if (player.isBot) {
+      const comment = getAiComment('action_taken', player.aiProfile);
+      if (comment) addLog(state, `  💬 ${player.name}: "${comment}"`);
+    }
+
     // Pay upfront costs
     payActionCost(state, player.id, actionChoice.actionId);
     renderGameState(state);
@@ -280,6 +286,12 @@ async function runActionsPhase() {
       }
     } else {
       addLog(state, `Aktion von ${player.name} schlägt fehl.`);
+      // Auftrag: refund 3 coins from bank IF the Gangster claim was correctly challenged
+      // PRD: "Wenn Anzeige des Gangster-Anspruchs korrekt ist, gehen die 3 Münzen zurück"
+      if (actionChoice.actionId === ACTIONS.AUFTRAG && pending._targetMustLoseCard && !pending.blocked) {
+        transferCoins(state, 'bank', player.id, AUFTRAG_COST);
+        addLog(state, `${player.name} erhält 3 Münzen zurück (Gangster-Anspruch widerlegt).`);
+      }
     }
 
     // Handle pending card losses from Anzeige

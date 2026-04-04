@@ -7,7 +7,7 @@ import {
   MIN_BESTECHUNG_ANZEIGE, MIN_BESTECHUNG_STURZ, REACTION_STATES
 } from './constants.js';
 import { getInfluence, getPlayerById } from './gameState.js';
-import { getAvailableActions, getValidTargets } from './actions.js';
+import { getAvailableActions, getValidTargets, getActionAvailability } from './actions.js';
 import { getAvailableReactions } from './reactions.js';
 import { renderLog } from './logger.js';
 
@@ -134,15 +134,24 @@ export function showActionSelection(state, player) {
     title.textContent = 'Wähle eine Aktion:';
     panel.appendChild(title);
 
-    const available = getAvailableActions(state, player);
+    const allActions = Object.keys(ACTION_INFO);
 
-    for (const actionId of available) {
+    for (const actionId of allActions) {
       const info = ACTION_INFO[actionId];
+      const { available, reason } = getActionAvailability(state, player, actionId);
       const btn = document.createElement('button');
       btn.className = 'action-btn';
-      btn.innerHTML = `<strong>${info.name}</strong><br><small>${info.description}</small>`;
+
+      if (!available) {
+        btn.classList.add('disabled-btn');
+        btn.innerHTML = `<strong>${info.name}</strong><br><small>${info.description}</small><br><small class="unavailable-reason">${reason}</small>`;
+        btn.disabled = true;
+      } else {
+        btn.innerHTML = `<strong>${info.name}</strong><br><small>${info.description}</small>`;
+      }
 
       btn.onclick = async () => {
+        if (!available) return;
         let targetId = null;
         let roleGuess = null;
 

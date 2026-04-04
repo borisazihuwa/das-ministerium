@@ -318,17 +318,19 @@ function handleRevealCard(state, pending) {
     }
 
     if (pending.blocked && targetId === pending.blockPlayerId) {
-      // False challenge on block → block stands, action fails
+      // False challenge on Polizist block → block stands, action FAILS
+      // PRD: "Block steht → Auftrag schlägt fehl (keine Doppelgefahr)"
       pending.actionSucceeds = false;
-      // Doppelgefahr: if action was Auftrag, it still goes through
+      addLog(state, `Block steht. Aktion schlägt fehl.`);
+    } else {
+      // False challenge on action claim → action proceeds
+      pending.actionSucceeds = true;
+      // Doppelgefahr: false challenge on Gangster claim = challenger loses card
+      // AND Auftrag still goes through (target loses card too)
       if (pending.actionId === ACTIONS.AUFTRAG) {
         pending.doppelgefahr = true;
-        pending.actionSucceeds = true;
-        addLog(state, `Doppelgefahr! Falsche Anzeige gegen Polizist — Auftrag geht trotzdem durch.`);
+        addLog(state, `Doppelgefahr! Falsche Anzeige gegen Gangster — Auftrag geht durch.`);
       }
-    } else {
-      // False challenge on action → action proceeds
-      pending.actionSucceeds = true;
     }
   } else {
     // Anzeige RICHTIG — target loses a card

@@ -13,6 +13,30 @@ import { getInfluence, getPlayerById } from './gameState.js';
 function rand() { return Math.random(); }
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+// KI-Kommentare für menschlicheres Verhalten
+const KI_KOMMENTARE = {
+  bluff_caught: ["Erwischt.", "Na gut, war ein Versuch.", "Immer diese Anzeigen..."],
+  successful_bluff: ["Niemand hat's gemerkt.", "Perfekt.", "Wie erwartet."],
+  bribe_offer: ["Wie wäre es damit?", "Ein Angebot.", "Lass uns einig werden."],
+  bribe_rejected: ["Schade.", "Dann halt nicht.", "Deine Entscheidung."],
+  coup_correct: ["Gewusst.", "Tja.", "Wie vermutet."],
+  coup_wrong: ["Mist.", "Diesmal daneben.", "Interessant."],
+  low_coins: ["Engpass.", "Brauche Münzen.", "Muss aufpassen."],
+  winning: ["Fast geschafft.", "Noch ein bisschen.", "Sieht gut aus."],
+  action_taken: ["So sei es.", "Mal sehen.", "Mein Zug."],
+  block: ["Nicht mit mir.", "Geblockt.", "Das lass ich nicht zu."],
+  anzeige: ["Das glaub ich nicht.", "Beweis es.", "Anzeige!"]
+};
+
+export function getAiComment(situation, profile) {
+  const comments = KI_KOMMENTARE[situation];
+  if (!comments) return null;
+  // Strong AI comments more often
+  const commentChance = profile === 'stark' ? 0.6 : profile === 'mittel' ? 0.4 : 0.2;
+  if (rand() < commentChance) return pick(comments);
+  return null;
+}
+
 function getProfile(player) {
   return AI_PROFILES[player.aiProfile] || AI_PROFILES.mittel;
 }
@@ -70,56 +94,54 @@ export function aiChooseAction(state, player) {
 
   if (available.length === 0) return null;
 
-  // Build weighted action candidates
+  // Build weighted action candidates (PRD base weights)
   const candidates = [];
 
-  // Always consider income actions
   if (available.includes(ACTIONS.BUERGERGELD)) {
-    candidates.push({ action: ACTIONS.BUERGERGELD, weight: 1 });
+    candidates.push({ action: ACTIONS.BUERGERGELD, weight: 1.0 });
   }
   if (available.includes(ACTIONS.SUBVENTION)) {
-    candidates.push({ action: ACTIONS.SUBVENTION, weight: 2 });
+    candidates.push({ action: ACTIONS.SUBVENTION, weight: 0.5 });
   }
 
-  // Steuern — if we have Finanzamt or willing to bluff
+  // Steuern — PRD weight 1.1, +0.7 if bluff roll succeeds
   if (available.includes(ACTIONS.STEUERN)) {
-    if (hasRole(player, ROLES.FINANZAMT)) {
-      candidates.push({ action: ACTIONS.STEUERN, weight: 4 });
-    } else if (rand() < profile.bluffRate) {
-      candidates.push({ action: ACTIONS.STEUERN, weight: 2 });
+    let w = 1.1;
+    if (!hasRole(player, ROLES.FINANZAMT)) {
+      if (rand() < profile.bluffRate) w += 0.7;
+      else w = 0; // won't bluff this time
+    } else {
+      w += 0.7; // has the role
     }
+    if (w > 0) candidates.push({ action: ACTIONS.STEUERN, weight: w });
   }
 
-  // Karten tauschen — if we have Politiker or willing to bluff
+  // Karten tauschen — always available, moderate weight
   if (available.includes(ACTIONS.KARTEN_TAUSCHEN)) {
     if (hasRole(player, ROLES.POLITIKER)) {
-      candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 3 });
-    } else if (rand() < profile.bluffRate) {
       candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 1.5 });
+    } else if (rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 0.8 });
     }
   }
 
-  // Stehlen — if we have Dieb or willing to bluff
+  // Stehlen — PRD weight 0.6
   if (available.includes(ACTIONS.STEHLEN)) {
-    if (hasRole(player, ROLES.DIEB)) {
-      candidates.push({ action: ACTIONS.STEHLEN, weight: 3.5 });
-    } else if (rand() < profile.bluffRate) {
-      candidates.push({ action: ACTIONS.STEHLEN, weight: 2 });
+    if (hasRole(player, ROLES.DIEB) || rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.STEHLEN, weight: 0.6 });
     }
   }
 
-  // Auftrag — aggressive action
+  // Auftrag — PRD weight 1.8, gated by auftragRate
   if (available.includes(ACTIONS.AUFTRAG) && rand() < profile.auftragRate) {
-    if (hasRole(player, ROLES.GANGSTER)) {
-      candidates.push({ action: ACTIONS.AUFTRAG, weight: 4 });
-    } else if (rand() < profile.bluffRate) {
-      candidates.push({ action: ACTIONS.AUFTRAG, weight: 2.5 });
+    if (hasRole(player, ROLES.GANGSTER) || rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.AUFTRAG, weight: 1.8 });
     }
   }
 
-  // Sturz — risky but powerful
+  // Sturz — PRD weight 1.9, gated by sturzRate
   if (available.includes(ACTIONS.STURZ) && rand() < profile.sturzRate) {
-    candidates.push({ action: ACTIONS.STURZ, weight: 2 });
+    candidates.push({ action: ACTIONS.STURZ, weight: 1.9 });
   }
 
   // Fallback to Bürgergeld

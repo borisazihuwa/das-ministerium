@@ -409,6 +409,22 @@ h1, h2, h3 {
   border-color: var(--gold);
 }
 
+.action-btn.disabled-btn {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: var(--text-muted);
+}
+
+.action-btn.disabled-btn:hover {
+  background: var(--bg-card);
+  border-color: var(--text-muted);
+}
+
+.unavailable-reason {
+  color: var(--red-light);
+  font-style: italic;
+}
+
 .action-btn.cancel-btn {
   text-align: center;
   color: var(--text-muted);
@@ -1300,7 +1316,7 @@ function getPlayerById(state, id) {
 
 
 
-// Check if an action is available for a player
+// All actions + their availability reason (for greyed-out tooltips)
 function getAvailableActions(state, player) {
   const available = [];
 
@@ -1313,17 +1329,35 @@ function getAvailableActions(state, player) {
   return available;
 }
 
+// Returns { available: bool, reason: string } for tooltip display
+function getActionAvailability(state, player, actionId) {
+  const info = ACTION_INFO[actionId];
+  if (!info) return { available: false, reason: 'Unbekannte Aktion' };
+
+  if (info.coinCost > 0 && player.coins < info.coinCost)
+    return { available: false, reason: `Nicht genug Münzen (${info.coinCost} benötigt)` };
+
+  if (info.potMin > 0 && state.pot < info.potMin)
+    return { available: false, reason: `Pot zu leer (${info.potMin} benötigt)` };
+
+  if (info.requiresTarget) {
+    const targets = getValidTargets(state, player, actionId);
+    if (targets.length === 0)
+      return { available: false, reason: 'Kein gültiges Ziel' };
+  }
+
+  return { available: true, reason: '' };
+}
+
 function canPerformAction(state, player, actionId) {
   const info = ACTION_INFO[actionId];
   if (!info) return false;
 
-  // Check coin cost (Auftrag=3, Sturz=7) — can't spend what you don't have
+  // Check coin cost (Auftrag=3, Sturz=7)
   if (info.coinCost > 0 && player.coins < info.coinCost) return false;
 
-  // Steuern (Finanzamt) requires coins in the pot — can't collect from empty pot
-  if (actionId === ACTIONS.STEUERN && state.pot < 1) return false;
-
-  // All other actions are always available (bluffing any role is allowed).
+  // Check pot minimum — Bürgergeld needs 1, Subvention needs 2, Steuern needs 3
+  if (info.potMin > 0 && state.pot < info.potMin) return false;
 
   // Check target availability for targeted actions
   if (info.requiresTarget) {
@@ -1792,17 +1826,19 @@ function handleRevealCard(state, pending) {
     }
 
     if (pending.blocked && targetId === pending.blockPlayerId) {
-      // False challenge on block → block stands, action fails
+      // False challenge on Polizist block → block stands, action FAILS
+      // PRD: "Block steht → Auftrag schlägt fehl (keine Doppelgefahr)"
       pending.actionSucceeds = false;
-      // Doppelgefahr: if action was Auftrag, it still goes through
+      addLog(state, `Block steht. Aktion schlägt fehl.`);
+    } else {
+      // False challenge on action claim → action proceeds
+      pending.actionSucceeds = true;
+      // Doppelgefahr: false challenge on Gangster claim = challenger loses card
+      // AND Auftrag still goes through (target loses card too)
       if (pending.actionId === ACTIONS.AUFTRAG) {
         pending.doppelgefahr = true;
-        pending.actionSucceeds = true;
-        addLog(state, `Doppelgefahr! Falsche Anzeige gegen Polizist — Auftrag geht trotzdem durch.`);
+        addLog(state, `Doppelgefahr! Falsche Anzeige gegen Gangster — Auftrag geht durch.`);
       }
-    } else {
-      // False challenge on action → action proceeds
-      pending.actionSucceeds = true;
     }
   } else {
     // Anzeige RICHTIG — target loses a card
@@ -1869,6 +1905,30 @@ function startReactionFlow(state, pending) {
 function rand() { return Math.random(); }
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+// KI-Kommentare für menschlicheres Verhalten
+const KI_KOMMENTARE = {
+  bluff_caught: ["Erwischt.", "Na gut, war ein Versuch.", "Immer diese Anzeigen..."],
+  successful_bluff: ["Niemand hat's gemerkt.", "Perfekt.", "Wie erwartet."],
+  bribe_offer: ["Wie wäre es damit?", "Ein Angebot.", "Lass uns einig werden."],
+  bribe_rejected: ["Schade.", "Dann halt nicht.", "Deine Entscheidung."],
+  coup_correct: ["Gewusst.", "Tja.", "Wie vermutet."],
+  coup_wrong: ["Mist.", "Diesmal daneben.", "Interessant."],
+  low_coins: ["Engpass.", "Brauche Münzen.", "Muss aufpassen."],
+  winning: ["Fast geschafft.", "Noch ein bisschen.", "Sieht gut aus."],
+  action_taken: ["So sei es.", "Mal sehen.", "Mein Zug."],
+  block: ["Nicht mit mir.", "Geblockt.", "Das lass ich nicht zu."],
+  anzeige: ["Das glaub ich nicht.", "Beweis es.", "Anzeige!"]
+};
+
+function getAiComment(situation, profile) {
+  const comments = KI_KOMMENTARE[situation];
+  if (!comments) return null;
+  // Strong AI comments more often
+  const commentChance = profile === 'stark' ? 0.6 : profile === 'mittel' ? 0.4 : 0.2;
+  if (rand() < commentChance) return pick(comments);
+  return null;
+}
+
 function getProfile(player) {
   return AI_PROFILES[player.aiProfile] || AI_PROFILES.mittel;
 }
@@ -1926,56 +1986,54 @@ function aiChooseAction(state, player) {
 
   if (available.length === 0) return null;
 
-  // Build weighted action candidates
+  // Build weighted action candidates (PRD base weights)
   const candidates = [];
 
-  // Always consider income actions
   if (available.includes(ACTIONS.BUERGERGELD)) {
-    candidates.push({ action: ACTIONS.BUERGERGELD, weight: 1 });
+    candidates.push({ action: ACTIONS.BUERGERGELD, weight: 1.0 });
   }
   if (available.includes(ACTIONS.SUBVENTION)) {
-    candidates.push({ action: ACTIONS.SUBVENTION, weight: 2 });
+    candidates.push({ action: ACTIONS.SUBVENTION, weight: 0.5 });
   }
 
-  // Steuern — if we have Finanzamt or willing to bluff
+  // Steuern — PRD weight 1.1, +0.7 if bluff roll succeeds
   if (available.includes(ACTIONS.STEUERN)) {
-    if (hasRole(player, ROLES.FINANZAMT)) {
-      candidates.push({ action: ACTIONS.STEUERN, weight: 4 });
-    } else if (rand() < profile.bluffRate) {
-      candidates.push({ action: ACTIONS.STEUERN, weight: 2 });
+    let w = 1.1;
+    if (!hasRole(player, ROLES.FINANZAMT)) {
+      if (rand() < profile.bluffRate) w += 0.7;
+      else w = 0; // won't bluff this time
+    } else {
+      w += 0.7; // has the role
     }
+    if (w > 0) candidates.push({ action: ACTIONS.STEUERN, weight: w });
   }
 
-  // Karten tauschen — if we have Politiker or willing to bluff
+  // Karten tauschen — always available, moderate weight
   if (available.includes(ACTIONS.KARTEN_TAUSCHEN)) {
     if (hasRole(player, ROLES.POLITIKER)) {
-      candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 3 });
-    } else if (rand() < profile.bluffRate) {
       candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 1.5 });
+    } else if (rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 0.8 });
     }
   }
 
-  // Stehlen — if we have Dieb or willing to bluff
+  // Stehlen — PRD weight 0.6
   if (available.includes(ACTIONS.STEHLEN)) {
-    if (hasRole(player, ROLES.DIEB)) {
-      candidates.push({ action: ACTIONS.STEHLEN, weight: 3.5 });
-    } else if (rand() < profile.bluffRate) {
-      candidates.push({ action: ACTIONS.STEHLEN, weight: 2 });
+    if (hasRole(player, ROLES.DIEB) || rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.STEHLEN, weight: 0.6 });
     }
   }
 
-  // Auftrag — aggressive action
+  // Auftrag — PRD weight 1.8, gated by auftragRate
   if (available.includes(ACTIONS.AUFTRAG) && rand() < profile.auftragRate) {
-    if (hasRole(player, ROLES.GANGSTER)) {
-      candidates.push({ action: ACTIONS.AUFTRAG, weight: 4 });
-    } else if (rand() < profile.bluffRate) {
-      candidates.push({ action: ACTIONS.AUFTRAG, weight: 2.5 });
+    if (hasRole(player, ROLES.GANGSTER) || rand() < profile.bluffRate) {
+      candidates.push({ action: ACTIONS.AUFTRAG, weight: 1.8 });
     }
   }
 
-  // Sturz — risky but powerful
+  // Sturz — PRD weight 1.9, gated by sturzRate
   if (available.includes(ACTIONS.STURZ) && rand() < profile.sturzRate) {
-    candidates.push({ action: ACTIONS.STURZ, weight: 2 });
+    candidates.push({ action: ACTIONS.STURZ, weight: 1.9 });
   }
 
   // Fallback to Bürgergeld
@@ -2368,15 +2426,24 @@ function showActionSelection(state, player) {
     title.textContent = 'Wähle eine Aktion:';
     panel.appendChild(title);
 
-    const available = getAvailableActions(state, player);
+    const allActions = Object.keys(ACTION_INFO);
 
-    for (const actionId of available) {
+    for (const actionId of allActions) {
       const info = ACTION_INFO[actionId];
+      const { available, reason } = getActionAvailability(state, player, actionId);
       const btn = document.createElement('button');
       btn.className = 'action-btn';
-      btn.innerHTML = `<strong>${info.name}</strong><br><small>${info.description}</small>`;
+
+      if (!available) {
+        btn.classList.add('disabled-btn');
+        btn.innerHTML = `<strong>${info.name}</strong><br><small>${info.description}</small><br><small class="unavailable-reason">${reason}</small>`;
+        btn.disabled = true;
+      } else {
+        btn.innerHTML = `<strong>${info.name}</strong><br><small>${info.description}</small>`;
+      }
 
       btn.onclick = async () => {
+        if (!available) return;
         let targetId = null;
         let roleGuess = null;
 
@@ -2915,6 +2982,12 @@ async function runActionsPhase() {
     if (actionChoice.roleGuess) announcement += ` (vermutet: ${actionChoice.roleGuess})`;
     addLog(state, announcement);
 
+    // AI comment
+    if (player.isBot) {
+      const comment = getAiComment('action_taken', player.aiProfile);
+      if (comment) addLog(state, `  💬 ${player.name}: "${comment}"`);
+    }
+
     // Pay upfront costs
     payActionCost(state, player.id, actionChoice.actionId);
     renderGameState(state);
@@ -2944,6 +3017,12 @@ async function runActionsPhase() {
       }
     } else {
       addLog(state, `Aktion von ${player.name} schlägt fehl.`);
+      // Auftrag: refund 3 coins from bank IF the Gangster claim was correctly challenged
+      // PRD: "Wenn Anzeige des Gangster-Anspruchs korrekt ist, gehen die 3 Münzen zurück"
+      if (actionChoice.actionId === ACTIONS.AUFTRAG && pending._targetMustLoseCard && !pending.blocked) {
+        transferCoins(state, 'bank', player.id, AUFTRAG_COST);
+        addLog(state, `${player.name} erhält 3 Münzen zurück (Gangster-Anspruch widerlegt).`);
+      }
     }
 
     // Handle pending card losses from Anzeige
