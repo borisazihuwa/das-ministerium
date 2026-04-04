@@ -306,14 +306,15 @@ function handleRevealCard(state, pending) {
     // Challenger loses a card (will be chosen by player/AI)
     pending._challengerMustLoseCard = true;
 
-    // Target swaps the revealed card for a new one from deck
+    // Target swaps the proven card for a new one from deck (card stays HIDDEN)
     const cardIdx = target.cards.findIndex(c => !c.revealed && c.role === claimedRole);
     if (cardIdx >= 0 && state.deck.length > 0) {
       const oldRole = target.cards[cardIdx].role;
       state.deck.push(oldRole);
       state.deck = shuffle(state.deck);
       target.cards[cardIdx].role = state.deck.pop();
-      addLog(state, `${target.name} tauscht die aufgedeckte Karte gegen eine neue.`);
+      // Card remains unrevealed — player keeps full influence
+      addLog(state, `${target.name} beweist ${claimedRole} und tauscht die Karte verdeckt gegen eine neue.`);
     }
 
     if (pending.blocked && targetId === pending.blockPlayerId) {

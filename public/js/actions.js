@@ -26,11 +26,11 @@ export function canPerformAction(state, player, actionId) {
   const info = ACTION_INFO[actionId];
   if (!info) return false;
 
-  // Check coin cost
+  // Check coin cost (Auftrag=3, Sturz=7) — can't spend what you don't have
   if (info.coinCost > 0 && player.coins < info.coinCost) return false;
 
-  // Check pot minimum
-  if (info.potMin > 0 && state.pot < info.potMin) return false;
+  // No potMin check — all actions are always available (bluffing is allowed).
+  // If pot is low, you simply get fewer coins.
 
   // Check target availability for targeted actions
   if (info.requiresTarget) {

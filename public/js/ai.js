@@ -332,7 +332,7 @@ export function aiChoosePolitikerCards(player, currentRoles, drawnRoles) {
   return { kept, returned };
 }
 
-// AI delay (milliseconds) to feel natural
+// AI delay (milliseconds) — slow enough to follow each step
 export function getAiDelay() {
-  return 600 + Math.random() * 900;
+  return 1200 + Math.random() * 1000;
 }

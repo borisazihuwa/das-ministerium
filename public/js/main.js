@@ -212,11 +212,8 @@ async function runGameLoop() {
 }
 
 async function runActionsPhase() {
-  const alive = getAlivePlayersInGame(state);
-  const activePlayers = alive.filter(p => getInfluence(p) > 0);
-  const totalTurns = activePlayers.length;
-
-  for (let turn = 0; turn < totalTurns; turn++) {
+  // Actions continue in a loop until someone loses both cards (round ends)
+  while (true) {
     if (state.gameOver) return;
 
     const player = state.players[state.currentPlayerIndex];
@@ -234,7 +231,9 @@ async function runActionsPhase() {
       showNotification(`Dein Zug, ${player.name}!`, 1500);
       actionChoice = await showActionSelection(state, player);
     } else {
-      await delay(getAiDelay());
+      // Slower AI actions with announcement delay
+      showNotification(`${player.name} überlegt...`, 1200);
+      await delay(1200 + Math.random() * 800);
       actionChoice = aiChooseAction(state, player);
     }
 
@@ -323,17 +322,11 @@ async function runActionsPhase() {
       }
     }
 
-    // Next player
+    // Next player (clockwise, loops around)
     state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
     if (state.currentPlayerIndex < 0) break;
 
-    await delay(300);
-  }
-
-  // If we get through all turns without a round ending, check for round completion
-  // All players took a turn, go back to abgabe
-  if (state.phase === 'actions') {
-    state.phase = 'abgabe';
+    await delay(500);
   }
 }
 
@@ -371,6 +364,8 @@ async function processReactionChain(pending) {
 
       if (choice.reaction !== 'pass') {
         reactionOccurred = true;
+        // Pause so player can read what happened
+        await delay(1500);
         break; // First reactor claims the reaction
       }
     }
@@ -385,7 +380,7 @@ async function processReactionChain(pending) {
       state.reactionState = REACTION_STATES.RESOLVING;
     }
 
-    await delay(400);
+    await delay(800);
   }
 }
 
