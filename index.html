@@ -756,6 +756,8 @@ function renderAction(s, me) {
       if (o.challenge) body += `<button class="btn bad sm" onclick="act('challenge')">⚖️ Anzeige (1 Münze)</button>`;
       if (o.blocks.length) body += o.blocks.map(r => `<button class="btn sec sm" onclick="act('block','${r}')">🛡️ Blocken als ${ROLES[r].name}</button>`).join('');
       body += `<button class="btn good sm" onclick="act('pass')">✓ Passen</button></div>`;
+      if (pd.action === 'auftrag' && pd.kind === 'action' && pd.target === me) body += `<div class="muted" style="margin-top:8px">⚠️ Doppelgefahr: Fliegt dein Polizist-Block auf oder ist deine Anzeige falsch, verlierst du eine Karte und der Auftrag geht trotzdem durch (zweite Karte). Passen kostet sicher nur eine Karte.</div>`;
+      else if (pd.action === 'auftrag' && pd.kind === 'block' && o.challenge) body += `<div class="muted" style="margin-top:8px">⚠️ Ist die Anzeige falsch, verlierst du eine Karte und 1 Münze. Hat ${nameOf(s, pd.blocker)} keinen Polizist, verliert er eine Karte und der Auftrag geht durch.</div>`;
     } else body += `<div class="muted" style="margin-top:8px">Warten auf: ${waiting}</div>`;
     return `<div class="panel"><h3>Reaktion? <span class="timer">⏱ ${left}s</span></h3><div>${desc}</div>${body}</div>`;
   }
