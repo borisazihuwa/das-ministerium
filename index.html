@@ -170,7 +170,7 @@ function shuffle(arr) {
   return a;
 }
 function freshDeck() { const d = []; ROLE_KEYS.forEach(r => { d.push(r, r, r); }); return shuffle(d); }
-function log(s, msg, kind) { s.log.push({ t: Date.now(), m: msg, k: kind || '' }); if (s.log.length > 60) s.log.splice(0, s.log.length - 60); }
+function log(s, msg, kind) { s.log.push({ t: Date.now(), m: msg, k: kind || '' }); if (s.log.length > 250) s.log.splice(0, s.log.length - 250); }
 function pname(s, i) { return s.players[i] ? s.players[i].name : '?'; }
 function alive(s) { return s.players.map((p, i) => i).filter(i => !s.players[i].out); }
 function inHand(s) { return s.players.map((p, i) => i).filter(i => !s.players[i].out && s.players[i].cards.length > 0); }
