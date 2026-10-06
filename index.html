@@ -1,12 +1,12 @@
-<!doctype html>
-<html lang="de">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>Das Ministerium</title>
-<meta name="description" content="Täuschung ist Gesetz. Ein Bluff- und Verhandlungsspiel für 2 bis 6 Spieler, online mit Freunden.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+<meta name="description" content="Täuschung ist Gesetz. Ein Bluff- und Verhandlungsspiel für 2 bis 6 Spieler, online mit Freunden."/>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏛️%3C/text%3E%3C/svg%3E"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&amp;display=swap" rel="stylesheet"/>
 <style>
 :root{--bg:#0f1020;--bg2:#171935;--panel:#1c1f44;--panel2:#23275a;--line:#2f3470;--gold:#d4a24c;--gold2:#f0c870;--text:#eef0ff;--muted:#9a9fc8;--good:#5fc49a;--bad:#e0605e;--warn:#f0b35a;--blue:#7c9cf5}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -83,7 +83,7 @@ table.rl{width:100%;border-collapse:collapse;font-size:13px}.rl td,.rl th{border
   <p class="tag">Täuschung ist Gesetz</p>
   <div class="card">
     <label>Dein Name</label>
-    <input type="text" id="name" maxlength="16" placeholder="z. B. Boris" autocomplete="nickname">
+    <input type="text" id="name" maxlength="16" placeholder="z. B. Boris" autocomplete="nickname"/>
     <div id="joinbox" style="display:none;margin-top:14px">
       <p class="muted">Du wurdest zu Spiel <b id="joincode" style="color:var(--gold2)"></b> eingeladen.</p>
       <button class="btn" id="btn-join">Spiel beitreten</button>
@@ -91,7 +91,7 @@ table.rl{width:100%;border-collapse:collapse;font-size:13px}.rl td,.rl th{border
     <div id="createbox">
       <button class="btn" id="btn-create">Neues Spiel erstellen</button>
       <div class="row" style="margin-top:14px">
-        <input type="text" id="codein" maxlength="4" placeholder="CODE" style="text-transform:uppercase;letter-spacing:.2em;text-align:center">
+        <input type="text" id="codein" maxlength="4" placeholder="CODE" style="text-transform:uppercase;letter-spacing:.2em;text-align:center"/>
         <button class="btn sec" id="btn-join2" style="margin-top:0">Beitreten</button>
       </div>
     </div>
@@ -141,6 +141,7 @@ table.rl{width:100%;border-collapse:collapse;font-size:13px}.rl td,.rl th{border
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+//<![CDATA[
 // ===== DAS MINISTERIUM – Spiel-Engine (reine Funktionen auf dem State) =====
 const ROLES = {
   finanzamt: { name: 'Finanzamt', icon: '🏛️', action: 'Steuern: +3 Münzen aus dem Pot', blocks: 'blockiert Subvention', color: '#d4a24c' },
@@ -496,16 +497,18 @@ function resolveAction(s, st) {
     case 'stehlen': { const a = Math.min(2, t.coins); t.coins -= a; p.coins += a; log(s, `${p.name} stiehlt ${a} Münzen von ${t.name}.`); break; }
     case 'auftrag': { log(s, `Auftrag geht durch: ${t.name} verliert eine Karte.`); s.steps.unshift({ type: 'lose', player: st.target, by: st.actor }); break; }
     case 'tauschen': {
+      const keep = p.cards.length;
       const opts = p.cards.concat([draw(s), draw(s)]);
-      s.pending = { type: 'exchange', player: st.actor, options: opts };
-      log(s, `${p.name} sieht 4 Karten und behält 2.`); break;
+      s.pending = { type: 'exchange', player: st.actor, options: opts, keep };
+      log(s, `${p.name} sieht ${opts.length} Karten und behält ${keep}.`); break;
     }
   }
 }
 
 function chooseExchange(s, meIdx, keepIdx) {
   const pd = s.pending; if (!pd || pd.type !== 'exchange' || pd.player !== meIdx) return 'x';
-  if (!Array.isArray(keepIdx) || keepIdx.length !== 2 || keepIdx[0] === keepIdx[1]) return 'Genau 2 Karten wählen.';
+  const n = pd.keep || 2;
+  if (!Array.isArray(keepIdx) || keepIdx.length !== n || new Set(keepIdx).size !== n) return `Genau ${n} Karte${n === 1 ? '' : 'n'} wählen.`;
   const keep = keepIdx.map(i => pd.options[i]); if (keep.some(c => !c)) return 'x';
   const back = pd.options.filter((c, i) => !keepIdx.includes(i));
   s.players[meIdx].cards = keep; s.deck.push(...back); s.deck = shuffle(s.deck);
@@ -518,8 +521,10 @@ function nextHand(s) {
 }
 
 
+//]]>
 </script>
 <script>
+//<![CDATA[
 // ===================== NETZWERK & UI =====================
 const SB_URL = 'https://ixgjcgjrdpoxjwfnmhlq.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Z2pjZ2pyZHBveGp3Zm5taGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5MzM5MjcsImV4cCI6MjA2NzUwOTkyN30.tuJ349X8t4yD4IJ9-Dn40UiSJXBWy_HY6zHJ2ZkI8dA';
@@ -657,7 +662,7 @@ function renderGame(s) {
   const pd = s.pending;
   if (mp && mp.cards.length) {
     const picking = pd && pd.type === 'lose' && pd.player === me;
-    $('myhand').innerHTML = `<div class="muted" style="margin-top:4px">${picking ? 'Welche Karte willst du aufdecken?' : 'Deine verdeckten Karten'}</div><div class="hand">` + mp.cards.map((c, i) => `<div class="hc ${picking ? 'pick' : ''}" ${picking ? `onclick="act('lose',${i})"` : ''}><div class="ic">${ROLES[c].icon}</div><div class="rn" style="color:${ROLES[c].color}">${ROLES[c].name}</div><div class="ra">${ROLES[c].action}<br>${ROLES[c].blocks}</div></div>`).join('') + '</div>';
+    $('myhand').innerHTML = `<div class="muted" style="margin-top:4px">${picking ? 'Welche Karte willst du aufdecken?' : 'Deine verdeckten Karten'}</div><div class="hand">` + mp.cards.map((c, i) => `<div class="hc ${picking ? 'pick' : ''}" ${picking ? `onclick="act('lose',${i})"` : ''}><div class="ic">${ROLES[c].icon}</div><div class="rn" style="color:${ROLES[c].color}">${ROLES[c].name}</div><div class="ra">${ROLES[c].action}<br/>${ROLES[c].blocks}</div></div>`).join('') + '</div>';
   } else if (mp && mp.out) { $('myhand').innerHTML = '<div class="card muted" style="text-align:center">Du bist ausgeschieden. Du kannst weiter zuschauen.</div>'; }
   else $('myhand').innerHTML = '';
   // Aktion
@@ -708,7 +713,7 @@ function renderAction(s, me) {
       if (me === acc) {
         const max = mp.coins;
         return `<div class="panel"><h3>Du wurdest angezeigt</h3><div>${head}</div><p class="muted">Du kannst ${nameOf(s, ch)} bestechen (mindestens 2 Münzen), damit die Anzeige fallen gelassen wird. Oder du lässt es auf die Karte ankommen.</p>` +
-          (max >= 2 ? `<div class="row"><input type="number" id="bribe" min="2" max="${max}" value="2" inputmode="numeric"><button class="btn sec" style="margin-top:0" onclick="act('bribe')">💰 Bestechen</button></div>` : '<div class="muted">Du hast nicht genug Münzen für eine Bestechung.</div>') +
+          (max >= 2 ? `<div class="row"><input type="number" id="bribe" min="2" max="${max}" value="2" inputmode="numeric"/><button class="btn sec" style="margin-top:0" onclick="act('bribe')">💰 Bestechen</button></div>` : '<div class="muted">Du hast nicht genug Münzen für eine Bestechung.</div>') +
           `<button class="btn" onclick="act('refuse')">🃏 Keine Bestechung, Karte zeigen</button></div>`;
       }
       return `<div class="panel"><h3><span class="spin"></span>Anzeige läuft</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, acc)} überlegt, ob er eine Bestechung anbietet …</div></div>`;
@@ -722,7 +727,7 @@ function renderAction(s, me) {
       if (me === pd.target) {
         const max = mp.coins;
         return `<div class="panel"><h3>Sturz gegen dich</h3><div>${head}</div><p class="muted">Du kannst ${nameOf(s, pd.actor)} bestechen (mindestens 1 Münze), um den Sturz abzuwenden. Die 7 Münzen bleiben in jedem Fall im Pot.</p>` +
-          (max >= 1 ? `<div class="row"><input type="number" id="bribe" min="1" max="${max}" value="1" inputmode="numeric"><button class="btn sec" style="margin-top:0" onclick="act('bribe')">💰 Bestechen</button></div>` : '<div class="muted">Du hast keine Münzen für eine Bestechung.</div>') +
+          (max >= 1 ? `<div class="row"><input type="number" id="bribe" min="1" max="${max}" value="1" inputmode="numeric"/><button class="btn sec" style="margin-top:0" onclick="act('bribe')">💰 Bestechen</button></div>` : '<div class="muted">Du hast keine Münzen für eine Bestechung.</div>') +
           `<button class="btn" onclick="act('refuse')">🃏 Keine Bestechung, aufdecken lassen</button></div>`;
       }
       return `<div class="panel"><h3><span class="spin"></span>Sturz läuft</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, pd.target)} überlegt, ob er eine Bestechung anbietet …</div></div>`;
@@ -737,7 +742,8 @@ function renderAction(s, me) {
   if (pd.type === 'exchange') {
     if (pd.player !== me) return `<div class="panel"><h3><span class="spin"></span>${nameOf(s, pd.player)} tauscht Karten</h3><div class="muted">Sieht 4 Karten an und behält 2.</div></div>`;
     const cards = pd.options.map((c, i) => `<div class="hc pick ${ui.keep.includes(i) ? 'sel' : ''}" onclick="toggleKeep(${i})"><div class="ic">${ROLES[c].icon}</div><div class="rn" style="color:${ROLES[c].color}">${ROLES[c].name}</div><div class="ra">${ROLES[c].action}</div></div>`).join('');
-    return `<div class="panel"><h3>Karten tauschen</h3><div class="muted">Wähle die 2 Karten, die du behalten willst.</div><div class="hand" style="flex-wrap:wrap">${cards}</div><button class="btn" ${ui.keep.length === 2 ? '' : 'disabled'} onclick="act('exchange')">Behalten</button></div>`;
+    const n = pd.keep || 2;
+    return `<div class="panel"><h3>Karten tauschen</h3><div class="muted">${n === 1 ? 'Wähle die 1 Karte, die du behalten willst.' : `Wähle die ${n} Karten, die du behalten willst.`}</div><div class="hand" style="flex-wrap:wrap">${cards}</div><button class="btn" ${ui.keep.length === n ? '' : 'disabled="disabled"'} onclick="act('exchange')">Behalten</button></div>`;
   }
   return '';
 }
@@ -754,17 +760,17 @@ function renderMyTurn(s, me) {
       html += `<div style="margin-top:10px"><label>Welche Rolle hat das Ziel verdeckt?</label>` + ROLE_KEYS.map(r => `<button class="btn ${ui.role === r ? '' : 'sec'} sm" onclick="pickRole('${r}')">${ROLES[r].icon} ${ROLES[r].name}</button>`).join('') + '</div>';
     }
     const ready = (!A.needsTarget || ui.target != null) && (ui.sel !== 'sturz' || ui.role);
-    html += `<div class="row"><button class="btn sec" onclick="selAction(null)">Zurück</button><button class="btn" ${ready ? '' : 'disabled'} onclick="act('do')">Ausführen</button></div></div>`;
+    html += `<div class="row"><button class="btn sec" onclick="selAction(null)">Zurück</button><button class="btn" ${ready ? '' : 'disabled="disabled"'} onclick="act('do')">Ausführen</button></div></div>`;
     return html;
   }
   const can = a => validateAction(s, me, a, others[0], 'finanzamt') === null || (ACTIONS[a].needsTarget && others.some(t => validateAction(s, me, a, t, 'finanzamt') === null));
-  const b = (a, extra) => `<button class="ab ${extra || ''}" ${can(a) ? '' : 'disabled'} onclick="selAction('${a}')"><b>${ACTIONS[a].name}</b><small>${ACTIONS[a].desc}</small></button>`;
+  const b = (a, extra) => `<button class="ab ${extra || ''}" ${can(a) ? '' : 'disabled="disabled"'} onclick="selAction('${a}')"><b>${ACTIONS[a].name}</b><small>${ACTIONS[a].desc}</small></button>`;
   return `<div class="panel"><h3>Du bist am Zug</h3><div class="muted" style="margin-bottom:8px">Wähle genau eine Aktion. Du darfst jede Rolle beanspruchen, egal was du hast.</div><div class="acts">${b('buergergeld')}${b('subvention')}${b('steuern')}${b('tauschen')}${b('stehlen')}${b('auftrag')}${b('sturz', 'wide')}</div></div>`;
 }
 function selAction(a) { ui.sel = a; ui.target = null; ui.role = null; render(); }
 function pickTarget(i) { ui.target = i; render(); }
 function pickRole(r) { ui.role = r; render(); }
-function toggleKeep(i) { if (ui.keep.includes(i)) ui.keep = ui.keep.filter(x => x !== i); else if (ui.keep.length < 2) ui.keep.push(i); render(); }
+function toggleKeep(i) { const n = (cur && cur.state.pending && cur.state.pending.keep) || 2; if (ui.keep.includes(i)) ui.keep = ui.keep.filter(x => x !== i); else if (ui.keep.length < n) ui.keep.push(i); render(); }
 
 // ---- Aktionen ausführen ----
 async function act(kind, arg) {
@@ -813,13 +819,13 @@ function openRules() {
   <tr><td>🔫 Gangster</td><td>Auftrag: 3 Münzen in die Bank, Ziel verliert 1 Karte</td><td>—</td></tr>
   <tr><td>🚔 Polizist</td><td>keine</td><td>Auftrag (nur Ziel)</td></tr></table>
   <h4>Hand-Ablauf</h4>
-  <p><b>1. Abgabe:</b> Jeder zahlt 1 Münze in den Pot. Wer danach 0 Münzen hat, scheidet aus.<br>
-  <b>2. Aktionen:</b> Reihum genau eine Aktion. Bürgergeld (+1), Subvention (+2, blockierbar), Steuern (+3, Finanzamt), Tauschen (Politiker), Stehlen (Dieb), Auftrag (Gangster, 3 Münzen), Sturz (7 Münzen in den Pot, Rolle einer verdeckten Karte raten, nicht anzeigbar). Einkommen kommt nur aus dem Pot.<br>
+  <p><b>1. Abgabe:</b> Jeder zahlt 1 Münze in den Pot. Wer danach 0 Münzen hat, scheidet aus.<br/>
+  <b>2. Aktionen:</b> Reihum genau eine Aktion. Bürgergeld (+1), Subvention (+2, blockierbar), Steuern (+3, Finanzamt), Tauschen (Politiker), Stehlen (Dieb), Auftrag (Gangster, 3 Münzen), Sturz (7 Münzen in den Pot, Rolle einer verdeckten Karte raten, nicht anzeigbar). Einkommen kommt nur aus dem Pot.<br/>
   <b>3. Pot-Verteilung:</b> Die Hand endet, sobald ein Spieler seine letzte Karte verliert. Wer das verursacht hat, gewinnt die Hand: max. 10 Münzen aus dem Pot, alle anderen je 1, der Rest bleibt im Pot. Wer dann 0 Münzen hat, ist raus.</p>
   <h4>Anzeige</h4>
-  <p>Jede beanspruchte Rolle (auch ein Block) kann angezeigt werden. Kostet 1 Münze in den Pot. Der Angezeigte kann eine Bestechung (min. 2 Münzen) anbieten, der Anzeigende nimmt an oder lehnt ab.<br>
-  <b>Richtig:</b> Angezeigter verliert eine Karte, Aktion schlägt fehl.<br>
-  <b>Falsch:</b> Anzeigender verliert eine Karte + 1 weitere Münze, der Angezeigte tauscht die gezeigte Karte, die Aktion geht durch.<br>
+  <p>Jede beanspruchte Rolle (auch ein Block) kann angezeigt werden. Kostet 1 Münze in den Pot. Der Angezeigte kann eine Bestechung (min. 2 Münzen) anbieten, der Anzeigende nimmt an oder lehnt ab.<br/>
+  <b>Richtig:</b> Angezeigter verliert eine Karte, Aktion schlägt fehl.<br/>
+  <b>Falsch:</b> Anzeigender verliert eine Karte + 1 weitere Münze, der Angezeigte tauscht die gezeigte Karte, die Aktion geht durch.<br/>
   <b>Doppelgefahr:</b> Wer den Gangster (oder einen Polizist-Block) falsch anzeigt, verliert eine Karte, und der Auftrag geht trotzdem durch.</p>
   <h4>Sturz und Bestechung</h4>
   <p>Beim Sturz zahlst du 7 Münzen in den Pot und nennst eine Rolle. Das Ziel kann dich bestechen (min. 1 Münze). Lehnst du ab: Richtig geraten → Ziel verliert die Karte. Falsch → nichts passiert, die 7 Münzen bleiben im Pot.</p>
@@ -845,6 +851,7 @@ $('ov').addEventListener('click', e => { if (e.target === $('ov')) closeSheet();
   }
   show('s-start');
 })();
+//]]>
 </script>
 </body>
 </html>
