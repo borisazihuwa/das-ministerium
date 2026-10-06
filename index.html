@@ -112,6 +112,7 @@ table.rl{width:100%;border-collapse:collapse;font-size:13px}.rl td,.rl th{border
       <button class="btn sec" id="btn-copy" style="margin-top:0">Link kopieren</button>
     </div>
   </div>
+  <div class="card" id="lsettings"></div>
   <div class="card">
     <div class="muted">Spieler <span id="lcount"></span></div>
     <ul class="plist" id="lplayers"></ul>
@@ -190,14 +191,16 @@ function newState(hostId, hostName) {
     players: [{ id: hostId, name: hostName, coins: 10, cards: [], revealed: [], out: false }],
     deck: [], pot: 0, bank: 0, hand: 0, turn: 0, startIdx: 0,
     pending: null, steps: [], log: [], winner: null, handResult: null, created: Date.now(),
+    settings: { seed: 5, auftragToPot: false },
   };
 }
 
 function startGame(s) {
-  s.phase = 'playing'; s.hand = 0; s.pot = 0; s.bank = 0; s.winner = null;
+  s.settings = Object.assign({ seed: 5, auftragToPot: false }, s.settings || {});
+  s.phase = 'playing'; s.hand = 0; s.pot = s.settings.seed; s.bank = 0; s.winner = null;
   s.players.forEach(p => { p.coins = 10; p.out = false; p.cards = []; p.revealed = []; });
   s.startIdx = -1; s.log = [];
-  log(s, 'Das Spiel beginnt. Jeder erhält 10 Münzen.', 'sys');
+  log(s, `Das Spiel beginnt. Jeder erhält 10 Münzen.${s.settings.seed ? ` Die Bank legt ${s.settings.seed} Münzen in den Pot.` : ''}${s.settings.auftragToPot ? ' Auftrag-Kosten gehen in den Pot.' : ''}`, 'sys');
   startHand(s);
 }
 
@@ -286,7 +289,7 @@ function doAction(s, actorIdx, action, target, role) {
   const p = s.players[actorIdx]; const A = ACTIONS[action];
   const tn = target != null ? pname(s, target) : '';
   if (action === 'buergergeld') { p.coins += 1; s.pot -= 1; log(s, `${p.name} nimmt Bürgergeld (+1).`); nextTurn(s); return null; }
-  if (action === 'auftrag') { p.coins -= 3; s.bank += 3; }
+  if (action === 'auftrag') { p.coins -= 3; if (s.settings && s.settings.auftragToPot) s.pot += 3; else s.bank += 3; }
   if (action === 'sturz') {
     p.coins -= 7; s.pot += 7;
     log(s, `${p.name} zahlt 7 in den Pot und versucht einen Sturz gegen ${tn}: „Du hast ${ROLES[role].name}!"`, 'warn');
@@ -394,30 +397,55 @@ function refuseBribe(s, meIdx) { // Angezeigter / Sturz-Ziel: keine Bestechung, 
   if (pd.type === 'sturz' && meIdx === pd.target) { log(s, `${pname(s, meIdx)} bietet keine Bestechung an.`); revealSturz(s); return null; }
   return 'x';
 }
-function decideBribe(s, meIdx, accept) {
-  const pd = s.pending; if (!pd || pd.stage !== 'decide') return 'x';
+function acceptBribe(s, amount) {
+  const pd = s.pending;
   if (pd.type === 'challenge') {
-    if (meIdx !== pd.challenger) return 'x';
-    if (accept) {
-      s.players[pd.accused].coins -= pd.bribe; s.players[meIdx].coins += pd.bribe;
-      log(s, `${pname(s, meIdx)} nimmt die Bestechung (${pd.bribe}) an. Anzeige zurückgezogen.`, 'good');
-      // weiter wie ohne Anzeige
-      if (pd.kind === 'action') { s.pending = null; s.steps = [{ type: 'resolve', action: pd.action, actor: pd.actor, target: pd.target }, { type: 'endTurn' }]; }
-      else { log(s, `Block bleibt bestehen. ${ACTIONS[pd.action].name} schlägt fehl.`); s.pending = null; s.steps = [{ type: 'endTurn' }]; }
-      runSteps(s);
-    } else { log(s, `${pname(s, meIdx)} lehnt die Bestechung ab.`); revealChallenge(s); }
-    return null;
+    s.players[pd.accused].coins -= amount; s.players[pd.challenger].coins += amount;
+    log(s, `${pname(s, pd.challenger)} nimmt die Bestechung (${amount}) an. Anzeige zurückgezogen.`, 'good');
+    if (pd.kind === 'action') { s.pending = null; s.steps = [{ type: 'resolve', action: pd.action, actor: pd.actor, target: pd.target }, { type: 'endTurn' }]; }
+    else { log(s, `Block bleibt bestehen. ${ACTIONS[pd.action].name} schlägt fehl.`); s.pending = null; s.steps = [{ type: 'endTurn' }]; }
+    runSteps(s);
+  } else {
+    s.players[pd.target].coins -= amount; s.players[pd.actor].coins += amount;
+    log(s, `${pname(s, pd.actor)} nimmt die Bestechung (${amount}) an. Sturz abgewendet, die 7 Münzen bleiben im Pot.`, 'good');
+    s.pending = null; s.steps = [{ type: 'endTurn' }]; runSteps(s);
   }
-  if (pd.type === 'sturz') {
-    if (meIdx !== pd.actor) return 'x';
-    if (accept) {
-      s.players[pd.target].coins -= pd.bribe; s.players[meIdx].coins += pd.bribe;
-      log(s, `${pname(s, meIdx)} nimmt die Bestechung (${pd.bribe}) an. Sturz abgewendet, die 7 Münzen bleiben im Pot.`, 'good');
-      s.pending = null; s.steps = [{ type: 'endTurn' }]; runSteps(s);
-    } else { log(s, `${pname(s, meIdx)} lehnt die Bestechung ab.`); revealSturz(s); }
-    return null;
+}
+// Wer bietet (Angezeigter / Sturz-Ziel) und wer entscheidet (Anzeigender / Angreifer)
+function bribeRoles(pd) {
+  return pd.type === 'challenge' ? { offerer: pd.accused, receiver: pd.challenger } : { offerer: pd.target, receiver: pd.actor };
+}
+function decideBribe(s, meIdx, accept) {
+  const pd = s.pending; if (!pd || (pd.type !== 'challenge' && pd.type !== 'sturz') || pd.stage !== 'decide') return 'x';
+  const { receiver } = bribeRoles(pd); if (meIdx !== receiver) return 'x';
+  if (accept) { acceptBribe(s, pd.bribe); return null; }
+  log(s, `${pname(s, meIdx)} lehnt die Bestechung ab.`);
+  if (pd.type === 'challenge') revealChallenge(s); else revealSturz(s);
+  return null;
+}
+// Gegenangebot: der Empfaenger fordert einmalig mehr
+function counterBribe(s, meIdx, amount) {
+  const pd = s.pending; if (!pd || (pd.type !== 'challenge' && pd.type !== 'sturz') || pd.stage !== 'decide') return 'x';
+  const { offerer, receiver } = bribeRoles(pd); if (meIdx !== receiver) return 'x';
+  if (pd.countered) return 'Du hast schon ein Gegenangebot gemacht.';
+  amount = Math.floor(Number(amount));
+  if (!(amount > pd.bribe)) return `Gegenangebot muss höher als ${pd.bribe} sein.`;
+  if (amount > s.players[offerer].coins) return `${pname(s, offerer)} hat nur ${s.players[offerer].coins} Münzen.`;
+  pd.counter = amount; pd.stage = 'counter';
+  log(s, `${pname(s, meIdx)} fordert stattdessen ${amount} Münzen von ${pname(s, offerer)}.`, 'warn');
+  return null;
+}
+function decideCounter(s, meIdx, accept) {
+  const pd = s.pending; if (!pd || pd.stage !== 'counter') return 'x';
+  const { offerer, receiver } = bribeRoles(pd); if (meIdx !== offerer) return 'x';
+  if (accept) {
+    if (pd.counter > s.players[offerer].coins) return 'So viele Münzen hast du nicht.';
+    log(s, `${pname(s, offerer)} akzeptiert die Forderung von ${pd.counter} Münzen.`);
+    acceptBribe(s, pd.counter); return null;
   }
-  return 'x';
+  pd.stage = 'decide'; pd.countered = true; pd.counter = null;
+  log(s, `${pname(s, offerer)} lehnt die Forderung ab. Das Angebot von ${pd.bribe} Münzen steht weiter, ${pname(s, receiver)} entscheidet.`);
+  return null;
 }
 
 function revealChallenge(s) {
@@ -523,6 +551,15 @@ function chooseExchange(s, meIdx, keepIdx) {
   s.pending = null; runSteps(s); return null;
 }
 
+function setSetting(s, meIdx, key, value) {
+  if (s.phase !== 'lobby') return 'Nur in der Lobby änderbar.';
+  if (s.players[meIdx].id !== s.host) return 'Nur der Host kann Einstellungen ändern.';
+  s.settings = Object.assign({ seed: 5, auftragToPot: false }, s.settings || {});
+  if (key === 'seed') { if (![0, 5, 10].includes(value)) return 'x'; s.settings.seed = value; }
+  else if (key === 'auftragToPot') s.settings.auftragToPot = !!value;
+  else return 'x';
+  return null;
+}
 function nextHand(s) {
   if (!s.pending || s.pending.type !== 'handEnd') return 'x';
   startHand(s); return null;
@@ -650,6 +687,11 @@ function renderLobby(s) {
   $('lcount').textContent = `(${s.players.length}/6)`;
   $('lplayers').innerHTML = s.players.map(p => `<li><span>${esc(p.name)}${p.id === pid ? ' <span class="muted">(du)</span>' : ''}</span><span class="muted">${p.id === s.host ? '👑 Host' : ''}</span></li>`).join('');
   const host = s.host === pid;
+  const st = Object.assign({ seed: 5, auftragToPot: false }, s.settings || {});
+  const opt = (key, val, label) => `<button class="btn ${String(st[key]) === String(val) ? '' : 'sec'} sm" ${host ? `onclick="act('setting','${key}',${JSON.stringify(val)})"` : 'disabled="disabled"'}>${label}</button>`;
+  $('lsettings').innerHTML = `<div class="muted">Spielvarianten${host ? '' : ' (stellt der Host ein)'}</div>
+    <div style="margin-top:8px"><label>Startkapital im Pot (legt die Bank zu Spielbeginn ein)</label>${opt('seed', 0, '0')}${opt('seed', 5, '5')}${opt('seed', 10, '10')}</div>
+    <div style="margin-top:10px"><label>Auftrag-Kosten (3 Münzen) gehen …</label>${opt('auftragToPot', false, 'in die Bank')}${opt('auftragToPot', true, 'in den Pot')}</div>`;
   $('hostctl').style.display = host ? '' : 'none'; $('waitctl').style.display = host ? 'none' : '';
   $('btn-start').disabled = s.players.length < 2;
 }
@@ -729,8 +771,7 @@ function renderAction(s, me) {
       }
       return `<div class="panel"><h3><span class="spin"></span>Anzeige läuft</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, acc)} überlegt, ob er eine Bestechung anbietet …</div></div>`;
     }
-    if (me === ch) return `<div class="panel"><h3>Bestechungsangebot</h3><div>${head}</div><p>${nameOf(s, acc)} bietet dir <b>${pd.bribe} Münzen</b>, damit du die Anzeige zurückziehst.</p><div class="row"><button class="btn good" onclick="act('decide',true)">💰 Annehmen (+${pd.bribe})</button><button class="btn bad" onclick="act('decide',false)">Ablehnen, Karte aufdecken</button></div></div>`;
-    return `<div class="panel"><h3><span class="spin"></span>Bestechung angeboten</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, acc)} bietet ${pd.bribe} Münzen. ${nameOf(s, ch)} entscheidet …</div></div>`;
+    return renderBribeDecision(s, me, head, acc, ch, 'die Anzeige zurückziehst', 'Ablehnen, Karte aufdecken');
   }
   if (pd.type === 'sturz') {
     const head = `<b>${nameOf(s, pd.actor)}</b> stürzt <b>${nameOf(s, pd.target)}</b> und rät: <b>${ROLES[pd.role].name}</b>. (7 Münzen liegen im Pot.)`;
@@ -743,8 +784,7 @@ function renderAction(s, me) {
       }
       return `<div class="panel"><h3><span class="spin"></span>Sturz läuft</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, pd.target)} überlegt, ob er eine Bestechung anbietet …</div></div>`;
     }
-    if (me === pd.actor) return `<div class="panel"><h3>Bestechungsangebot</h3><div>${head}</div><p>${nameOf(s, pd.target)} bietet dir <b>${pd.bribe} Münzen</b>, damit du den Sturz abbrichst.</p><div class="row"><button class="btn good" onclick="act('decide',true)">💰 Annehmen (+${pd.bribe})</button><button class="btn bad" onclick="act('decide',false)">Ablehnen, aufdecken</button></div></div>`;
-    return `<div class="panel"><h3><span class="spin"></span>Bestechung angeboten</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, pd.target)} bietet ${pd.bribe} Münzen. ${nameOf(s, pd.actor)} entscheidet …</div></div>`;
+    return renderBribeDecision(s, me, head, pd.target, pd.actor, 'den Sturz abbrichst', 'Ablehnen, aufdecken');
   }
   if (pd.type === 'lose') {
     if (pd.player === me) return `<div class="panel"><h3>Du verlierst eine Karte</h3><div class="muted">Tippe oben auf die Karte, die du aufdecken willst.</div></div>`;
@@ -757,6 +797,21 @@ function renderAction(s, me) {
     return `<div class="panel"><h3>Karten tauschen</h3><div class="muted">${n === 1 ? 'Wähle die 1 Karte, die du behalten willst.' : `Wähle die ${n} Karten, die du behalten willst.`}</div><div class="hand" style="flex-wrap:wrap">${cards}</div><button class="btn" ${ui.keep.length === n ? '' : 'disabled="disabled"'} onclick="act('exchange')">Behalten</button></div>`;
   }
   return '';
+}
+
+// Verhandlung: offerer bietet, receiver entscheidet (annehmen / ablehnen / einmal Gegenangebot)
+function renderBribeDecision(s, me, head, offerer, receiver, purpose, declineLabel) {
+  const pd = s.pending; const oc = s.players[offerer].coins;
+  if (pd.stage === 'counter') {
+    if (me === offerer) return `<div class="panel"><h3>Gegenforderung</h3><div>${head}</div><p>${nameOf(s, receiver)} will <b>${pd.counter} Münzen</b> statt deiner ${pd.bribe}. Lehnst du ab, entscheidet ${nameOf(s, receiver)} über dein ursprüngliches Angebot von ${pd.bribe}.</p><div class="row"><button class="btn good" onclick="act('decideCounter',true)">💰 ${pd.counter} zahlen</button><button class="btn bad" onclick="act('decideCounter',false)">Ablehnen, bei ${pd.bribe} bleiben</button></div></div>`;
+    return `<div class="panel"><h3><span class="spin"></span>Verhandlung</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, receiver)} fordert ${pd.counter} statt ${pd.bribe} Münzen. ${nameOf(s, offerer)} entscheidet …</div></div>`;
+  }
+  if (me === receiver) {
+    const canCounter = !pd.countered && oc > pd.bribe;
+    return `<div class="panel"><h3>Bestechungsangebot</h3><div>${head}</div><p>${nameOf(s, offerer)} bietet dir <b>${pd.bribe} Münzen</b>, damit du ${purpose}.${pd.countered ? ' Deine Gegenforderung wurde abgelehnt, das Angebot steht weiter.' : ''}</p><div class="row"><button class="btn good" onclick="act('decide',true)">💰 Annehmen (+${pd.bribe})</button><button class="btn bad" onclick="act('decide',false)">${declineLabel}</button></div>` +
+      (canCounter ? `<div class="muted" style="margin-top:12px">Oder mehr fordern (${nameOf(s, offerer)} hat ${oc} Münzen):</div><div class="row"><input type="number" id="counter" min="${pd.bribe + 1}" max="${oc}" value="${Math.min(oc, pd.bribe + 2)}" inputmode="numeric"/><button class="btn sec" style="margin-top:0" onclick="act('counter')">↕️ Gegenangebot</button></div>` : '') + '</div>';
+  }
+  return `<div class="panel"><h3><span class="spin"></span>Bestechung angeboten</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, offerer)} bietet ${pd.bribe} Münzen. ${nameOf(s, receiver)} entscheidet …</div></div>`;
 }
 
 function renderMyTurn(s, me) {
@@ -774,8 +829,8 @@ function renderMyTurn(s, me) {
     html += `<div class="row"><button class="btn sec" onclick="selAction(null)">Zurück</button><button class="btn" ${ready ? '' : 'disabled="disabled"'} onclick="act('do')">Ausführen</button></div></div>`;
     return html;
   }
-  const can = a => validateAction(s, me, a, others[0], 'finanzamt') === null || (ACTIONS[a].needsTarget && others.some(t => validateAction(s, me, a, t, 'finanzamt') === null));
-  const b = (a, extra) => `<button class="ab ${extra || ''}" ${can(a) ? '' : 'disabled="disabled"'} onclick="selAction('${a}')"><b>${ACTIONS[a].name}</b><small>${ACTIONS[a].desc}</small></button>`;
+  const why = a => { if (ACTIONS[a].needsTarget) { let last = null; for (const t of others) { const e = validateAction(s, me, a, t, 'finanzamt'); if (!e) return null; last = e; } return last || 'Kein Ziel.'; } return validateAction(s, me, a, null, 'finanzamt'); };
+  const b = (a, extra) => { const w = why(a); return `<button class="ab ${extra || ''}" ${w ? 'disabled="disabled"' : ''} onclick="selAction('${a}')"><b>${ACTIONS[a].name}</b><small>${w ? '⛔ ' + w : ACTIONS[a].desc}</small></button>`; };
   return `<div class="panel"><h3>Du bist am Zug</h3><div class="muted" style="margin-bottom:8px">Wähle genau eine Aktion. Du darfst jede Rolle beanspruchen, egal was du hast.</div><div class="acts">${b('buergergeld')}${b('subvention')}${b('steuern')}${b('tauschen')}${b('stehlen')}${b('auftrag')}${b('sturz', 'wide')}</div></div>`;
 }
 function newGame() {
@@ -790,11 +845,12 @@ function pickRole(r) { ui.role = r; render(); }
 function toggleKeep(i) { const n = (cur && cur.state.pending && cur.state.pending.keep) || 2; if (ui.keep.includes(i)) ui.keep = ui.keep.filter(x => x !== i); else if (ui.keep.length < n) ui.keep.push(i); render(); }
 
 // ---- Aktionen ausführen ----
-async function act(kind, arg) {
+async function act(kind, arg, arg2) {
   const me = myIdx(); if (me < 0) return;
   const bribeVal = () => { const el = $('bribe'); return el ? el.value : 0; };
   const sel = { ...ui };
   const amount = bribeVal();
+  const counterAmt = (() => { const el = $('counter'); return el ? el.value : 0; })();
   await commit(s => {
     switch (kind) {
       case 'do': return doAction(s, me, sel.sel, sel.target, sel.role);
@@ -804,9 +860,12 @@ async function act(kind, arg) {
       case 'bribe': return offerBribe(s, me, amount);
       case 'refuse': return refuseBribe(s, me);
       case 'decide': return decideBribe(s, me, arg);
+      case 'counter': return counterBribe(s, me, counterAmt);
+      case 'decideCounter': return decideCounter(s, me, arg);
       case 'lose': return chooseLose(s, me, arg);
       case 'exchange': return chooseExchange(s, me, sel.keep);
       case 'nextHand': return nextHand(s);
+      case 'setting': return setSetting(s, me, arg, arg2);
       case 'again': if (s.host !== pid) return 'Nur der Host.'; s.phase = 'lobby'; s.players.forEach(p => { p.coins = 10; p.cards = []; p.revealed = []; p.out = false; }); s.pot = 0; s.bank = 0; s.pending = null; s.steps = []; s.log = []; s.winner = null; s.hand = 0; return null;
     }
     return 'x';
@@ -835,17 +894,20 @@ function openRules() {
   <tr><td>🕶️ Dieb</td><td>Stehlen: 2 Münzen von einem Spieler</td><td>Diebstahl (nur Ziel)</td></tr>
   <tr><td>🔫 Gangster</td><td>Auftrag: 3 Münzen in die Bank, Ziel verliert 1 Karte</td><td>—</td></tr>
   <tr><td>🚔 Polizist</td><td>keine</td><td>Auftrag (nur Ziel)</td></tr></table>
+  <h4>Spielvarianten (Host stellt sie in der Lobby ein)</h4>
+  <p><b>Startkapital:</b> Die Bank legt zu Spielbeginn 0, 5 oder 10 Münzen in den Pot. <b>Auftrag-Kosten:</b> gehen in die Bank (verschwinden aus dem Spiel) oder in den Pot.</p>
   <h4>Hand-Ablauf</h4>
   <p><b>1. Abgabe:</b> Jeder zahlt 1 Münze in den Pot. Wer danach 0 Münzen hat, scheidet aus.<br/>
   <b>2. Aktionen:</b> Reihum genau eine Aktion. Bürgergeld (+1), Subvention (+2, blockierbar), Steuern (+3, Finanzamt), Tauschen (Politiker), Stehlen (Dieb), Auftrag (Gangster, 3 Münzen), Sturz (7 Münzen in den Pot, Rolle einer verdeckten Karte raten, nicht anzeigbar). Einkommen kommt nur aus dem Pot.<br/>
   <b>3. Pot-Verteilung:</b> Wer beide Karten verliert, ist aus der laufenden Hand raus. Die Hand endet, sobald nur noch ein Spieler Karten hat: Er gewinnt die Hand und nimmt max. 10 Münzen aus dem Pot, alle anderen bekommen je 1 (bei 2 Spielern nichts), der Rest bleibt im Pot. Wer dann 0 Münzen hat, scheidet aus dem Spiel aus.</p>
   <h4>Anzeige</h4>
-  <p>Jede beanspruchte Rolle (auch ein Block) kann angezeigt werden. Kostet 1 Münze in den Pot. Der Angezeigte kann eine Bestechung (min. 2 Münzen) anbieten, der Anzeigende nimmt an oder lehnt ab.<br/>
+  <p>Jede beanspruchte Rolle (auch ein Block) kann angezeigt werden. Kostet 1 Münze in den Pot. Der Angezeigte kann eine Bestechung (min. 2 Münzen) anbieten, der Anzeigende nimmt an, lehnt ab oder fordert einmalig mehr (Gegenangebot). Lehnt der Angezeigte die Forderung ab, steht sein ursprüngliches Angebot wieder zur Entscheidung.<br/>
   <b>Richtig:</b> Angezeigter verliert eine Karte, Aktion schlägt fehl.<br/>
   <b>Falsch:</b> Anzeigender verliert eine Karte + 1 weitere Münze, der Angezeigte tauscht die gezeigte Karte, die Aktion geht durch.<br/>
   <b>Doppelgefahr:</b> Wer den Gangster (oder einen Polizist-Block) falsch anzeigt, verliert eine Karte, und der Auftrag geht trotzdem durch.</p>
   <h4>Sturz und Bestechung</h4>
-  <p>Beim Sturz zahlst du 7 Münzen in den Pot und nennst eine Rolle. Das Ziel kann dich bestechen (min. 1 Münze). Lehnst du ab: Richtig geraten → Ziel verliert die Karte. Falsch → nichts passiert, die 7 Münzen bleiben im Pot.</p>
+  <p>Beim Sturz zahlst du 7 Münzen in den Pot und nennst eine Rolle. Das Ziel kann dich bestechen (min. 1 Münze), auch hier mit einmaligem Gegenangebot. Lehnst du ab: Richtig geraten → Ziel verliert die Karte. Falsch → nichts passiert, die 7 Münzen bleiben im Pot.</p>
+  <p>Bluffen ist immer erlaubt, die Kosten gelten trotzdem: Auftrag braucht 3 Münzen, Sturz 7, Anzeige 1. Blocken ist kostenlos.</p>
   <p class="muted">Reaktionen haben 30 Sekunden Zeit, danach gilt „keine Reaktion".</p>
   </div><button class="btn sec" onclick="closeSheet()">Schließen</button>`;
   $('ov').classList.add('on');
