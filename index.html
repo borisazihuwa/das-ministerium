@@ -1,3246 +1,850 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Das Ministerium</title>
-  <style>
-/* ============================================================
-   Das Ministerium — Dark Ministry Theme
-   ============================================================ */
-
-/* Google Fonts — falls nicht erreichbar, Fallback-Fonts greifen */
-
-
-:root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-card: #1a1a2e;
-  --bg-card-hover: #222240;
-  --bg-accent: #16213e;
-  --gold: #c9a84c;
-  --gold-light: #e8d48b;
-  --gold-dark: #8a6d2b;
-  --red: #c0392b;
-  --red-light: #e74c3c;
-  --green: #27ae60;
-  --green-light: #2ecc71;
-  --blue: #2980b9;
-  --text-primary: #e8e8e8;
-  --text-secondary: #a0a0b0;
-  --text-muted: #606070;
-  --border: #2a2a3e;
-  --shadow: rgba(0, 0, 0, 0.5);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-h1, h2, h3 {
-  font-family: 'Playfair Display', serif;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* ---- SCREENS ---- */
-
-.screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ---- MENU ---- */
-
-.menu-container {
-  text-align: center;
-  max-width: 500px;
-  width: 90%;
-  padding: 2rem;
-}
-
-.title {
-  font-size: 3rem;
-  color: var(--gold);
-  text-shadow: 0 2px 20px rgba(201, 168, 76, 0.3);
-  margin-bottom: 0.25rem;
-  letter-spacing: 2px;
-}
-
-.subtitle {
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  font-style: italic;
-  margin-bottom: 3rem;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-}
-
-.menu-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.menu-btn {
-  background: var(--bg-card);
-  color: var(--gold);
-  border: 1px solid var(--gold-dark);
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  font-family: 'Playfair Display', serif;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 1px;
-}
-
-.menu-btn:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--gold);
-  box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
-}
-
-.menu-btn.start-btn {
-  background: var(--gold-dark);
-  color: var(--bg-primary);
-  font-weight: 700;
-  margin-top: 1.5rem;
-  width: 100%;
-  padding: 1rem;
-  font-size: 1.1rem;
-}
-
-.menu-btn.start-btn:hover {
-  background: var(--gold);
-}
-
-.menu-btn.small-btn {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
-}
-
-.setup-panel {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  padding: 2rem;
-  margin-top: 1.5rem;
-  text-align: left;
-}
-
-.setup-panel h2 {
-  color: var(--gold);
-  margin-bottom: 1.5rem;
-  font-size: 1.3rem;
-  text-align: center;
-}
-
-.form-group {
-  margin-bottom: 1.2rem;
-}
-
-.form-group label {
-  display: block;
-  color: var(--text-secondary);
-  margin-bottom: 0.4rem;
-  font-size: 0.9rem;
-}
-
-.form-group input[type="text"],
-.form-group select {
-  width: 100%;
-  padding: 0.6rem;
-  background: var(--bg-primary);
-  border: 1px solid var(--border);
-  color: var(--text-primary);
-  font-size: 1rem;
-  font-family: 'Inter', sans-serif;
-}
-
-.form-group input[type="range"] {
-  width: 100%;
-  accent-color: var(--gold);
-}
-
-.online-options {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-}
-
-.join-group {
-  display: flex;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.join-group input {
-  flex: 1;
-  padding: 0.6rem;
-  background: var(--bg-primary);
-  border: 1px solid var(--border);
-  color: var(--text-primary);
-  font-size: 1.2rem;
-  text-align: center;
-  letter-spacing: 4px;
-}
-
-/* ---- GAME LAYOUT ---- */
-
-.game-layout {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.game-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.stat-display {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-}
-
-.stat-display.pot {
-  color: var(--gold);
-  font-weight: 700;
-  font-size: 1.2rem;
-}
-
-.stat-display.bank {
-  color: var(--text-muted);
-}
-
-.phase-display {
-  color: var(--gold-light);
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  letter-spacing: 1px;
-}
-
-.economy-display {
-  display: flex;
-  gap: 1.5rem;
-}
-
-/* ---- PLAYERS AREA ---- */
-
-.players-area {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-}
-
-.player-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  padding: 1rem;
-  transition: all 0.3s;
-  position: relative;
-}
-
-.player-card.active-turn {
-  border-color: var(--gold);
-  box-shadow: 0 0 20px rgba(201, 168, 76, 0.15);
-}
-
-.player-card.human {
-  border-left: 3px solid var(--gold);
-}
-
-.player-card.eliminated {
-  opacity: 0.35;
-  filter: grayscale(0.8);
-}
-
-.player-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  color: var(--gold-light);
-  margin-bottom: 0.5rem;
-}
-
-.player-coins {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--gold);
-  margin-bottom: 0.5rem;
-}
-
-.player-cards-display {
-  display: flex;
-  gap: 0.4rem;
-  margin-bottom: 0.4rem;
-}
-
-.card-mini {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.75rem;
-  border: 1px solid var(--border);
-  text-align: center;
-  min-width: 70px;
-}
-
-.card-mini.own-card {
-  background: var(--bg-accent);
-  border-color: var(--gold-dark);
-  color: var(--gold-light);
-  font-weight: 500;
-}
-
-.card-mini.hidden-card {
-  background: var(--bg-primary);
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.card-mini.revealed {
-  background: var(--red);
-  color: #fff;
-  opacity: 0.7;
-  text-decoration: line-through;
-}
-
-.player-influence {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-/* ---- ACTION PANEL ---- */
-
-.action-panel {
-  background: var(--bg-secondary);
-  border: 1px solid var(--gold-dark);
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.action-panel h3 {
-  color: var(--gold);
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
-}
-
-.action-btn {
-  display: block;
-  width: 100%;
-  padding: 0.7rem 1rem;
-  margin-bottom: 0.5rem;
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  text-align: left;
-  transition: all 0.15s;
-}
-
-.action-btn:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--gold-dark);
-}
-
-.action-btn strong {
-  color: var(--gold-light);
-}
-
-.action-btn small {
-  color: var(--text-secondary);
-}
-
-.action-btn.passive-btn {
-  border-color: var(--text-muted);
-  opacity: 0.7;
-}
-
-.action-btn.passive-btn:hover {
-  opacity: 1;
-}
-
-.action-btn.danger-btn {
-  border-color: var(--red);
-  color: var(--red-light);
-}
-
-.action-btn.danger-btn:hover {
-  background: rgba(192, 57, 43, 0.15);
-}
-
-.action-btn.role-btn {
-  text-align: center;
-  font-weight: 500;
-  color: var(--gold-light);
-}
-
-.action-btn.role-btn.selected {
-  background: var(--gold-dark);
-  color: var(--bg-primary);
-  border-color: var(--gold);
-}
-
-.action-btn.disabled-btn {
-  opacity: 0.35;
-  cursor: not-allowed;
-  border-color: var(--text-muted);
-}
-
-.action-btn.disabled-btn:hover {
-  background: var(--bg-card);
-  border-color: var(--text-muted);
-}
-
-.unavailable-reason {
-  color: var(--red-light);
-  font-style: italic;
-}
-
-.action-btn.cancel-btn {
-  text-align: center;
-  color: var(--text-muted);
-  margin-top: 0.5rem;
-}
-
-.action-btn.confirm-btn {
-  text-align: center;
-  background: var(--gold-dark);
-  color: var(--bg-primary);
-  font-weight: 600;
-  margin-top: 0.8rem;
-}
-
-.action-btn.confirm-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.action-btn.confirm-btn:not(:disabled):hover {
-  background: var(--gold);
-}
-
-/* ---- LOG ---- */
-
-.log-container {
-  flex: 1;
-  min-height: 150px;
-}
-
-.log-container h3 {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-.game-log {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  padding: 0.8rem;
-  max-height: 250px;
-  overflow-y: auto;
-  font-size: 0.82rem;
-  line-height: 1.6;
-}
-
-.log-entry {
-  padding: 0.15rem 0;
-  border-bottom: 1px solid rgba(42, 42, 62, 0.5);
-  color: var(--text-secondary);
-}
-
-.log-entry.log-round {
-  color: var(--gold);
-  font-weight: 600;
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--gold-dark);
-}
-
-.log-entry.log-positive {
-  color: var(--green-light);
-}
-
-.log-entry.log-negative {
-  color: var(--red-light);
-}
-
-.log-entry.log-reaction {
-  color: var(--blue);
-}
-
-/* ---- NOTIFICATION ---- */
-
-.notification {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--bg-card);
-  border: 2px solid var(--gold);
-  color: var(--gold-light);
-  padding: 1.5rem 3rem;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  text-align: center;
-  z-index: 1000;
-  box-shadow: 0 0 40px rgba(201, 168, 76, 0.3);
-  animation: fadeInOut 2s ease-in-out;
-  pointer-events: none;
-}
-
-.notification.show {
-  display: block;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
-  15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  80% { opacity: 1; }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
-}
-
-/* ---- MODAL ---- */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-}
-
-.modal {
-  background: var(--bg-secondary);
-  border: 1px solid var(--gold-dark);
-  padding: 2rem;
-  max-width: 450px;
-  width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.modal h3 {
-  color: var(--gold);
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-size: 1.1rem;
-}
-
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-/* ---- GAME OVER ---- */
-
-.game-over-container {
-  text-align: center;
-  padding: 2rem;
-}
-
-.game-over-container h1 {
-  color: var(--gold);
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-shadow: 0 2px 20px rgba(201, 168, 76, 0.3);
-}
-
-.winner-display {
-  background: var(--bg-card);
-  border: 2px solid var(--gold);
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.winner-label {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin-bottom: 0.5rem;
-}
-
-.winner-display h2 {
-  color: var(--gold-light);
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.winner-coins {
-  color: var(--gold);
-  font-size: 1.2rem;
-}
-
-/* ---- SCROLLBAR ---- */
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-dark);
-}
-
-/* ---- RESPONSIVE ---- */
-
-@media (max-width: 768px) {
-  .title {
-    font-size: 2rem;
-  }
-
-  .subtitle {
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-  }
-
-  .players-area {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .game-header {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .notification {
-    font-size: 1.1rem;
-    padding: 1rem 2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .players-area {
-    grid-template-columns: 1fr;
-  }
-
-  .menu-buttons {
-    flex-direction: column;
-  }
-}
-
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Das Ministerium</title>
+<meta name="description" content="Täuschung ist Gesetz. Ein Bluff- und Verhandlungsspiel für 2 bis 6 Spieler, online mit Freunden.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1020;--bg2:#171935;--panel:#1c1f44;--panel2:#23275a;--line:#2f3470;--gold:#d4a24c;--gold2:#f0c870;--text:#eef0ff;--muted:#9a9fc8;--good:#5fc49a;--bad:#e0605e;--warn:#f0b35a;--blue:#7c9cf5}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.4}
+body{min-height:100dvh;background:radial-gradient(1200px 600px at 50% -200px,#2a2d6a 0%,var(--bg) 60%)}
+h1,h2,.brand{font-family:Cinzel,serif;letter-spacing:.04em}
+.wrap{max-width:640px;margin:0 auto;padding:16px 16px calc(24px + env(safe-area-inset-bottom))}
+.screen{display:none}.screen.on{display:block}
+.brand{color:var(--gold);text-align:center;font-weight:800;font-size:30px;margin:28px 0 2px}
+.tag{text-align:center;color:var(--muted);font-style:italic;margin:0 0 26px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+label{display:block;color:var(--muted);font-size:13px;margin:0 0 6px}
+input[type=text],input[type=number]{width:100%;background:var(--bg2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:17px;outline:none}
+input:focus{border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:#1b1402;border:0;border-radius:12px;padding:13px 18px;font-size:16px;font-weight:700;cursor:pointer;width:100%;margin-top:10px;transition:transform .05s}
+.btn:active{transform:scale(.98)}
+.btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn.bad{background:var(--bad);color:#fff}.btn.good{background:var(--good);color:#06281a}
+.btn.sm{padding:9px 12px;font-size:14px;width:auto;margin:4px 4px 0 0}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center}.row>*{flex:1}
+.muted{color:var(--muted);font-size:14px}
+.code{font-family:Cinzel,serif;font-size:44px;letter-spacing:.3em;color:var(--gold2);text-align:center;margin:6px 0}
+.plist{list-style:none;padding:0;margin:8px 0 0}.plist li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}.plist li:last-child{border:0}
+/* game */
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+.top .brand{font-size:18px;margin:0;text-align:left}
+.pot{display:flex;gap:10px}.pot div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;text-align:center;min-width:64px}
+.pot b{display:block;font-size:20px;color:var(--gold2);line-height:1.1}.pot span{font-size:11px;color:var(--muted)}
+.players{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:10px 0}
+.pl{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;position:relative;min-height:74px}
+.pl.turn{border-color:var(--gold);box-shadow:0 0 0 2px rgba(212,162,76,.35)}
+.pl.me{background:var(--panel2)}.pl.out{opacity:.4}
+.pl .nm{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl .co{color:var(--gold2);font-weight:700}
+.pl .cards{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.cb{width:22px;height:30px;border-radius:4px;background:linear-gradient(135deg,#3b3f8a,#23275a);border:1px solid #5a5fb0}
+.rv{height:30px;border-radius:4px;padding:0 6px;font-size:11px;display:flex;align-items:center;background:#2a2d4a;border:1px solid var(--line);color:var(--muted);text-decoration:line-through}
+.badge{position:absolute;top:-8px;right:8px;background:var(--gold);color:#1b1402;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
+.hand{display:flex;gap:10px;margin:12px 0}
+.hc{flex:1;border-radius:14px;padding:14px 12px;background:var(--panel);border:2px solid var(--line);min-height:110px;cursor:default}
+.hc .ic{font-size:30px}.hc .rn{font-family:Cinzel,serif;font-weight:800;font-size:17px;margin-top:4px}.hc .ra{font-size:12px;color:var(--muted);margin-top:4px}
+.hc.sel{border-color:var(--gold);background:var(--panel2)}.hc.pick{cursor:pointer}
+.panel{background:var(--panel);border:1px solid var(--gold);border-radius:14px;padding:14px;margin:12px 0}
+.panel h3{margin:0 0 8px;font-size:16px;color:var(--gold2)}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ab{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:left;color:var(--text);cursor:pointer;font-size:14px}
+.ab b{display:block;font-size:15px}.ab small{color:var(--muted);display:block;margin-top:2px;font-size:12px}
+.ab:disabled{opacity:.4;cursor:not-allowed}
+.ab.wide{grid-column:1/-1}
+.timer{float:right;color:var(--warn);font-weight:700}
+.log{margin-top:14px;max-height:190px;overflow:auto;font-size:13px;border-top:1px solid var(--line);padding-top:8px}
+.log div{padding:3px 0;color:var(--muted)}.log .claim{color:var(--blue)}.log .warn{color:var(--warn)}.log .good{color:var(--good)}.log .bad{color:var(--bad)}.log .sys{color:var(--text)}
+.ov{position:fixed;inset:0;background:rgba(5,6,20,.75);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+.ov.on{display:flex}
+.sheet{background:var(--bg2);border:1px solid var(--line);border-radius:18px 18px 0 0;width:100%;max-width:640px;max-height:88dvh;overflow:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.sheet h3{margin:0 0 10px;color:var(--gold2);font-family:Cinzel,serif}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2b1e1e;border:1px solid var(--bad);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;z-index:99;display:none;max-width:90%}
+.toast.ok{background:#15302a;border-color:var(--good)}
+table.rl{width:100%;border-collapse:collapse;font-size:13px}.rl td,.rl th{border:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}.rl th{color:var(--gold2)}
+.rules p{font-size:14px;color:var(--text)}.rules h4{color:var(--gold2);margin:14px 0 4px}
+.chip{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);font-size:12px;margin:2px 2px 0 0}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--muted);border-top-color:var(--gold);border-radius:50%;animation:sp 1s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.win{text-align:center;padding:24px 10px}.win .t{font-size:54px}.win h2{color:var(--gold2);margin:8px 0}
+</style>
 </head>
-<body style="background:#0a0a0f;color:#e8e8e8;font-family:sans-serif;">
+<body>
+<div class="wrap">
 
-
-  <!-- MENU SCREEN -->
-  <div id="menu-screen" class="screen">
-    <div class="menu-container">
-      <h1 class="title">Das Ministerium</h1>
-      <p class="subtitle">Täuschung ist Gesetz</p>
-
-      <div class="menu-buttons">
-        <button id="btn-solo" class="menu-btn">Solo vs. Bots</button>
-        <button id="btn-online" class="menu-btn">Online Multiplayer</button>
-      </div>
-
-      <!-- Solo Setup -->
-      <div id="solo-setup" class="setup-panel hidden">
-        <h2>Solo-Spiel konfigurieren</h2>
-
-        <div class="form-group">
-          <label for="player-name">Dein Name:</label>
-          <input type="text" id="player-name" value="Spieler" maxlength="20">
-        </div>
-
-        <div class="form-group">
-          <label for="bot-count">Anzahl Bots: <span id="bot-count-label">3</span></label>
-          <input type="range" id="bot-count" min="1" max="5" value="3">
-        </div>
-
-        <div class="form-group">
-          <label for="bot-difficulty">Bot-Schwierigkeit:</label>
-          <select id="bot-difficulty">
-            <option value="schwach">Schwach</option>
-            <option value="mittel" selected>Mittel</option>
-            <option value="stark">Stark</option>
-            <option value="gemischt">Gemischt</option>
-          </select>
-        </div>
-
-        <button id="btn-start-solo" class="menu-btn start-btn">Spiel starten</button>
-      </div>
-
-      <!-- Online Setup -->
-      <div id="online-setup" class="setup-panel hidden">
-        <h2>Online Multiplayer</h2>
-
-        <div class="form-group">
-          <label for="online-name">Dein Name:</label>
-          <input type="text" id="online-name" value="Spieler" maxlength="20">
-        </div>
-
-        <div class="online-options">
-          <button id="btn-create-lobby" class="menu-btn">Lobby erstellen</button>
-          <div class="join-group">
-            <input type="text" id="room-code" placeholder="Raum-Code" maxlength="4" style="text-transform: uppercase">
-            <button id="btn-join-lobby" class="menu-btn">Beitreten</button>
-          </div>
-        </div>
-
-        <div id="lobby-area" class="hidden">
-          <h3>Lobby: <span id="lobby-code"></span></h3>
-          <div id="lobby-players"></div>
-          <div class="form-group">
-            <label for="lobby-bots">Bots hinzufügen:</label>
-            <select id="lobby-bot-difficulty">
-              <option value="schwach">Schwach</option>
-              <option value="mittel">Mittel</option>
-              <option value="stark">Stark</option>
-            </select>
-            <button id="btn-add-bot" class="menu-btn small-btn">+ Bot</button>
-          </div>
-          <button id="btn-start-online" class="menu-btn start-btn">Spiel starten</button>
-        </div>
+<!-- START -->
+<section id="s-start" class="screen on">
+  <h1 class="brand">DAS MINISTERIUM</h1>
+  <p class="tag">Täuschung ist Gesetz</p>
+  <div class="card">
+    <label>Dein Name</label>
+    <input type="text" id="name" maxlength="16" placeholder="z. B. Boris" autocomplete="nickname">
+    <div id="joinbox" style="display:none;margin-top:14px">
+      <p class="muted">Du wurdest zu Spiel <b id="joincode" style="color:var(--gold2)"></b> eingeladen.</p>
+      <button class="btn" id="btn-join">Spiel beitreten</button>
+    </div>
+    <div id="createbox">
+      <button class="btn" id="btn-create">Neues Spiel erstellen</button>
+      <div class="row" style="margin-top:14px">
+        <input type="text" id="codein" maxlength="4" placeholder="CODE" style="text-transform:uppercase;letter-spacing:.2em;text-align:center">
+        <button class="btn sec" id="btn-join2" style="margin-top:0">Beitreten</button>
       </div>
     </div>
   </div>
+  <p class="muted" style="text-align:center">2 bis 6 Spieler · Jeder spielt auf dem eigenen Handy</p>
+  <p style="text-align:center"><button class="btn sec sm" onclick="openRules()">Regeln lesen</button></p>
+</section>
 
-  <!-- GAME SCREEN -->
-  <div id="game-screen" class="screen hidden">
-    <div class="game-layout">
-      <!-- Header -->
-      <div class="game-header">
-        <div id="round-display" class="stat-display">Runde: 1</div>
-        <div id="phase-info" class="phase-display">Vorbereitung</div>
-        <div class="economy-display">
-          <div id="pot-display" class="stat-display pot">Pot: 0</div>
-          <div id="bank-display" class="stat-display bank">Bank: 0</div>
-        </div>
-      </div>
-
-      <!-- Players Area -->
-      <div id="players-area" class="players-area"></div>
-
-      <!-- Action Panel -->
-      <div id="action-panel" class="action-panel hidden"></div>
-
-      <!-- Game Log -->
-      <div class="log-container">
-        <h3>Spielverlauf</h3>
-        <div id="game-log" class="game-log"></div>
-      </div>
-    </div>
-
-    <!-- Notification -->
-    <div id="notification" class="notification hidden"></div>
-  </div>
-
-  <!-- GAME OVER SCREEN -->
-  <div id="game-over-screen" class="screen hidden">
-    <div class="game-over-container">
-      <h1>Spiel beendet!</h1>
-      <div class="winner-display">
-        <p class="winner-label">Gewinner:</p>
-        <h2 id="winner-name"></h2>
-        <p id="winner-coins" class="winner-coins"></p>
-      </div>
-      <button id="btn-new-game" class="menu-btn" onclick="location.reload()">Neues Spiel</button>
+<!-- LOBBY -->
+<section id="s-lobby" class="screen">
+  <h1 class="brand" style="font-size:22px;margin-top:10px">DAS MINISTERIUM</h1>
+  <div class="card" style="text-align:center">
+    <div class="muted">Spielcode</div>
+    <div class="code" id="lcode">····</div>
+    <div class="muted">Schick deinen Freunden den Link, sie geben ihren Namen ein und sind drin.</div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn sec" id="btn-share" style="margin-top:0">Link teilen</button>
+      <button class="btn sec" id="btn-copy" style="margin-top:0">Link kopieren</button>
     </div>
   </div>
+  <div class="card">
+    <div class="muted">Spieler <span id="lcount"></span></div>
+    <ul class="plist" id="lplayers"></ul>
+    <div id="hostctl"><button class="btn" id="btn-start">Spiel starten</button></div>
+    <div id="waitctl" class="muted" style="text-align:center;margin-top:12px"><span class="spin"></span>Warten, bis der Host startet …</div>
+  </div>
+  <p style="text-align:center"><button class="btn sec sm" onclick="openRules()">Regeln lesen</button> <button class="btn sec sm" onclick="leaveGame()">Verlassen</button></p>
+</section>
 
-  
+<!-- GAME -->
+<section id="s-game" class="screen">
+  <div class="top">
+    <div><div class="brand">MINISTERIUM</div><div class="muted" id="ghand">Hand 1</div></div>
+    <div class="pot"><div><b id="gpot">0</b><span>Pot</span></div><div><b id="gbank">0</b><span>Bank</span></div><div><b id="gdeck">0</b><span>Stapel</span></div></div>
+  </div>
+  <div class="players" id="gplayers"></div>
+  <div id="myhand"></div>
+  <div id="action"></div>
+  <div class="log" id="glog"></div>
+  <p style="text-align:center;margin-top:10px"><button class="btn sec sm" onclick="openRules()">Regeln</button> <button class="btn sec sm" onclick="refresh(true)">Aktualisieren</button></p>
+</section>
 
-  <script>
-// --- constants.js ---
-// ============================================================
-// Das Ministerium — Constants & Game Rules
-// ============================================================
+</div>
 
+<div class="ov" id="ov"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ===== DAS MINISTERIUM – Spiel-Engine (reine Funktionen auf dem State) =====
 const ROLES = {
-  FINANZAMT: 'Finanzamt',
-  POLITIKER: 'Politiker',
-  DIEB: 'Dieb',
-  GANGSTER: 'Gangster',
-  POLIZIST: 'Polizist'
+  finanzamt: { name: 'Finanzamt', icon: '🏛️', action: 'Steuern: +3 Münzen aus dem Pot', blocks: 'blockiert Subvention', color: '#d4a24c' },
+  politiker: { name: 'Politiker', icon: '🎩', action: 'Karten tauschen: 4 sehen, 2 behalten', blocks: 'blockiert Diebstahl', color: '#7c9cf5' },
+  dieb:      { name: 'Dieb',      icon: '🕶️', action: 'Stehlen: 2 Münzen von einem Spieler', blocks: 'blockiert Diebstahl', color: '#5fc49a' },
+  gangster:  { name: 'Gangster',  icon: '🔫', action: 'Auftrag: −3 Münzen, Ziel verliert 1 Karte', blocks: '—', color: '#e0605e' },
+  polizist:  { name: 'Polizist',  icon: '🚔', action: '(keine Aktion)', blocks: 'blockiert Auftrag', color: '#b48ce6' },
 };
+const ROLE_KEYS = Object.keys(ROLES);
+const REACT_SECONDS = 30;
 
-const ROLE_LIST = Object.values(ROLES);
-
-// 15 cards total: 3 of each role
-const CARDS_PER_ROLE = 3;
-const TOTAL_CARDS = ROLE_LIST.length * CARDS_PER_ROLE; // 15
-
-// Economy
-const START_COINS = 7;
-const TOTAL_COINS = 50;
-const ABGABE_COST = 2;
-const STURZ_COST = 5;
-const AUFTRAG_COST = 3;
-const ANZEIGE_COST = 1;
-const ANZEIGE_FAIL_EXTRA_COST = 1; // additional 1 coin on failed Anzeige
-const MIN_BESTECHUNG_ANZEIGE = 2;
-const MIN_BESTECHUNG_STURZ = 1;
-const WINNER_CAP = 10;
-const REDISTRIBUTION = 1;
-const RUNDENSTEUER = 1;        // each loser pays this to round winner
-const RUNDENSTEUER_DUEL = 2;   // when only 2 players remain
-
-// Actions
 const ACTIONS = {
-  BUERGERGELD: 'buergergeld',
-  SUBVENTION: 'subvention',
-  STEUERN: 'steuern',
-  KARTEN_TAUSCHEN: 'karten_tauschen',
-  STEHLEN: 'stehlen',
-  AUFTRAG: 'auftrag',
-  STURZ: 'sturz'
+  buergergeld: { name: 'Bürgergeld', desc: '+1 Münze aus dem Pot. Nicht anfechtbar.', role: null, needsTarget: false },
+  subvention:  { name: 'Subvention', desc: '+2 Münzen aus dem Pot. Jeder darf mit Finanzamt blockieren.', role: null, needsTarget: false },
+  steuern:     { name: 'Steuern eintreiben', desc: '+3 Münzen aus dem Pot. Rolle: Finanzamt.', role: 'finanzamt', needsTarget: false },
+  tauschen:    { name: 'Karten tauschen', desc: '2 Karten ziehen, 4 ansehen, 2 behalten. Rolle: Politiker.', role: 'politiker', needsTarget: false },
+  stehlen:     { name: 'Stehlen', desc: '2 Münzen von einem Spieler. Rolle: Dieb. Ziel blockt mit Dieb oder Politiker.', role: 'dieb', needsTarget: true },
+  auftrag:     { name: 'Auftrag erteilen', desc: '3 Münzen in die Bank, Ziel verliert 1 Karte. Rolle: Gangster. Ziel blockt mit Polizist.', role: 'gangster', needsTarget: true },
+  sturz:       { name: 'Sturz', desc: '7 Münzen in den Pot. Rolle einer verdeckten Karte des Ziels raten. Nicht anzeigbar.', role: null, needsTarget: true },
 };
 
-const ACTION_INFO = {
-  [ACTIONS.BUERGERGELD]: {
-    name: 'Bürgergeld',
-    description: '+1 Münze aus dem Pot',
-    requiresRole: null,
-    requiresTarget: false,
-
-    potMin: 1,
-    coinCost: 0,
-    challengeable: false,
-    blockable: false
-  },
-  [ACTIONS.SUBVENTION]: {
-    name: 'Subvention',
-    description: '+2 Münzen aus dem Pot',
-    requiresRole: null,
-    requiresTarget: false,
-
-    potMin: 2,
-    coinCost: 0,
-    challengeable: false,
-    blockable: true,
-    blockedBy: [ROLES.FINANZAMT],
-    anyoneCanBlock: true
-  },
-  [ACTIONS.STEUERN]: {
-    name: 'Steuern eintreiben',
-    description: '+3 Münzen aus dem Pot (Finanzamt)',
-    requiresRole: ROLES.FINANZAMT,
-    requiresTarget: false,
-
-    potMin: 3,
-    coinCost: 0,
-    challengeable: true,
-    blockable: false
-  },
-  [ACTIONS.KARTEN_TAUSCHEN]: {
-    name: 'Karten tauschen',
-    description: 'Karten ziehen und beste behalten (Politiker)',
-    requiresRole: ROLES.POLITIKER,
-    requiresTarget: false,
-
-    potMin: 0,
-    coinCost: 0,
-    challengeable: true,
-    blockable: false
-  },
-  [ACTIONS.STEHLEN]: {
-    name: 'Stehlen',
-    description: '2 Münzen von einem Spieler (Dieb)',
-    requiresRole: ROLES.DIEB,
-    requiresTarget: true,
-
-    potMin: 0,
-    coinCost: 0,
-    challengeable: true,
-    blockable: true,
-    blockedBy: [ROLES.DIEB, ROLES.POLITIKER],
-    anyoneCanBlock: false // only target
-  },
-  [ACTIONS.AUFTRAG]: {
-    name: 'Auftrag erteilen',
-    description: 'Ziel verliert 1 Karte, kostet 3 Münzen (Gangster)',
-    requiresRole: ROLES.GANGSTER,
-    requiresTarget: true,
-
-    potMin: 0,
-    coinCost: AUFTRAG_COST,
-    coinTarget: 'bank',
-    challengeable: true,
-    blockable: true,
-    blockedBy: [ROLES.POLIZIST],
-    anyoneCanBlock: false // only target
-  },
-  [ACTIONS.STURZ]: {
-    name: 'Sturz',
-    description: 'Rolle einer Karte des Ziels erraten (7 Münzen)',
-    requiresRole: null,
-    requiresTarget: true,
-    requiresRoleGuess: true,
-
-    potMin: 0,
-    coinCost: STURZ_COST,
-    coinTarget: 'pot',
-    challengeable: false,
-    blockable: false,
-    bribeable: true
-  }
-};
-
-// Block matrix: which roles can block which actions
-const BLOCK_MATRIX = {
-  [ACTIONS.SUBVENTION]: { roles: [ROLES.FINANZAMT], anyoneCanBlock: true },
-  [ACTIONS.STEHLEN]: { roles: [ROLES.DIEB, ROLES.POLITIKER], anyoneCanBlock: false },
-  [ACTIONS.AUFTRAG]: { roles: [ROLES.POLIZIST], anyoneCanBlock: false }
-};
-
-// Reaction state machine states
-const REACTION_STATES = {
-  IDLE: 'idle',
-  AWAITING_REACTIONS: 'awaiting_reactions',
-  BLOCK_ANNOUNCED: 'block_announced',
-  AWAITING_ANZEIGE_ON_BLOCK: 'awaiting_anzeige_on_block',
-  ANZEIGE_RAISED: 'anzeige_raised',
-  AWAITING_BESTECHUNG: 'awaiting_bestechung',
-  AWAITING_BESTECHUNG_DECISION: 'awaiting_bestechung_decision',
-  STURZ_ANNOUNCED: 'sturz_announced',
-  AWAITING_STURZ_BESTECHUNG: 'awaiting_sturz_bestechung',
-  AWAITING_STURZ_BESTECHUNG_DECISION: 'awaiting_sturz_bestechung_decision',
-  RESOLVING: 'resolving'
-};
-
-// AI Profiles from PRD simulation
-const AI_PROFILES = {
-  schwach: {
-    name: 'Schwach',
-    anzeigeRate: 0.22,
-    anzeigeTrefferquote: 0.33,
-    bluffRate: 0.28,
-    blockRate: 0.28,
-    auftragRate: 0.38,
-    sturzRate: 0.30,
-    sturzTrefferquote: 0.25,
-    bestechungAnbieten: 0.28,
-    bestechungBluffHoch: 0.08,
-    bestechungBluffNiedrig: 0.06,
-    bestechungAnnehmen: 0.58,
-    zieltAufSchwächsten: 0.45
-  },
-  mittel: {
-    name: 'Mittel',
-    anzeigeRate: 0.40,
-    anzeigeTrefferquote: 0.52,
-    bluffRate: 0.44,
-    blockRate: 0.48,
-    auftragRate: 0.58,
-    sturzRate: 0.48,
-    sturzTrefferquote: 0.42,
-    bestechungAnbieten: 0.48,
-    bestechungBluffHoch: 0.18,
-    bestechungBluffNiedrig: 0.16,
-    bestechungAnnehmen: 0.44,
-    zieltAufSchwächsten: 0.68
-  },
-  stark: {
-    name: 'Stark',
-    anzeigeRate: 0.56,
-    anzeigeTrefferquote: 0.68,
-    bluffRate: 0.58,
-    blockRate: 0.68,
-    auftragRate: 0.72,
-    sturzRate: 0.62,
-    sturzTrefferquote: 0.56,
-    bestechungAnbieten: 0.62,
-    bestechungBluffHoch: 0.30,
-    bestechungBluffNiedrig: 0.26,
-    bestechungAnnehmen: 0.36,
-    zieltAufSchwächsten: 0.80
-  }
-};
-
-const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 6;
-
-
-// --- gameState.js ---
-// ============================================================
-// Das Ministerium — Game State Management
-// ============================================================
-
-
-// Create a fresh deck of 15 cards (3 per role)
-function createDeck() {
-  const deck = [];
-  for (const role of ROLE_LIST) {
-    for (let i = 0; i < CARDS_PER_ROLE; i++) {
-      deck.push(role);
-    }
-  }
-  return shuffle(deck);
-}
-
-// Fisher-Yates shuffle
 function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 }
+function freshDeck() { const d = []; ROLE_KEYS.forEach(r => { d.push(r, r, r); }); return shuffle(d); }
+function log(s, msg, kind) { s.log.push({ t: Date.now(), m: msg, k: kind || '' }); if (s.log.length > 60) s.log.splice(0, s.log.length - 60); }
+function pname(s, i) { return s.players[i] ? s.players[i].name : '?'; }
+function alive(s) { return s.players.map((p, i) => i).filter(i => !s.players[i].out); }
+function inHand(s) { return s.players.map((p, i) => i).filter(i => !s.players[i].out && s.players[i].cards.length > 0); }
 
-// Create a player
-function createPlayer(id, name, isHuman = false, aiProfile = null) {
+// Nachziehstapel: bei leerem Stapel alle aufgedeckten Karten neu mischen
+function draw(s) {
+  if (s.deck.length === 0) {
+    const pool = [];
+    s.players.forEach(p => { pool.push(...p.revealed); p.revealed = []; });
+    s.deck = shuffle(pool);
+  }
+  return s.deck.shift();
+}
+
+function newState(hostId, hostName) {
   return {
-    id,
-    name,
-    coins: START_COINS,
-    cards: [], // { role, revealed }
-    isHuman,
-    isBot: !isHuman,
-    aiProfile, // 'schwach' | 'mittel' | 'stark' | null
-    eliminated: false,
-    socketId: null
+    phase: 'lobby', host: hostId,
+    players: [{ id: hostId, name: hostName, coins: 10, cards: [], revealed: [], out: false }],
+    deck: [], pot: 0, bank: 0, hand: 0, turn: 0, startIdx: 0,
+    pending: null, steps: [], log: [], winner: null, handResult: null, created: Date.now(),
   };
 }
 
-// Create initial game state
-function createGameState(players) {
-  const deck = createDeck();
-  const totalPlayerCoins = players.length * START_COINS;
-  const bankCoins = TOTAL_COINS - totalPlayerCoins;
-
-  // Deal 2 cards to each player
-  const gamePlayers = players.map(p => {
-    const player = { ...p, cards: [] };
-    player.cards.push({ role: deck.pop(), revealed: false });
-    player.cards.push({ role: deck.pop(), revealed: false });
-    return player;
-  });
-
-  return {
-    players: gamePlayers,
-    bank: bankCoins,
-    pot: 0,
-    deck,
-    discardPile: [],
-    currentPlayerIndex: 0,
-    phase: 'round_setup',
-    round: 1,
-    roundWinner: null,
-    turnIndex: 0,
-    reactionState: REACTION_STATES.IDLE,
-    pendingAction: null,
-    pendingReaction: null,
-    log: [],
-    gameOver: false,
-    winner: null,
-    metaEliminated: [] // players eliminated from the entire game (0 coins)
-  };
+function startGame(s) {
+  s.phase = 'playing'; s.hand = 0; s.pot = 0; s.bank = 0; s.winner = null;
+  s.players.forEach(p => { p.coins = 10; p.out = false; p.cards = []; p.revealed = []; });
+  s.startIdx = -1; s.log = [];
+  log(s, 'Das Spiel beginnt. Jeder erhält 10 Münzen.', 'sys');
+  startHand(s);
 }
 
-// Get active players (still in the current round — have unrevealed cards)
-function getActivePlayers(state) {
-  return state.players.filter(p => !p.eliminated && getInfluence(p) > 0);
+function startHand(s) {
+  s.hand += 1; s.pending = null; s.steps = []; s.handResult = null;
+  // Phase 1: Abgabe
+  s.players.forEach(p => { if (!p.out && p.coins > 0) { p.coins -= 1; s.pot += 1; } });
+  s.players.forEach(p => { if (!p.out && p.coins === 0) { p.out = true; log(s, `${p.name} hat keine Münzen mehr und scheidet aus.`, 'bad'); } });
+  log(s, `Hand ${s.hand}: Abgabe gezahlt. Pot: ${s.pot}.`, 'sys');
+  const al = alive(s);
+  if (al.length <= 1) { return gameOver(s, al[0]); }
+  // Karten
+  s.deck = freshDeck();
+  al.forEach(i => { s.players[i].cards = [s.deck.shift(), s.deck.shift()]; s.players[i].revealed = []; });
+  s.players.forEach((p, i) => { if (p.out) { p.cards = []; p.revealed = []; } });
+  // Startspieler rotiert
+  let idx = s.startIdx;
+  do { idx = (idx + 1) % s.players.length; } while (s.players[idx].out);
+  s.startIdx = idx; s.turn = idx;
+  log(s, `${pname(s, idx)} beginnt.`, 'sys');
 }
 
-// Get players still in the game (have coins or cards)
-function getAlivePlayersInGame(state) {
-  return state.players.filter(p => !state.metaEliminated.includes(p.id));
+function gameOver(s, winnerIdx) {
+  s.phase = 'over'; s.winner = winnerIdx == null ? null : winnerIdx; s.pending = null; s.steps = [];
+  log(s, winnerIdx != null ? `🏆 ${pname(s, winnerIdx)} gewinnt das Spiel!` : 'Spiel beendet.', 'good');
 }
 
-// Get influence count (unrevealed cards)
-function getInfluence(player) {
-  return player.cards.filter(c => !c.revealed).length;
+function nextTurn(s) {
+  const ih = inHand(s);
+  if (ih.length === 0) return;
+  // Sackgasse: niemand hat Münzen und der Pot ist leer → Hand endet ohne Gewinner
+  if (s.pot === 0 && ih.every(i => s.players[i].coins === 0)) {
+    log(s, 'Niemand hat mehr Münzen und der Pot ist leer. Die Hand endet unentschieden.', 'sys');
+    s.steps = []; s.pending = null;
+    s.players.forEach(p => { if (!p.out && p.coins === 0) p.out = true; });
+    gameOver(s, null); return;
+  }
+  let idx = s.turn;
+  do { idx = (idx + 1) % s.players.length; } while (!ih.includes(idx));
+  s.turn = idx; s.pending = null;
 }
 
-// Player loses a card (reveals one of their choice)
-function loseCard(state, playerId, cardIndex) {
-  const player = state.players.find(p => p.id === playerId);
-  if (!player) return;
-  const unrevealed = player.cards.filter(c => !c.revealed);
-  if (unrevealed.length === 0) return;
-
-  // cardIndex refers to which unrevealed card (0 or 1)
-  const actualIndex = cardIndex !== undefined
-    ? player.cards.findIndex((c, i) => !c.revealed && i === cardIndex)
-    : player.cards.findIndex(c => !c.revealed);
-
-  if (actualIndex >= 0) {
-    player.cards[actualIndex].revealed = true;
-    state.discardPile.push(player.cards[actualIndex].role);
-    addLog(state, `${player.name} verliert Einfluss: ${player.cards[actualIndex].role} aufgedeckt.`);
+// Phase 3: Pot-Verteilung
+function endHand(s, winnerIdx) {
+  s.steps = []; s.pending = null;
+  const others = alive(s).filter(i => i !== winnerIdx);
+  let winAmt = 0, each = 0;
+  if (s.pot <= 10 || others.length === 0) { winAmt = s.pot; }
+  else {
+    winAmt = 10;
+    const rest = s.pot - 10;
+    if (rest >= others.length) each = 1; else winAmt = s.pot; // Pot zu klein → Gewinner nimmt alles
   }
+  s.pot -= winAmt; s.players[winnerIdx].coins += winAmt;
+  if (each) others.forEach(i => { s.players[i].coins += 1; s.pot -= 1; });
+  log(s, `Hand ${s.hand} beendet. ${pname(s, winnerIdx)} gewinnt ${winAmt} Münzen` + (each ? `, alle anderen je 1.` : '.') + ` Rest im Pot: ${s.pot}.`, 'good');
+  s.players.forEach(p => { if (!p.out && p.coins === 0) { p.out = true; log(s, `${p.name} hat keine Münzen mehr und scheidet aus.`, 'bad'); } });
+  s.handResult = { winner: winnerIdx, winAmt, each, pot: s.pot };
+  const al = alive(s);
+  if (al.length <= 1) { gameOver(s, al[0]); return; }
+  s.pending = { type: 'handEnd' };
 }
 
-// Transfer coins between entities
-function transferCoins(state, from, to, amount) {
-  if (amount <= 0) return 0;
-
-  let actualAmount = amount;
-  let source, dest;
-
-  // Resolve source
-  if (from === 'bank') {
-    actualAmount = Math.min(amount, state.bank);
-    state.bank -= actualAmount;
-  } else if (from === 'pot') {
-    actualAmount = Math.min(amount, state.pot);
-    state.pot -= actualAmount;
-  } else {
-    const player = state.players.find(p => p.id === from);
-    if (!player) return 0;
-    actualAmount = Math.min(amount, player.coins);
-    player.coins -= actualAmount;
+// ----- Aktionen -----
+function validateAction(s, actorIdx, action, target, role) {
+  const p = s.players[actorIdx];
+  if (s.phase !== 'playing' || s.pending || s.turn !== actorIdx) return 'Du bist nicht am Zug.';
+  const A = ACTIONS[action]; if (!A) return 'Unbekannte Aktion.';
+  if (A.needsTarget) {
+    if (target == null || target === actorIdx || !inHand(s).includes(target)) return 'Ungültiges Ziel.';
   }
-
-  // Resolve destination
-  if (to === 'bank') {
-    state.bank += actualAmount;
-  } else if (to === 'pot') {
-    state.pot += actualAmount;
-  } else {
-    const player = state.players.find(p => p.id === to);
-    if (player) player.coins += actualAmount;
+  switch (action) {
+    case 'buergergeld': if (s.pot < 1) return 'Pot ist leer.'; break;
+    case 'subvention': if (s.pot < 2) return 'Pot hat weniger als 2 Münzen.'; break;
+    case 'steuern': if (s.pot < 3) return 'Pot hat weniger als 3 Münzen.'; break;
+    case 'stehlen': if (s.players[target].coins < 1) return 'Ziel hat keine Münzen.'; break;
+    case 'auftrag': if (p.coins < 3) return 'Du brauchst 3 Münzen.'; break;
+    case 'sturz': if (p.coins < 7) return 'Du brauchst 7 Münzen.'; if (!ROLES[role]) return 'Rolle wählen.'; break;
   }
-
-  return actualAmount;
-}
-
-// Phase 1: Abgabe — each player pays 1 coin to pot
-function executeAbgabe(state) {
-  const alive = getAlivePlayersInGame(state);
-  for (const player of alive) {
-    if (player.coins > 0) {
-      const paid = transferCoins(state, player.id, 'pot', ABGABE_COST);
-      if (paid > 0) {
-        addLog(state, `${player.name} zahlt ${paid} Münze Abgabe in den Pot.`);
-      }
-    }
-  }
-
-  // Eliminate players with 0 coins after Abgabe
-  const eliminated = [];
-  for (const player of alive) {
-    if (player.coins === 0 && !state.metaEliminated.includes(player.id)) {
-      player.eliminated = true;
-      state.metaEliminated.push(player.id);
-      eliminated.push(player);
-      addLog(state, `${player.name} hat 0 Münzen nach der Abgabe und scheidet aus!`);
-    }
-  }
-
-  return eliminated;
-}
-
-// Phase 3: Pot distribution + Rundensteuer
-function distributePot(state, roundWinnerId) {
-  const winner = state.players.find(p => p.id === roundWinnerId);
-  if (!winner) return;
-
-  const activeMeta = state.players.filter(p =>
-    !state.metaEliminated.includes(p.id) && p.id !== roundWinnerId
-  );
-
-  const aliveCount = activeMeta.length + 1; // +1 for winner
-
-  // 1. Winner gets max 10 from pot
-  const winnerAmount = Math.min(WINNER_CAP, state.pot);
-  transferCoins(state, 'pot', roundWinnerId, winnerAmount);
-  addLog(state, `${winner.name} erhält ${winnerAmount} Münzen aus dem Pot (Rundengewinner).`);
-
-  // 2. Rundensteuer: each loser pays winner directly
-  const taxAmount = aliveCount <= 2 ? RUNDENSTEUER_DUEL : RUNDENSTEUER;
-  let totalTax = 0;
-  for (const player of activeMeta) {
-    const paid = transferCoins(state, player.id, roundWinnerId, taxAmount);
-    if (paid > 0) totalTax += paid;
-  }
-  if (totalTax > 0) {
-    addLog(state, `Rundensteuer: ${winner.name} erhält ${totalTax} Münzen von den Verlierern.`);
-  }
-
-  // 3. Redistribution (only with 3+ players)
-  if (aliveCount >= 3) {
-    for (const player of activeMeta) {
-      const redistAmount = Math.min(REDISTRIBUTION, state.pot);
-      if (redistAmount > 0) {
-        transferCoins(state, 'pot', player.id, redistAmount);
-        addLog(state, `${player.name} erhält ${redistAmount} Münze Redistribution.`);
-      }
-    }
-  }
-
-  if (state.pot > 0) {
-    addLog(state, `${state.pot} Münzen verbleiben im Pot.`);
-  }
-
-  // 4. Eliminate players with 0 coins
-  for (const player of state.players) {
-    if (player.coins === 0 && !state.metaEliminated.includes(player.id)) {
-      player.eliminated = true;
-      state.metaEliminated.push(player.id);
-      addLog(state, `${player.name} hat 0 Münzen und scheidet aus dem Spiel aus!`);
-    }
-  }
-}
-
-// Setup new round
-function setupNewRound(state) {
-  state.round++;
-  state.roundWinner = null;
-  state.turnIndex = 0;
-  state.currentPlayerIndex = 0;
-
-  // Reshuffle all cards
-  const allCards = [];
-  for (const player of state.players) {
-    for (const card of player.cards) {
-      allCards.push(card.role);
-    }
-    player.cards = [];
-  }
-  // Add discard pile
-  allCards.push(...state.discardPile);
-  // Add remaining deck
-  allCards.push(...state.deck);
-
-  state.deck = shuffle(allCards);
-  state.discardPile = [];
-
-  // Deal 2 cards to each active player
-  const alive = state.players.filter(p => !state.metaEliminated.includes(p.id));
-  for (const player of alive) {
-    player.cards = [
-      { role: state.deck.pop(), revealed: false },
-      { role: state.deck.pop(), revealed: false }
-    ];
-    player.eliminated = false;
-  }
-
-  // Find first non-eliminated player
-  state.currentPlayerIndex = findNextActivePlayer(state, 0);
-  state.phase = 'abgabe';
-  addLog(state, `--- Runde ${state.round} beginnt ---`);
-}
-
-// Check if game is over
-function checkGameOver(state) {
-  const alive = state.players.filter(p => !state.metaEliminated.includes(p.id));
-  if (alive.length <= 1) {
-    state.gameOver = true;
-    state.winner = alive[0] || null;
-    if (state.winner) {
-      addLog(state, `🏆 ${state.winner.name} gewinnt das Spiel!`);
-    }
-    return true;
-  }
-  return false;
-}
-
-// Find next active player index (has cards and not eliminated)
-function findNextActivePlayer(state, fromIndex) {
-  const n = state.players.length;
-  for (let i = 0; i < n; i++) {
-    const idx = (fromIndex + i) % n;
-    const p = state.players[idx];
-    if (!p.eliminated && !state.metaEliminated.includes(p.id) && getInfluence(p) > 0) {
-      return idx;
-    }
-  }
-  return -1;
-}
-
-// Reshuffle discard pile into deck when deck is empty
-function reshuffleDeck(state) {
-  if (state.deck.length === 0 && state.discardPile.length > 0) {
-    state.deck = shuffle([...state.discardPile]);
-    state.discardPile = [];
-    addLog(state, 'Nachziehstapel wurde neu gemischt.');
-  }
-}
-
-// Swap a player's card back into deck and draw a new one
-function swapCard(state, playerId, cardIndex) {
-  const player = state.players.find(p => p.id === playerId);
-  if (!player) return;
-
-  reshuffleDeck(state);
-  if (state.deck.length === 0) return;
-
-  const oldRole = player.cards[cardIndex].role;
-  state.deck.push(oldRole);
-  state.deck = shuffle(state.deck);
-  player.cards[cardIndex].role = state.deck.pop();
-}
-
-function addLog(state, message) {
-  state.log.push(message);
-}
-
-function getPlayerById(state, id) {
-  return state.players.find(p => p.id === id);
-}
-
-
-// --- actions.js ---
-// ============================================================
-// Das Ministerium — Action Execution
-// ============================================================
-
-
-
-// All actions + their availability reason (for greyed-out tooltips)
-function getAvailableActions(state, player) {
-  const available = [];
-
-  for (const [actionId, info] of Object.entries(ACTION_INFO)) {
-    if (canPerformAction(state, player, actionId)) {
-      available.push(actionId);
-    }
-  }
-
-  return available;
-}
-
-// Returns { available: bool, reason: string } for tooltip display
-function getActionAvailability(state, player, actionId) {
-  const info = ACTION_INFO[actionId];
-  if (!info) return { available: false, reason: 'Unbekannte Aktion' };
-
-  if (info.coinCost > 0 && player.coins < info.coinCost)
-    return { available: false, reason: `Nicht genug Münzen (${info.coinCost} benötigt)` };
-
-  if (info.potMin > 0 && state.pot < info.potMin)
-    return { available: false, reason: `Pot zu leer (${info.potMin} benötigt)` };
-
-  if (info.requiresTarget) {
-    const targets = getValidTargets(state, player, actionId);
-    if (targets.length === 0)
-      return { available: false, reason: 'Kein gültiges Ziel' };
-  }
-
-  return { available: true, reason: '' };
-}
-
-function canPerformAction(state, player, actionId) {
-  const info = ACTION_INFO[actionId];
-  if (!info) return false;
-
-  // Check coin cost (Auftrag=3, Sturz=7)
-  if (info.coinCost > 0 && player.coins < info.coinCost) return false;
-
-  // Check pot minimum — Bürgergeld needs 1, Subvention needs 2, Steuern needs 3
-  if (info.potMin > 0 && state.pot < info.potMin) return false;
-
-  // Check target availability for targeted actions
-  if (info.requiresTarget) {
-    const targets = getValidTargets(state, player, actionId);
-    if (targets.length === 0) return false;
-  }
-
-  return true;
-}
-
-// Get valid targets for a targeted action
-function getValidTargets(state, player, actionId) {
-  return state.players.filter(p => {
-    if (p.id === player.id) return false;
-    if (p.eliminated || state.metaEliminated.includes(p.id)) return false;
-    if (getInfluence(p) === 0) return false;
-
-    // Stehlen: target must have at least 1 coin
-    if (actionId === ACTIONS.STEHLEN && p.coins < 1) return false;
-
-    return true;
-  });
-}
-
-// Execute an action (after all reactions resolved, action confirmed)
-function executeAction(state, playerId, actionId, targetId, roleGuess) {
-  const player = getPlayerById(state, playerId);
-  if (!player) return false;
-
-  const info = ACTION_INFO[actionId];
-  const target = targetId ? getPlayerById(state, targetId) : null;
-
-  switch (actionId) {
-    case ACTIONS.BUERGERGELD: {
-      const amount = transferCoins(state, 'pot', playerId, 1);
-      addLog(state, `${player.name} nimmt Bürgergeld: +${amount} Münze aus dem Pot.`);
-      return true;
-    }
-
-    case ACTIONS.SUBVENTION: {
-      const amount = transferCoins(state, 'pot', playerId, 2);
-      addLog(state, `${player.name} erhält Subvention: +${amount} Münzen aus dem Pot.`);
-      return true;
-    }
-
-    case ACTIONS.STEUERN: {
-      const amount = transferCoins(state, 'pot', playerId, 3);
-      addLog(state, `${player.name} treibt Steuern ein (Finanzamt): +${amount} Münzen aus dem Pot.`);
-      return true;
-    }
-
-    case ACTIONS.KARTEN_TAUSCHEN: {
-      // Draw 2, see all 4, keep 2, return 2 — handled via UI/AI
-      addLog(state, `${player.name} tauscht Karten (Politiker).`);
-      return true; // actual swap handled separately
-    }
-
-    case ACTIONS.STEHLEN: {
-      if (!target) return false;
-      const amount = transferCoins(state, targetId, playerId, 2);
-      addLog(state, `${player.name} stiehlt ${amount} Münzen von ${target.name} (Dieb).`);
-      return true;
-    }
-
-    case ACTIONS.AUFTRAG: {
-      // 3 coins already paid to bank during announcement
-      if (!target) return false;
-      addLog(state, `${player.name} erteilt Auftrag gegen ${target.name} (Gangster).`);
-      // Target loses a card — handled by caller (card choice needed)
-      return true;
-    }
-
-    case ACTIONS.STURZ: {
-      // 7 coins already paid to pot during announcement
-      if (!target || !roleGuess) return false;
-      // Check if target has the guessed role
-      const matchingCard = target.cards.find(c => !c.revealed && c.role === roleGuess);
-      if (matchingCard) {
-        matchingCard.revealed = true;
-        state.discardPile.push(matchingCard.role);
-        addLog(state, `${player.name} stürzt ${target.name} — ${roleGuess} erraten! Karte verloren.`);
-        return true;
-      } else {
-        addLog(state, `${player.name} stürzt ${target.name} — ${roleGuess} falsch geraten. Keine Strafe.`);
-        return false; // 7 coins stay in pot regardless
-      }
-    }
-
-    default:
-      return false;
-  }
-}
-
-// Pay action costs upfront (before reactions)
-function payActionCost(state, playerId, actionId) {
-  const info = ACTION_INFO[actionId];
-  const player = getPlayerById(state, playerId);
-
-  if (info.coinCost > 0) {
-    if (info.coinTarget === 'bank') {
-      transferCoins(state, playerId, 'bank', info.coinCost);
-      addLog(state, `${player.name} zahlt ${info.coinCost} Münzen in die Bank.`);
-    } else if (info.coinTarget === 'pot') {
-      transferCoins(state, playerId, 'pot', info.coinCost);
-      addLog(state, `${player.name} zahlt ${info.coinCost} Münzen in den Pot.`);
-    }
-  }
-}
-
-// Execute Karten tauschen (Politiker) — draw phase
-function drawCardsForPolitiker(state, playerId) {
-  const player = getPlayerById(state, playerId);
-  if (!player) return [];
-
-  const unrevealedCount = player.cards.filter(c => !c.revealed).length;
-
-  reshuffleDeck(state);
-  const drawn = [];
-  // Draw same number of cards as unrevealed cards (1 or 2)
-  const drawCount = Math.min(unrevealedCount, 2);
-  for (let i = 0; i < drawCount && state.deck.length > 0; i++) {
-    drawn.push(state.deck.pop());
-  }
-  return drawn;
-}
-
-// Complete Karten tauschen — player chose which to keep
-function completePolitikerSwap(state, playerId, keptCards, returnedCards) {
-  const player = getPlayerById(state, playerId);
-  if (!player) return;
-
-  const unrevealedCount = player.cards.filter(c => !c.revealed).length;
-  const revealed = player.cards.filter(c => c.revealed);
-
-  // Keep exactly as many cards as the player had unrevealed (1 or 2)
-  const actualKept = keptCards.slice(0, unrevealedCount);
-  const actualReturned = [...keptCards.slice(unrevealedCount), ...returnedCards];
-
-  // Player always has exactly 2 card slots total
-  player.cards = [
-    ...actualKept.map(role => ({ role, revealed: false })),
-    ...revealed
-  ];
-
-  // Return unused cards to deck
-  for (const role of actualReturned) {
-    state.deck.push(role);
-  }
-  state.deck = shuffle(state.deck);
-
-  addLog(state, `${player.name} hat Karten getauscht und ${actualKept.length} behalten.`);
-}
-
-
-// --- reactions.js ---
-// ============================================================
-// Das Ministerium — Reaction System (State Machine)
-// ============================================================
-//
-// Flow:
-// 1. Action announced → AWAITING_REACTIONS
-//    - Players can: Block, Anzeige, or Pass
-// 2. Block announced → AWAITING_ANZEIGE_ON_BLOCK
-//    - Action player can: Anzeige the block, or Accept (action fails)
-// 3. Anzeige raised → AWAITING_BESTECHUNG
-//    - Target can: offer Bestechung, or reveal card
-// 4. Bestechung offered → AWAITING_BESTECHUNG_DECISION
-//    - Challenger decides: accept (anzeige dropped) or decline (card reveal)
-// 5. Sturz announced → AWAITING_STURZ_BESTECHUNG
-//    - Target can bribe attacker
-//
-// Resolution determines if action succeeds or fails.
-
-
-
-// Create a pending action context
-function createPendingAction(playerId, actionId, targetId = null, roleGuess = null, claimedRole = null) {
-  return {
-    playerId,
-    actionId,
-    targetId,
-    roleGuess,
-    claimedRole: claimedRole || ACTION_INFO[actionId]?.requiresRole || null,
-    blocked: false,
-    blockPlayerId: null,
-    blockClaimedRole: null,
-    challenged: false,
-    challengePlayerId: null,
-    challengeTarget: null, // 'action' or 'block'
-    bestechungOffer: 0,
-    actionSucceeds: true,
-    resolved: false,
-    // Track who has passed reactions
-    passedPlayers: new Set(),
-    // For Doppelgefahr tracking
-    doppelgefahr: false
-  };
-}
-
-// Get players who can react to the current action (clockwise from actor)
-function getReactingPlayers(state, pending) {
-  const info = ACTION_INFO[pending.actionId];
-  const players = [];
-  const n = state.players.length;
-  const startIdx = state.players.findIndex(p => p.id === pending.playerId);
-
-  for (let i = 1; i < n; i++) {
-    const idx = (startIdx + i) % n;
-    const p = state.players[idx];
-    if (p.eliminated || state.metaEliminated.includes(p.id) || getInfluence(p) === 0) continue;
-    if (pending.passedPlayers.has(p.id)) continue;
-    players.push(p);
-  }
-  return players;
-}
-
-// Get available reactions for a player
-function getAvailableReactions(state, pending, playerId) {
-  const reactions = [];
-  const player = getPlayerById(state, playerId);
-  if (!player || player.eliminated || getInfluence(player) === 0) return reactions;
-
-  const info = ACTION_INFO[pending.actionId];
-
-  if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
-    // Can Anzeige if action is challengeable and player has coins
-    if (info.challengeable && player.coins >= ANZEIGE_COST) {
-      reactions.push('anzeige');
-    }
-
-    // Can Block if action is blockable
-    if (info.blockable) {
-      const blockInfo = BLOCK_MATRIX[pending.actionId];
-      if (blockInfo) {
-        if (blockInfo.anyoneCanBlock) {
-          reactions.push('block');
-        } else if (pending.targetId === playerId) {
-          reactions.push('block');
-        }
-      }
-    }
-
-    reactions.push('pass');
-  }
-
-  if (state.reactionState === REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK) {
-    // Only action player can challenge the block
-    if (playerId === pending.playerId && player.coins >= ANZEIGE_COST) {
-      reactions.push('anzeige_block');
-    }
-    reactions.push('accept_block');
-  }
-
-  if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG) {
-    // Anzeige target can offer Bestechung
-    if (playerId === pending.challengeTarget) {
-      const minBribe = MIN_BESTECHUNG_ANZEIGE;
-      if (player.coins >= minBribe) {
-        reactions.push('bestechung');
-      }
-      reactions.push('reveal_card');
-    }
-  }
-
-  if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG_DECISION) {
-    // Challenger decides on bribe
-    if (playerId === pending.challengePlayerId) {
-      reactions.push('accept_bestechung');
-      reactions.push('decline_bestechung');
-    }
-  }
-
-  if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG) {
-    // Sturz target can bribe
-    if (playerId === pending.targetId) {
-      if (player.coins >= MIN_BESTECHUNG_STURZ) {
-        reactions.push('sturz_bestechung');
-      }
-      reactions.push('accept_sturz');
-    }
-  }
-
-  if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG_DECISION) {
-    if (playerId === pending.playerId) {
-      reactions.push('accept_sturz_bestechung');
-      reactions.push('decline_sturz_bestechung');
-    }
-  }
-
-  return reactions;
-}
-
-// Process a reaction
-function processReaction(state, pending, playerId, reaction, params = {}) {
-  const player = getPlayerById(state, playerId);
-
-  switch (reaction) {
-    case 'pass':
-      pending.passedPlayers.add(playerId);
-      // Check if all eligible players passed
-      const reactors = getReactingPlayers(state, pending);
-      if (reactors.length === 0) {
-        // All passed — action succeeds
-        state.reactionState = REACTION_STATES.RESOLVING;
-        pending.actionSucceeds = true;
-      }
-      break;
-
-    case 'anzeige':
-      handleAnzeige(state, pending, playerId, 'action');
-      break;
-
-    case 'block': {
-      const blockRole = params.blockRole;
-      pending.blocked = true;
-      pending.blockPlayerId = playerId;
-      pending.blockClaimedRole = blockRole;
-      state.reactionState = REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK;
-      addLog(state, `${player.name} blockiert mit ${blockRole}!`);
-      break;
-    }
-
-    case 'anzeige_block':
-      handleAnzeige(state, pending, playerId, 'block');
-      break;
-
-    case 'accept_block':
-      // Action fails due to uncontested block
-      pending.actionSucceeds = false;
-      state.reactionState = REACTION_STATES.RESOLVING;
-      addLog(state, `${getPlayerById(state, pending.playerId).name} akzeptiert den Block.`);
-      break;
-
-    case 'bestechung': {
-      const amount = params.amount || MIN_BESTECHUNG_ANZEIGE;
-      pending.bestechungOffer = amount;
-      state.reactionState = REACTION_STATES.AWAITING_BESTECHUNG_DECISION;
-      addLog(state, `${player.name} bietet ${amount} Münzen Bestechung an.`);
-      break;
-    }
-
-    case 'accept_bestechung':
-      handleAcceptBestechung(state, pending);
-      break;
-
-    case 'decline_bestechung':
-      handleDeclineBestechung(state, pending);
-      break;
-
-    case 'reveal_card':
-      // Anzeige target chooses to reveal (no bribe)
-      handleRevealCard(state, pending);
-      break;
-
-    case 'sturz_bestechung': {
-      const amount = params.amount || MIN_BESTECHUNG_STURZ;
-      pending.bestechungOffer = amount;
-      state.reactionState = REACTION_STATES.AWAITING_STURZ_BESTECHUNG_DECISION;
-      addLog(state, `${player.name} bietet ${amount} Münzen Bestechung gegen den Sturz an.`);
-      break;
-    }
-
-    case 'accept_sturz_bestechung': {
-      // Attacker accepts bribe, Sturz cancelled
-      const target = getPlayerById(state, pending.targetId);
-      const attacker = getPlayerById(state, pending.playerId);
-      transferCoins(state, pending.targetId, pending.playerId, pending.bestechungOffer);
-      addLog(state, `${attacker.name} nimmt die Bestechung an. Sturz abgewendet.`);
-      pending.actionSucceeds = false;
-      state.reactionState = REACTION_STATES.RESOLVING;
-      break;
-    }
-
-    case 'decline_sturz_bestechung': {
-      // Attacker declines, Sturz proceeds
-      addLog(state, `${getPlayerById(state, pending.playerId).name} lehnt die Bestechung ab.`);
-      pending.actionSucceeds = true;
-      state.reactionState = REACTION_STATES.RESOLVING;
-      break;
-    }
-
-    case 'accept_sturz':
-      // Target accepts Sturz (no bribe)
-      pending.actionSucceeds = true;
-      state.reactionState = REACTION_STATES.RESOLVING;
-      break;
-  }
-
-  return pending;
-}
-
-function handleAnzeige(state, pending, challengerId, target) {
-  const challenger = getPlayerById(state, challengerId);
-
-  // Pay 1 coin to pot
-  transferCoins(state, challengerId, 'pot', ANZEIGE_COST);
-
-  pending.challenged = true;
-  pending.challengePlayerId = challengerId;
-
-  if (target === 'action') {
-    pending.challengeTarget = pending.playerId;
-    addLog(state, `${challenger.name} zeigt ${getPlayerById(state, pending.playerId).name} an! (Bezweifelt: ${pending.claimedRole})`);
-  } else {
-    pending.challengeTarget = pending.blockPlayerId;
-    addLog(state, `${challenger.name} zeigt ${getPlayerById(state, pending.blockPlayerId).name} an! (Bezweifelt Block: ${pending.blockClaimedRole})`);
-  }
-
-  state.reactionState = REACTION_STATES.AWAITING_BESTECHUNG;
-}
-
-function handleAcceptBestechung(state, pending) {
-  const challenger = getPlayerById(state, pending.challengePlayerId);
-  const target = getPlayerById(state, pending.challengeTarget);
-
-  // Transfer bribe
-  transferCoins(state, pending.challengeTarget, pending.challengePlayerId, pending.bestechungOffer);
-  addLog(state, `${challenger.name} nimmt die Bestechung (${pending.bestechungOffer} Münzen) an. Anzeige zurückgezogen.`);
-
-  // Anzeige dropped — what happens to the action?
-  if (pending.blocked && pending.challengeTarget === pending.blockPlayerId) {
-    // Was challenging a block, bribe accepted → block stands, action fails
-    pending.actionSucceeds = false;
-  } else {
-    // Was challenging an action, bribe accepted → action proceeds
-    pending.actionSucceeds = true;
-  }
-
-  state.reactionState = REACTION_STATES.RESOLVING;
-}
-
-function handleDeclineBestechung(state, pending) {
-  addLog(state, `Bestechung abgelehnt. Karte wird aufgedeckt.`);
-  handleRevealCard(state, pending);
-}
-
-function handleRevealCard(state, pending) {
-  const targetId = pending.challengeTarget;
-  const target = getPlayerById(state, targetId);
-  const challenger = getPlayerById(state, pending.challengePlayerId);
-
-  const claimedRole = pending.blocked && targetId === pending.blockPlayerId
-    ? pending.blockClaimedRole
-    : pending.claimedRole;
-
-  // Does target actually have the claimed role?
-  const hasRole = target.cards.some(c => !c.revealed && c.role === claimedRole);
-
-  if (hasRole) {
-    // Anzeige FALSCH — challenger loses card + extra coin
-    addLog(state, `Anzeige FALSCH! ${target.name} hat tatsächlich ${claimedRole}.`);
-    transferCoins(state, pending.challengePlayerId, 'pot', ANZEIGE_FAIL_EXTRA_COST);
-
-    // Challenger loses a card (will be chosen by player/AI)
-    pending._challengerMustLoseCard = true;
-
-    // Target swaps the proven card for a new one from deck (card stays HIDDEN)
-    const cardIdx = target.cards.findIndex(c => !c.revealed && c.role === claimedRole);
-    if (cardIdx >= 0 && state.deck.length > 0) {
-      const oldRole = target.cards[cardIdx].role;
-      state.deck.push(oldRole);
-      state.deck = shuffle(state.deck);
-      target.cards[cardIdx].role = state.deck.pop();
-      // Card remains unrevealed — player keeps full influence
-      addLog(state, `${target.name} beweist ${claimedRole} und tauscht die Karte verdeckt gegen eine neue.`);
-    }
-
-    if (pending.blocked && targetId === pending.blockPlayerId) {
-      // False challenge on Polizist block → block stands, action FAILS
-      // PRD: "Block steht → Auftrag schlägt fehl (keine Doppelgefahr)"
-      pending.actionSucceeds = false;
-      addLog(state, `Block steht. Aktion schlägt fehl.`);
-    } else {
-      // False challenge on action claim → action proceeds
-      pending.actionSucceeds = true;
-      // Doppelgefahr: false challenge on Gangster claim = challenger loses card
-      // AND Auftrag still goes through (target loses card too)
-      if (pending.actionId === ACTIONS.AUFTRAG) {
-        pending.doppelgefahr = true;
-        addLog(state, `Doppelgefahr! Falsche Anzeige gegen Gangster — Auftrag geht durch.`);
-      }
-    }
-  } else {
-    // Anzeige RICHTIG — target loses a card
-    addLog(state, `Anzeige RICHTIG! ${target.name} hat ${claimedRole} nicht.`);
-
-    pending._targetMustLoseCard = true;
-
-    if (pending.blocked && targetId === pending.blockPlayerId) {
-      // Correct challenge on block → block fails, action succeeds
-      pending.actionSucceeds = true;
-    } else {
-      // Correct challenge on action → action fails
-      pending.actionSucceeds = false;
-    }
-  }
-
-  state.reactionState = REACTION_STATES.RESOLVING;
-}
-
-// Start reaction flow for an action
-function startReactionFlow(state, pending) {
-  const info = ACTION_INFO[pending.actionId];
-
-  // Bürgergeld is never challengeable or blockable
-  if (pending.actionId === ACTIONS.BUERGERGELD) {
-    state.reactionState = REACTION_STATES.RESOLVING;
-    pending.actionSucceeds = true;
-    return;
-  }
-
-  // Sturz has special bribery flow
-  if (pending.actionId === ACTIONS.STURZ) {
-    state.reactionState = REACTION_STATES.AWAITING_STURZ_BESTECHUNG;
-    return;
-  }
-
-  // If action is challengeable or blockable, await reactions
-  if (info.challengeable || info.blockable) {
-    state.reactionState = REACTION_STATES.AWAITING_REACTIONS;
-    return;
-  }
-
-  // Default: action succeeds immediately
-  state.reactionState = REACTION_STATES.RESOLVING;
-  pending.actionSucceeds = true;
-}
-
-
-// --- ai.js ---
-// ============================================================
-// Das Ministerium — AI Bot Decision Making
-// ============================================================
-
-
-
-
-
-function rand() { return Math.random(); }
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-// KI-Kommentare für menschlicheres Verhalten
-const KI_KOMMENTARE = {
-  bluff_caught: ["Erwischt.", "Na gut, war ein Versuch.", "Immer diese Anzeigen..."],
-  successful_bluff: ["Niemand hat's gemerkt.", "Perfekt.", "Wie erwartet."],
-  bribe_offer: ["Wie wäre es damit?", "Ein Angebot.", "Lass uns einig werden."],
-  bribe_rejected: ["Schade.", "Dann halt nicht.", "Deine Entscheidung."],
-  coup_correct: ["Gewusst.", "Tja.", "Wie vermutet."],
-  coup_wrong: ["Mist.", "Diesmal daneben.", "Interessant."],
-  low_coins: ["Engpass.", "Brauche Münzen.", "Muss aufpassen."],
-  winning: ["Fast geschafft.", "Noch ein bisschen.", "Sieht gut aus."],
-  action_taken: ["So sei es.", "Mal sehen.", "Mein Zug."],
-  block: ["Nicht mit mir.", "Geblockt.", "Das lass ich nicht zu."],
-  anzeige: ["Das glaub ich nicht.", "Beweis es.", "Anzeige!"]
-};
-
-function getAiComment(situation, profile) {
-  const comments = KI_KOMMENTARE[situation];
-  if (!comments) return null;
-  // Strong AI comments more often
-  const commentChance = profile === 'stark' ? 0.6 : profile === 'mittel' ? 0.4 : 0.2;
-  if (rand() < commentChance) return pick(comments);
   return null;
 }
 
-function getProfile(player) {
-  return AI_PROFILES[player.aiProfile] || AI_PROFILES.mittel;
+function doAction(s, actorIdx, action, target, role) {
+  const err = validateAction(s, actorIdx, action, target, role); if (err) return err;
+  const p = s.players[actorIdx]; const A = ACTIONS[action];
+  const tn = target != null ? pname(s, target) : '';
+  if (action === 'buergergeld') { p.coins += 1; s.pot -= 1; log(s, `${p.name} nimmt Bürgergeld (+1).`); nextTurn(s); return null; }
+  if (action === 'auftrag') { p.coins -= 3; s.bank += 3; }
+  if (action === 'sturz') {
+    p.coins -= 7; s.pot += 7;
+    log(s, `${p.name} zahlt 7 in den Pot und versucht einen Sturz gegen ${tn}: „Du hast ${ROLES[role].name}!"`, 'warn');
+    s.pending = { type: 'sturz', actor: actorIdx, target, role, stage: 'bribe', bribe: null };
+    return null;
+  }
+  const claim = A.role ? ` (beansprucht ${ROLES[A.role].name})` : '';
+  log(s, `${p.name}: ${A.name}${tn ? ' gegen ' + tn : ''}${claim}.`, A.role ? 'claim' : '');
+  s.pending = { type: 'react', kind: 'action', actor: actorIdx, action, target: target ?? null, role: A.role, passed: {}, deadline: Date.now() + REACT_SECONDS * 1000 };
+  return null;
 }
 
-function getUnrevealedRoles(player) {
-  return player.cards.filter(c => !c.revealed).map(c => c.role);
-}
-
-function hasRole(player, role) {
-  return player.cards.some(c => !c.revealed && c.role === role);
-}
-
-// Find the weakest opponent (fewest coins, then fewest influence)
-function findWeakest(state, excludeId) {
-  const opponents = state.players.filter(p =>
-    p.id !== excludeId && !p.eliminated && !state.metaEliminated.includes(p.id) && getInfluence(p) > 0
-  );
-  if (opponents.length === 0) return null;
-  return opponents.sort((a, b) => {
-    if (a.coins !== b.coins) return a.coins - b.coins;
-    return getInfluence(a) - getInfluence(b);
-  })[0];
-}
-
-function findStrongest(state, excludeId) {
-  const opponents = state.players.filter(p =>
-    p.id !== excludeId && !p.eliminated && !state.metaEliminated.includes(p.id) && getInfluence(p) > 0
-  );
-  if (opponents.length === 0) return null;
-  return opponents.sort((a, b) => {
-    if (b.coins !== a.coins) return b.coins - a.coins;
-    return getInfluence(b) - getInfluence(a);
-  })[0];
-}
-
-// Choose a target based on profile
-function chooseTarget(state, player, actionId) {
-  const profile = getProfile(player);
-  const targets = getValidTargets(state, player, actionId);
-  if (targets.length === 0) return null;
-
-  if (rand() < profile.zieltAufSchwächsten) {
-    const weakest = findWeakest(state, player.id);
-    if (weakest && targets.find(t => t.id === weakest.id)) return weakest.id;
-  }
-
-  return pick(targets).id;
-}
-
-// AI chooses an action
-function aiChooseAction(state, player) {
-  const profile = getProfile(player);
-  const available = getAvailableActions(state, player);
-  const roles = getUnrevealedRoles(player);
-
-  if (available.length === 0) return null;
-
-  // Build weighted action candidates (PRD base weights)
-  const candidates = [];
-
-  if (available.includes(ACTIONS.BUERGERGELD)) {
-    candidates.push({ action: ACTIONS.BUERGERGELD, weight: 1.0 });
-  }
-  if (available.includes(ACTIONS.SUBVENTION)) {
-    candidates.push({ action: ACTIONS.SUBVENTION, weight: 0.5 });
-  }
-
-  // Steuern — PRD weight 1.1, +0.7 if bluff roll succeeds
-  if (available.includes(ACTIONS.STEUERN)) {
-    let w = 1.1;
-    if (!hasRole(player, ROLES.FINANZAMT)) {
-      if (rand() < profile.bluffRate) w += 0.7;
-      else w = 0; // won't bluff this time
-    } else {
-      w += 0.7; // has the role
-    }
-    if (w > 0) candidates.push({ action: ACTIONS.STEUERN, weight: w });
-  }
-
-  // Karten tauschen — always available, moderate weight
-  if (available.includes(ACTIONS.KARTEN_TAUSCHEN)) {
-    if (hasRole(player, ROLES.POLITIKER)) {
-      candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 1.5 });
-    } else if (rand() < profile.bluffRate) {
-      candidates.push({ action: ACTIONS.KARTEN_TAUSCHEN, weight: 0.8 });
-    }
-  }
-
-  // Stehlen — PRD weight 0.6
-  if (available.includes(ACTIONS.STEHLEN)) {
-    if (hasRole(player, ROLES.DIEB) || rand() < profile.bluffRate) {
-      candidates.push({ action: ACTIONS.STEHLEN, weight: 0.6 });
-    }
-  }
-
-  // Auftrag — PRD weight 1.8, gated by auftragRate
-  if (available.includes(ACTIONS.AUFTRAG) && rand() < profile.auftragRate) {
-    if (hasRole(player, ROLES.GANGSTER) || rand() < profile.bluffRate) {
-      candidates.push({ action: ACTIONS.AUFTRAG, weight: 1.8 });
-    }
-  }
-
-  // Sturz — PRD weight 1.9, gated by sturzRate
-  if (available.includes(ACTIONS.STURZ) && rand() < profile.sturzRate) {
-    candidates.push({ action: ACTIONS.STURZ, weight: 1.9 });
-  }
-
-  // Fallback to Bürgergeld
-  if (candidates.length === 0) {
-    if (available.includes(ACTIONS.BUERGERGELD)) return { actionId: ACTIONS.BUERGERGELD };
-    return { actionId: available[0] };
-  }
-
-  // Weighted random selection
-  const totalWeight = candidates.reduce((sum, c) => sum + c.weight, 0);
-  let r = rand() * totalWeight;
-  let chosen = candidates[0];
-  for (const c of candidates) {
-    r -= c.weight;
-    if (r <= 0) { chosen = c; break; }
-  }
-
-  const result = { actionId: chosen.action };
-
-  // Choose target if needed
-  const info = ACTION_INFO[chosen.action];
-  if (info.requiresTarget) {
-    result.targetId = chooseTarget(state, player, chosen.action);
-    if (!result.targetId) {
-      // Fallback to non-targeted action only
-      const nonTargeted = available.find(a => !ACTION_INFO[a].requiresTarget);
-      if (nonTargeted) return { actionId: nonTargeted };
-      return { actionId: ACTIONS.KARTEN_TAUSCHEN }; // always available
-    }
-  }
-
-  // Role guess for Sturz
-  if (chosen.action === ACTIONS.STURZ && result.targetId) {
-    result.roleGuess = aiGuessRole(state, player, result.targetId);
-  }
-
-  return result;
-}
-
-// AI guesses a role for Sturz
-function aiGuessRole(state, player, targetId) {
-  const profile = getProfile(player);
-  const target = getPlayerById(state, targetId);
-
-  // Track revealed cards to narrow down possibilities
-  // Only count from player cards (discardPile duplicates these)
-  const revealedCounts = {};
-  for (const role of ROLE_LIST) revealedCounts[role] = 0;
-
-  for (const p of state.players) {
-    for (const c of p.cards) {
-      if (c.revealed) revealedCounts[c.role]++;
-    }
-  }
-
-  // Roles that still have unrevealed copies
-  const possibleRoles = ROLE_LIST.filter(r => revealedCounts[r] < 3);
-
-  if (possibleRoles.length === 0) return pick(ROLE_LIST);
-
-  // Slightly smarter: guess roles that haven't been seen much
-  if (rand() < profile.sturzTrefferquote) {
-    // "Smart" guess — weighted toward less-revealed roles
-    return pick(possibleRoles);
-  }
-  return pick(ROLE_LIST);
-}
-
-// AI decides on a reaction
-function aiChooseReaction(state, pending, player) {
-  const profile = getProfile(player);
-  const reactions = getAvailableReactions(state, pending, player.id);
-
-  if (reactions.length === 0) return null;
-  if (reactions.length === 1) return { reaction: reactions[0] };
-
-  // Anzeige decision
-  if (reactions.includes('anzeige')) {
-    if (rand() < profile.anzeigeRate) {
-      return { reaction: 'anzeige' };
-    }
-  }
-
-  // Block decision
-  if (reactions.includes('block')) {
-    const blockInfo = BLOCK_MATRIX[pending.actionId];
-    if (blockInfo) {
-      const myRoles = getUnrevealedRoles(player);
-      const canTrulyBlock = blockInfo.roles.some(r => myRoles.includes(r));
-
-      if (canTrulyBlock) {
-        if (rand() < profile.blockRate + 0.2) { // Higher chance if actually have the role
-          return { reaction: 'block', params: { blockRole: blockInfo.roles.find(r => myRoles.includes(r)) } };
-        }
-      } else if (rand() < profile.blockRate * profile.bluffRate) {
-        // Bluff block
-        return { reaction: 'block', params: { blockRole: pick(blockInfo.roles) } };
-      }
-    }
-  }
-
-  // Challenge on block
-  if (reactions.includes('anzeige_block')) {
-    if (rand() < profile.anzeigeRate) {
-      return { reaction: 'anzeige_block' };
-    }
-    return { reaction: 'accept_block' };
-  }
-
-  // Bestechung decisions
-  if (reactions.includes('bestechung')) {
-    if (rand() < profile.bestechungAnbieten) {
-      let amount = MIN_BESTECHUNG_ANZEIGE;
-      // Determine bribe amount
-      const roles = getUnrevealedRoles(player);
-      const claimedRole = pending.challengeTarget === pending.blockPlayerId
-        ? pending.blockClaimedRole
-        : pending.claimedRole;
-      const hasIt = roles.includes(claimedRole);
-
-      if (!hasIt && rand() < profile.bestechungBluffHoch) {
-        // High bribe bluff — pretend we have it
-        amount = Math.min(player.coins, Math.max(3, Math.floor(player.coins * 0.4)));
-      } else if (hasIt && rand() < profile.bestechungBluffNiedrig) {
-        // Low bribe with real card — try to seem weak
-        amount = MIN_BESTECHUNG_ANZEIGE;
-      } else if (hasIt) {
-        amount = Math.min(player.coins, Math.max(MIN_BESTECHUNG_ANZEIGE, Math.floor(player.coins * 0.25)));
-      } else {
-        amount = Math.min(player.coins, MIN_BESTECHUNG_ANZEIGE);
-      }
-
-      return { reaction: 'bestechung', params: { amount } };
-    }
-    return { reaction: 'reveal_card' };
-  }
-
-  // Accept/decline bestechung
-  if (reactions.includes('accept_bestechung')) {
-    if (rand() < profile.bestechungAnnehmen) {
-      return { reaction: 'accept_bestechung' };
-    }
-    return { reaction: 'decline_bestechung' };
-  }
-
-  // Sturz bestechung
-  if (reactions.includes('sturz_bestechung')) {
-    if (rand() < profile.bestechungAnbieten) {
-      const amount = Math.min(player.coins, Math.max(MIN_BESTECHUNG_STURZ, Math.floor(player.coins * 0.3)));
-      return { reaction: 'sturz_bestechung', params: { amount } };
-    }
-    return { reaction: 'accept_sturz' };
-  }
-
-  if (reactions.includes('accept_sturz_bestechung')) {
-    if (rand() < profile.bestechungAnnehmen) {
-      return { reaction: 'accept_sturz_bestechung' };
-    }
-    return { reaction: 'decline_sturz_bestechung' };
-  }
-
-  // Default: pass
-  if (reactions.includes('pass')) return { reaction: 'pass' };
-  return { reaction: reactions[0] };
-}
-
-// AI chooses which card to lose
-function aiChooseCardToLose(player) {
-  const unrevealed = player.cards
-    .map((c, i) => ({ ...c, index: i }))
-    .filter(c => !c.revealed);
-
-  if (unrevealed.length <= 1) return unrevealed[0]?.index ?? 0;
-
-  // Prefer losing less useful roles
-  const rolePriority = {
-    [ROLES.POLIZIST]: 1, // Defensive only
-    [ROLES.FINANZAMT]: 2,
-    [ROLES.POLITIKER]: 3,
-    [ROLES.DIEB]: 4,
-    [ROLES.GANGSTER]: 5 // Most valuable (offensive)
-  };
-
-  unrevealed.sort((a, b) => (rolePriority[a.role] || 0) - (rolePriority[b.role] || 0));
-  return unrevealed[0].index;
-}
-
-// AI chooses cards for Politiker swap — keep best N (where N = unrevealed count)
-function aiChoosePolitikerCards(player, currentRoles, drawnRoles) {
-  const keepCount = currentRoles.length; // 1 or 2 depending on influence
-
-  const allCards = [
-    ...currentRoles.map((role, i) => ({ role, source: 'hand', index: i })),
-    ...drawnRoles.map((role, i) => ({ role, source: 'drawn', index: i }))
-  ];
-
-  const rolePriority = {
-    [ROLES.GANGSTER]: 5,
-    [ROLES.DIEB]: 4,
-    [ROLES.POLITIKER]: 3,
-    [ROLES.FINANZAMT]: 2,
-    [ROLES.POLIZIST]: 1
-  };
-
-  allCards.sort((a, b) => (rolePriority[b.role] || 0) - (rolePriority[a.role] || 0));
-  const kept = allCards.slice(0, keepCount).map(c => c.role);
-  const returned = allCards.slice(keepCount).map(c => c.role);
-
-  return { kept, returned };
-}
-
-// AI delay (milliseconds) — slow enough to follow each step
-function getAiDelay() {
-  return 1200 + Math.random() * 1000;
-}
-
-
-// --- logger.js ---
-// ============================================================
-// Das Ministerium — Game Event Logger
-// ============================================================
-
-const MAX_LOG_ENTRIES = 200;
-
-let logContainer = null;
-
-function initLogger(container) {
-  logContainer = container;
-}
-
-function renderLog(entries) {
-  if (!logContainer) return;
-
-  logContainer.innerHTML = '';
-  const recentEntries = entries.slice(-50); // Show last 50
-
-  for (const entry of recentEntries) {
-    const div = document.createElement('div');
-    div.className = 'log-entry';
-
-    if (entry.startsWith('---')) {
-      div.classList.add('log-round');
-    } else if (entry.includes('verliert') || entry.includes('FALSCH') || entry.includes('scheidet aus')) {
-      div.classList.add('log-negative');
-    } else if (entry.includes('erhält') || entry.includes('nimmt') || entry.includes('RICHTIG') || entry.includes('gewinnt')) {
-      div.classList.add('log-positive');
-    } else if (entry.includes('blockiert') || entry.includes('zeigt') || entry.includes('Anzeige')) {
-      div.classList.add('log-reaction');
-    }
-
-    div.textContent = entry;
-    logContainer.appendChild(div);
-  }
-
-  logContainer.scrollTop = logContainer.scrollHeight;
-}
-
-
-// --- ui.js ---
-// ============================================================
-// Das Ministerium — UI Rendering
-// ============================================================
-
-
-
-
-
-
-let gameRef = null;
-let callbackRef = null;
-
-function initUI(game, callbacks) {
-  gameRef = game;
-  callbackRef = callbacks;
-}
-
-// ---- MENU SCREEN ----
-
-function showMenu() {
-  document.getElementById('menu-screen').classList.remove('hidden');
-  document.getElementById('game-screen').classList.add('hidden');
-  document.getElementById('game-over-screen').classList.add('hidden');
-}
-
-function hideMenu() {
-  document.getElementById('menu-screen').classList.add('hidden');
-}
-
-function showGameScreen() {
-  document.getElementById('game-screen').classList.remove('hidden');
-}
-
-// ---- GAME RENDERING ----
-
-function renderGameState(state) {
-  renderPlayers(state);
-  renderEconomy(state);
-  renderLog(state.log);
-  renderPhaseInfo(state);
-}
-
-function renderPlayers(state) {
-  const container = document.getElementById('players-area');
-  container.innerHTML = '';
-
-  for (const player of state.players) {
-    const div = document.createElement('div');
-    div.className = 'player-card';
-    if (player.eliminated || state.metaEliminated.includes(player.id)) {
-      div.classList.add('eliminated');
-    }
-    if (state.currentPlayerIndex !== undefined &&
-        state.players[state.currentPlayerIndex]?.id === player.id) {
-      div.classList.add('active-turn');
-    }
-    if (player.isHuman) {
-      div.classList.add('human');
-    }
-
-    const nameDiv = document.createElement('div');
-    nameDiv.className = 'player-name';
-    nameDiv.textContent = player.name + (player.isBot ? ` (${player.aiProfile})` : ' (Du)');
-    div.appendChild(nameDiv);
-
-    const coinsDiv = document.createElement('div');
-    coinsDiv.className = 'player-coins';
-    coinsDiv.textContent = `${player.coins} Münzen`;
-    div.appendChild(coinsDiv);
-
-    const cardsDiv = document.createElement('div');
-    cardsDiv.className = 'player-cards-display';
-
-    for (const card of player.cards) {
-      const cardEl = document.createElement('div');
-      cardEl.className = 'card-mini';
-      if (card.revealed) {
-        cardEl.classList.add('revealed');
-        cardEl.textContent = card.role;
-      } else if (player.isHuman) {
-        cardEl.classList.add('own-card');
-        cardEl.textContent = card.role;
-      } else {
-        cardEl.classList.add('hidden-card');
-        cardEl.textContent = '?';
-      }
-      cardsDiv.appendChild(cardEl);
-    }
-
-    div.appendChild(cardsDiv);
-
-    if (getInfluence(player) > 0 && !state.metaEliminated.includes(player.id)) {
-      const influenceDiv = document.createElement('div');
-      influenceDiv.className = 'player-influence';
-      influenceDiv.textContent = `Einfluss: ${getInfluence(player)}`;
-      div.appendChild(influenceDiv);
-    }
-
-    container.appendChild(div);
+// Wer darf auf das aktuelle "react"-Pending reagieren und wie?
+function reactOptions(s, meIdx) {
+  const pd = s.pending; if (!pd || pd.type !== 'react') return null;
+  const me = s.players[meIdx]; if (!me || me.out || me.cards.length === 0) return null;
+  const ih = inHand(s);
+  if (pd.kind === 'action') {
+    if (meIdx === pd.actor) return null;
+    const o = { challenge: false, blocks: [] };
+    if (pd.role && me.coins >= 1) o.challenge = true;
+    if (pd.action === 'subvention') o.blocks = ['finanzamt'];
+    if (pd.action === 'stehlen' && pd.target === meIdx) o.blocks = ['dieb', 'politiker'];
+    if (pd.action === 'auftrag' && pd.target === meIdx) o.blocks = ['polizist'];
+    if (!o.challenge && o.blocks.length === 0) return null;
+    return o;
+  } else { // block
+    if (meIdx === pd.blocker) return null;
+    if (me.coins < 1) return null;
+    return { challenge: true, blocks: [] };
   }
 }
-
-function renderEconomy(state) {
-  document.getElementById('pot-display').textContent = `Pot: ${state.pot}`;
-  document.getElementById('bank-display').textContent = `Bank: ${state.bank}`;
-  document.getElementById('round-display').textContent = `Runde: ${state.round}`;
+function reactEligible(s) {
+  return inHand(s).filter(i => reactOptions(s, i) !== null);
+}
+function allPassed(s) {
+  const pd = s.pending;
+  return reactEligible(s).every(i => pd.passed[s.players[i].id]);
 }
 
-function renderPhaseInfo(state) {
-  const phaseEl = document.getElementById('phase-info');
-  const phases = {
-    'round_setup': 'Runde wird vorbereitet...',
-    'abgabe': 'Phase 1 — Abgabe',
-    'actions': 'Phase 2 — Aktionen',
-    'pot_distribution': 'Phase 3 — Pot-Verteilung',
-    'game_over': 'Spiel beendet'
-  };
-  phaseEl.textContent = phases[state.phase] || state.phase;
+function pass(s, meIdx) {
+  const pd = s.pending; if (!pd || pd.type !== 'react') return 'Nichts zu bestätigen.';
+  pd.passed[s.players[meIdx].id] = true;
+  if (allPassed(s)) resolveReact(s);
+  return null;
+}
+function timeoutReact(s) {
+  const pd = s.pending; if (!pd || pd.type !== 'react') return 'x';
+  if (Date.now() < pd.deadline - 500) return 'x';
+  log(s, 'Zeit abgelaufen, keine Reaktion.', 'sys');
+  resolveReact(s);
+  return null;
+}
+function resolveReact(s) {
+  const pd = s.pending;
+  if (pd.kind === 'action') { s.pending = null; s.steps = [{ type: 'resolve', action: pd.action, actor: pd.actor, target: pd.target }, { type: 'endTurn' }]; }
+  else { log(s, `Block von ${pname(s, pd.blocker)} wird nicht angezweifelt. ${ACTIONS[pd.action].name} schlägt fehl.`); s.pending = null; s.steps = [{ type: 'endTurn' }]; }
+  runSteps(s);
 }
 
-// ---- ACTION SELECTION (Human Player) ----
-
-function showActionSelection(state, player) {
-  return new Promise((resolve) => {
-    const panel = document.getElementById('action-panel');
-    panel.innerHTML = '';
-    panel.classList.remove('hidden');
-
-    const title = document.createElement('h3');
-    title.textContent = 'Wähle eine Aktion:';
-    panel.appendChild(title);
-
-    const allActions = Object.keys(ACTION_INFO);
-
-    for (const actionId of allActions) {
-      const info = ACTION_INFO[actionId];
-      const { available, reason } = getActionAvailability(state, player, actionId);
-      const btn = document.createElement('button');
-      btn.className = 'action-btn';
-
-      if (!available) {
-        btn.classList.add('disabled-btn');
-        btn.innerHTML = `<strong>${info.name}</strong><br><small>${info.description}</small><br><small class="unavailable-reason">${reason}</small>`;
-        btn.disabled = true;
-      } else {
-        btn.innerHTML = `<strong>${info.name}</strong><br><small>${info.description}</small>`;
-      }
-
-      btn.onclick = async () => {
-        if (!available) return;
-        let targetId = null;
-        let roleGuess = null;
-
-        if (info.requiresTarget) {
-          targetId = await showTargetSelection(state, player, actionId);
-          if (targetId === null) return; // cancelled
-        }
-
-        if (info.requiresRoleGuess) {
-          roleGuess = await showRoleGuessSelection();
-          if (roleGuess === null) return; // cancelled
-        }
-
-        panel.classList.add('hidden');
-        resolve({ actionId, targetId, roleGuess });
-      };
-
-      panel.appendChild(btn);
-    }
-  });
+function block(s, meIdx, role) {
+  const pd = s.pending; const o = reactOptions(s, meIdx);
+  if (!o || !o.blocks.includes(role)) return 'Du kannst nicht blockieren.';
+  log(s, `${pname(s, meIdx)} blockiert ${ACTIONS[pd.action].name} (beansprucht ${ROLES[role].name}).`, 'claim');
+  s.pending = { type: 'react', kind: 'block', actor: pd.actor, action: pd.action, target: pd.target, role: role, blocker: meIdx, passed: {}, deadline: Date.now() + REACT_SECONDS * 1000 };
+  return null;
 }
 
-function showTargetSelection(state, player, actionId) {
-  return new Promise((resolve) => {
-    const targets = getValidTargets(state, player, actionId);
-    const modal = showModal('Wähle ein Ziel:');
-
-    for (const target of targets) {
-      const btn = document.createElement('button');
-      btn.className = 'action-btn';
-      btn.textContent = `${target.name} (${target.coins} Münzen, ${getInfluence(target)} Einfluss)`;
-      btn.onclick = () => { closeModal(modal); resolve(target.id); };
-      modal.querySelector('.modal-content').appendChild(btn);
-    }
-
-    const cancelBtn = document.createElement('button');
-    cancelBtn.className = 'action-btn cancel-btn';
-    cancelBtn.textContent = 'Abbrechen';
-    cancelBtn.onclick = () => { closeModal(modal); resolve(null); };
-    modal.querySelector('.modal-content').appendChild(cancelBtn);
-  });
+function challenge(s, meIdx) {
+  const pd = s.pending; const o = reactOptions(s, meIdx);
+  if (!o || !o.challenge) return 'Du kannst nicht anzeigen.';
+  const accused = pd.kind === 'action' ? pd.actor : pd.blocker;
+  s.players[meIdx].coins -= 1; s.pot += 1;
+  log(s, `${pname(s, meIdx)} zeigt ${pname(s, accused)} an: „Du hast keinen ${ROLES[pd.role].name}!" (1 Münze in den Pot)`, 'warn');
+  s.pending = { type: 'challenge', kind: pd.kind, challenger: meIdx, accused, role: pd.role, action: pd.action, actor: pd.actor, target: pd.target, blocker: pd.blocker ?? null, stage: 'bribe', bribe: null };
+  return null;
 }
 
-function showRoleGuessSelection() {
-  return new Promise((resolve) => {
-    const modal = showModal('Welche Rolle vermutest du?');
-
-    for (const role of ROLE_LIST) {
-      const btn = document.createElement('button');
-      btn.className = 'action-btn role-btn';
-      btn.textContent = role;
-      btn.onclick = () => { closeModal(modal); resolve(role); };
-      modal.querySelector('.modal-content').appendChild(btn);
-    }
-
-    const cancelBtn = document.createElement('button');
-    cancelBtn.className = 'action-btn cancel-btn';
-    cancelBtn.textContent = 'Abbrechen';
-    cancelBtn.onclick = () => { closeModal(modal); resolve(null); };
-    modal.querySelector('.modal-content').appendChild(cancelBtn);
-  });
-}
-
-// ---- REACTION SELECTION (Human Player) ----
-
-function showReactionSelection(state, pending, player) {
-  return new Promise((resolve) => {
-    const reactions = getAvailableReactions(state, pending, player.id);
-    if (reactions.length === 0) { resolve(null); return; }
-
-    const panel = document.getElementById('action-panel');
-    panel.innerHTML = '';
-    panel.classList.remove('hidden');
-
-    const title = document.createElement('h3');
-
-    if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
-      const actor = getPlayerById(state, pending.playerId);
-      const info = ACTION_INFO[pending.actionId];
-      title.textContent = `${actor.name} spielt: ${info.name}. Deine Reaktion?`;
-    } else if (state.reactionState === REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK) {
-      const blocker = getPlayerById(state, pending.blockPlayerId);
-      title.textContent = `${blocker.name} blockiert mit ${pending.blockClaimedRole}. Anzeigen?`;
-    } else if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG) {
-      title.textContent = 'Du wurdest angezeigt! Bestechung anbieten oder Karte aufdecken?';
-    } else if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG_DECISION) {
-      title.textContent = `Bestechungsangebot: ${pending.bestechungOffer} Münzen. Annehmen?`;
-    } else if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG) {
-      title.textContent = 'Sturz gegen dich! Bestechung anbieten?';
-    } else if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG_DECISION) {
-      title.textContent = `Bestechung gegen Sturz: ${pending.bestechungOffer} Münzen. Annehmen?`;
-    }
-
-    panel.appendChild(title);
-
-    const reactionLabels = {
-      'anzeige': 'Anzeige! (1 Münze)',
-      'block': 'Blockieren',
-      'pass': 'Passen',
-      'anzeige_block': 'Block anzweifeln! (1 Münze)',
-      'accept_block': 'Block akzeptieren',
-      'bestechung': 'Bestechung anbieten',
-      'reveal_card': 'Karte aufdecken',
-      'accept_bestechung': 'Bestechung annehmen',
-      'decline_bestechung': 'Bestechung ablehnen',
-      'sturz_bestechung': 'Bestechung anbieten',
-      'accept_sturz': 'Sturz akzeptieren',
-      'accept_sturz_bestechung': 'Bestechung annehmen',
-      'decline_sturz_bestechung': 'Bestechung ablehnen'
-    };
-
-    for (const reaction of reactions) {
-      const btn = document.createElement('button');
-      btn.className = 'action-btn';
-      if (reaction === 'pass' || reaction === 'accept_block' || reaction === 'accept_sturz') {
-        btn.classList.add('passive-btn');
-      }
-      if (reaction === 'anzeige' || reaction === 'anzeige_block') {
-        btn.classList.add('danger-btn');
-      }
-
-      btn.textContent = reactionLabels[reaction] || reaction;
-
-      btn.onclick = async () => {
-        let params = {};
-
-        if (reaction === 'block') {
-          const blockInfo = BLOCK_MATRIX[pending.actionId];
-          if (blockInfo && blockInfo.roles.length > 1) {
-            const role = await showBlockRoleSelection(blockInfo.roles);
-            if (!role) return;
-            params.blockRole = role;
-          } else if (blockInfo) {
-            params.blockRole = blockInfo.roles[0];
-          }
-        }
-
-        if (reaction === 'bestechung') {
-          const amount = await showBribeAmountSelection(player, MIN_BESTECHUNG_ANZEIGE);
-          if (amount === null) return;
-          params.amount = amount;
-        }
-
-        if (reaction === 'sturz_bestechung') {
-          const amount = await showBribeAmountSelection(player, MIN_BESTECHUNG_STURZ);
-          if (amount === null) return;
-          params.amount = amount;
-        }
-
-        panel.classList.add('hidden');
-        resolve({ reaction, params });
-      };
-
-      panel.appendChild(btn);
-    }
-  });
-}
-
-function showBlockRoleSelection(roles) {
-  return new Promise((resolve) => {
-    const modal = showModal('Mit welcher Rolle blockieren?');
-    for (const role of roles) {
-      const btn = document.createElement('button');
-      btn.className = 'action-btn role-btn';
-      btn.textContent = role;
-      btn.onclick = () => { closeModal(modal); resolve(role); };
-      modal.querySelector('.modal-content').appendChild(btn);
-    }
-    const cancelBtn = document.createElement('button');
-    cancelBtn.className = 'action-btn cancel-btn';
-    cancelBtn.textContent = 'Abbrechen';
-    cancelBtn.onclick = () => { closeModal(modal); resolve(null); };
-    modal.querySelector('.modal-content').appendChild(cancelBtn);
-  });
-}
-
-function showBribeAmountSelection(player, min) {
-  return new Promise((resolve) => {
-    const modal = showModal(`Bestechung: Wie viele Münzen? (Min: ${min}, Max: ${player.coins})`);
-    const content = modal.querySelector('.modal-content');
-
-    const amounts = [];
-    for (let i = min; i <= player.coins; i++) {
-      amounts.push(i);
-    }
-
-    // Show buttons for reasonable amounts
-    const displayAmounts = amounts.length <= 6 ? amounts : [
-      min, Math.floor(player.coins * 0.25), Math.floor(player.coins * 0.5), player.coins
-    ].filter((v, i, a) => v >= min && a.indexOf(v) === i).sort((a, b) => a - b);
-
-    for (const amount of displayAmounts) {
-      const btn = document.createElement('button');
-      btn.className = 'action-btn';
-      btn.textContent = `${amount} Münzen`;
-      btn.onclick = () => { closeModal(modal); resolve(amount); };
-      content.appendChild(btn);
-    }
-
-    const cancelBtn = document.createElement('button');
-    cancelBtn.className = 'action-btn cancel-btn';
-    cancelBtn.textContent = 'Abbrechen';
-    cancelBtn.onclick = () => { closeModal(modal); resolve(null); };
-    content.appendChild(cancelBtn);
-  });
-}
-
-// ---- CARD SELECTION ----
-
-function showCardSelection(player, message = 'Welche Karte verlieren?') {
-  return new Promise((resolve) => {
-    const unrevealed = player.cards
-      .map((c, i) => ({ ...c, index: i }))
-      .filter(c => !c.revealed);
-
-    if (unrevealed.length <= 1) {
-      resolve(unrevealed[0]?.index ?? 0);
-      return;
-    }
-
-    const modal = showModal(message);
-    for (const card of unrevealed) {
-      const btn = document.createElement('button');
-      btn.className = 'action-btn role-btn';
-      btn.textContent = card.role;
-      btn.onclick = () => { closeModal(modal); resolve(card.index); };
-      modal.querySelector('.modal-content').appendChild(btn);
-    }
-  });
-}
-
-// Politiker swap: show cards, pick N to keep (N = unrevealed count)
-function showPolitikerSwap(player, drawnRoles) {
-  return new Promise((resolve) => {
-    const currentRoles = player.cards.filter(c => !c.revealed).map(c => c.role);
-    const keepCount = currentRoles.length; // 1 or 2
-    const modal = showModal(`Karten tauschen (Politiker): Wähle ${keepCount} Karte${keepCount > 1 ? 'n' : ''} zum Behalten`);
-    const content = modal.querySelector('.modal-content');
-
-    const allCards = [
-      ...currentRoles.map(r => ({ role: r, source: 'hand' })),
-      ...drawnRoles.map(r => ({ role: r, source: 'drawn' }))
-    ];
-
-    const selected = new Set();
-    const buttons = [];
-
-    const updateButtons = () => {
-      buttons.forEach((btn, i) => {
-        btn.classList.toggle('selected', selected.has(i));
-      });
-      confirmBtn.disabled = selected.size !== keepCount;
-    };
-
-    for (let i = 0; i < allCards.length; i++) {
-      const card = allCards[i];
-      const btn = document.createElement('button');
-      btn.className = 'action-btn role-btn';
-      btn.textContent = `${card.role} (${card.source === 'hand' ? 'Hand' : 'Neu'})`;
-      btn.onclick = () => {
-        if (selected.has(i)) {
-          selected.delete(i);
-        } else if (selected.size < keepCount) {
-          selected.add(i);
-        }
-        updateButtons();
-      };
-      buttons.push(btn);
-      content.appendChild(btn);
-    }
-
-    const confirmBtn = document.createElement('button');
-    confirmBtn.className = 'action-btn confirm-btn';
-    confirmBtn.textContent = 'Bestätigen';
-    confirmBtn.disabled = true;
-    confirmBtn.onclick = () => {
-      const kept = [];
-      const returned = [];
-      allCards.forEach((card, i) => {
-        if (selected.has(i)) kept.push(card.role);
-        else returned.push(card.role);
-      });
-      closeModal(modal);
-      resolve({ kept, returned });
-    };
-    content.appendChild(confirmBtn);
-  });
-}
-
-// ---- NOTIFICATION ----
-
-function showNotification(text, duration = 2000) {
-  const notif = document.getElementById('notification');
-  notif.textContent = text;
-  notif.classList.remove('hidden');
-  notif.classList.add('show');
-  setTimeout(() => {
-    notif.classList.remove('show');
-    notif.classList.add('hidden');
-  }, duration);
-}
-
-// ---- GAME OVER ----
-
-function showGameOver(winner) {
-  document.getElementById('game-screen').classList.add('hidden');
-  const screen = document.getElementById('game-over-screen');
-  screen.classList.remove('hidden');
-  document.getElementById('winner-name').textContent = winner ? winner.name : 'Niemand';
-  document.getElementById('winner-coins').textContent = winner ? `${winner.coins} Münzen` : '';
-}
-
-// ---- MODAL SYSTEM ----
-
-function showModal(title) {
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
-
-  const modal = document.createElement('div');
-  modal.className = 'modal';
-
-  const titleEl = document.createElement('h3');
-  titleEl.textContent = title;
-  modal.appendChild(titleEl);
-
-  const content = document.createElement('div');
-  content.className = 'modal-content';
-  modal.appendChild(content);
-
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-
-  return overlay;
-}
-
-function closeModal(overlay) {
-  if (overlay && overlay.parentNode) {
-    overlay.parentNode.removeChild(overlay);
+function offerBribe(s, meIdx, amount) {
+  const pd = s.pending; if (!pd) return 'x';
+  amount = Math.floor(Number(amount));
+  if (pd.type === 'challenge') {
+    if (meIdx !== pd.accused || pd.stage !== 'bribe') return 'Nicht möglich.';
+    if (amount < 2) return 'Mindestens 2 Münzen.';
+    if (amount > s.players[meIdx].coins) return 'So viele Münzen hast du nicht.';
+    pd.bribe = amount; pd.stage = 'decide';
+    log(s, `${pname(s, meIdx)} bietet ${pname(s, pd.challenger)} eine Bestechung von ${amount} Münzen an.`, 'warn');
+    return null;
   }
+  if (pd.type === 'sturz') {
+    if (meIdx !== pd.target || pd.stage !== 'bribe') return 'Nicht möglich.';
+    if (amount < 1) return 'Mindestens 1 Münze.';
+    if (amount > s.players[meIdx].coins) return 'So viele Münzen hast du nicht.';
+    pd.bribe = amount; pd.stage = 'decide';
+    log(s, `${pname(s, meIdx)} bietet ${pname(s, pd.actor)} eine Bestechung von ${amount} Münzen an.`, 'warn');
+    return null;
+  }
+  return 'x';
+}
+function refuseBribe(s, meIdx) { // Angezeigter / Sturz-Ziel: keine Bestechung, Karte zeigen lassen
+  const pd = s.pending; if (!pd || pd.stage !== 'bribe') return 'x';
+  if (pd.type === 'challenge' && meIdx === pd.accused) { log(s, `${pname(s, meIdx)} bietet keine Bestechung an.`); revealChallenge(s); return null; }
+  if (pd.type === 'sturz' && meIdx === pd.target) { log(s, `${pname(s, meIdx)} bietet keine Bestechung an.`); revealSturz(s); return null; }
+  return 'x';
+}
+function decideBribe(s, meIdx, accept) {
+  const pd = s.pending; if (!pd || pd.stage !== 'decide') return 'x';
+  if (pd.type === 'challenge') {
+    if (meIdx !== pd.challenger) return 'x';
+    if (accept) {
+      s.players[pd.accused].coins -= pd.bribe; s.players[meIdx].coins += pd.bribe;
+      log(s, `${pname(s, meIdx)} nimmt die Bestechung (${pd.bribe}) an. Anzeige zurückgezogen.`, 'good');
+      // weiter wie ohne Anzeige
+      if (pd.kind === 'action') { s.pending = null; s.steps = [{ type: 'resolve', action: pd.action, actor: pd.actor, target: pd.target }, { type: 'endTurn' }]; }
+      else { log(s, `Block bleibt bestehen. ${ACTIONS[pd.action].name} schlägt fehl.`); s.pending = null; s.steps = [{ type: 'endTurn' }]; }
+      runSteps(s);
+    } else { log(s, `${pname(s, meIdx)} lehnt die Bestechung ab.`); revealChallenge(s); }
+    return null;
+  }
+  if (pd.type === 'sturz') {
+    if (meIdx !== pd.actor) return 'x';
+    if (accept) {
+      s.players[pd.target].coins -= pd.bribe; s.players[meIdx].coins += pd.bribe;
+      log(s, `${pname(s, meIdx)} nimmt die Bestechung (${pd.bribe}) an. Sturz abgewendet, die 7 Münzen bleiben im Pot.`, 'good');
+      s.pending = null; s.steps = [{ type: 'endTurn' }]; runSteps(s);
+    } else { log(s, `${pname(s, meIdx)} lehnt die Bestechung ab.`); revealSturz(s); }
+    return null;
+  }
+  return 'x';
 }
 
-function hideActionPanel() {
-  document.getElementById('action-panel').classList.add('hidden');
-}
-
-
-// --- main.js ---
-// ============================================================
-// Das Ministerium — Main Game Loop
-// ============================================================
-
-
-
-
-
-
-
-
-
-let state = null;
-let isOnline = false;
-
-// ---- INITIALIZATION ----
-
-document.addEventListener('DOMContentLoaded', () => {
-  initLogger(document.getElementById('game-log'));
-  setupMenuHandlers();
-  showMenu();
-});
-
-function setupMenuHandlers() {
-  document.getElementById('btn-solo').addEventListener('click', () => {
-    document.getElementById('solo-setup').classList.remove('hidden');
-    document.getElementById('online-setup').classList.add('hidden');
-  });
-
-  document.getElementById('btn-online').addEventListener('click', () => {
-    document.getElementById('online-setup').classList.remove('hidden');
-    document.getElementById('solo-setup').classList.add('hidden');
-  });
-
-  document.getElementById('btn-start-solo').addEventListener('click', startSoloGame);
-
-  // Bot count slider
-  const slider = document.getElementById('bot-count');
-  const label = document.getElementById('bot-count-label');
-  if (slider && label) {
-    slider.addEventListener('input', () => {
-      label.textContent = slider.value;
-    });
-  }
-
-  // Online not available in standalone
-}
-
-
-function startSoloGame() {
-  const botCount = parseInt(document.getElementById('bot-count').value) || 3;
-  const difficulty = document.getElementById('bot-difficulty').value || 'mittel';
-
-  const players = [];
-
-  // Human player
-  const playerName = document.getElementById('player-name').value.trim() || 'Spieler';
-  players.push(createPlayer(0, playerName, true, null));
-
-  // Bot names
-  const botNames = ['Minister Schmidt', 'Rätin Müller', 'Sekretär Weber', 'Beamtin Fischer', 'Inspektor Koch'];
-
-  for (let i = 0; i < botCount; i++) {
-    const profile = difficulty === 'gemischt'
-      ? ['schwach', 'mittel', 'stark'][i % 3]
-      : difficulty;
-    players.push(createPlayer(i + 1, botNames[i] || `Bot ${i + 1}`, false, profile));
-  }
-
-  state = createGameState(players);
-  isOnline = false;
-
-  hideMenu();
-  showGameScreen();
-
-  addLog(state, `=== Das Ministerium — Neues Spiel ===`);
-  addLog(state, `${players.length} Spieler. Viel Erfolg!`);
-
-  runGameLoop();
-}
-
-// ---- GAME LOOP ----
-// PRD flow per round:
-//   1. Abgabe (Ante) — each alive player pays 1 coin to pot
-//   2. Eliminate players with 0 coins (no cards dealt to them)
-//   3. Deal cards — 2 per remaining player
-//   4. Actions — clockwise turns until someone loses both cards
-//   5. Pot distribution — winner gets max 10, others get 1 each
-//   6. Eliminate players with 0 coins after distribution
-//   7. Next round (or game over if ≤1 player left)
-
-async function runGameLoop() {
-  // Round 1: cards already dealt in createGameState, skip to abgabe
-  addLog(state, `--- Runde ${state.round} beginnt ---`);
-  renderGameState(state);
-
-  while (!state.gameOver) {
-    // === PHASE 1: ABGABE ===
-    showNotification(`Runde ${state.round} — Abgabe`, 1500);
-    await delay(1200);
-
-    executeAbgabe(state);
-    renderGameState(state);
-    await delay(1000);
-
-    if (checkGameOver(state)) break;
-
-    // === PHASE 2: KARTENAUSGABE ===
-    // Round 1: already dealt. Round 2+: deal new cards.
-    if (state.round > 1) {
-      dealNewCards(state);
-      renderGameState(state);
-      await delay(500);
-    }
-
-    // === PHASE 3: AKTIONSPHASE ===
-    state.phase = 'actions';
-    state.currentPlayerIndex = findNextActivePlayer(state, 0);
-    showNotification(`Runde ${state.round} — Aktionen`, 1500);
-    renderGameState(state);
-    await delay(500);
-
-    await runActionsPhase();
-    if (state.gameOver) break;
-
-    // === PHASE 4: POT-VERTEILUNG ===
-    state.phase = 'pot_distribution';
-    showNotification(`Runde ${state.round} — Pot-Verteilung`, 1500);
-    renderGameState(state);
-    await delay(1000);
-
-    if (state.roundWinner !== null) {
-      distributePot(state, state.roundWinner);
-    }
-    renderGameState(state);
-    await delay(1500);
-
-    if (checkGameOver(state)) break;
-
-    // === NÄCHSTE RUNDE ===
-    state.round++;
-    state.roundWinner = null;
-    state.phase = 'abgabe';
-    addLog(state, `--- Runde ${state.round} beginnt ---`);
-    renderGameState(state);
-    await delay(800);
-  }
-
-  // Game over
-  renderGameState(state);
-  showGameOver(state.winner);
-}
-
-// Deal new cards for a new round (Round 2+)
-function dealNewCards(state) {
-  // Collect all cards back
-  const allCards = [];
-  for (const player of state.players) {
-    for (const card of player.cards) {
-      allCards.push(card.role);
-    }
-    player.cards = [];
-  }
-  allCards.push(...state.discardPile, ...state.deck);
-
-  state.deck = shuffle(allCards);
-  state.discardPile = [];
-
-  // Deal 2 cards only to players still in the game (not meta-eliminated)
-  const alive = state.players.filter(p => !state.metaEliminated.includes(p.id));
-  for (const player of alive) {
-    player.cards = [
-      { role: state.deck.pop(), revealed: false },
-      { role: state.deck.pop(), revealed: false }
-    ];
-    player.eliminated = false;
-  }
-
-  addLog(state, `Karten ausgeteilt an ${alive.length} Spieler.`);
-}
-
-async function runActionsPhase() {
-  // Actions continue in a loop until someone loses both cards (round ends)
-  while (true) {
-    if (state.gameOver) return;
-
-    const player = state.players[state.currentPlayerIndex];
-    if (!player || player.eliminated || state.metaEliminated.includes(player.id) || getInfluence(player) === 0) {
-      state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
-      if (state.currentPlayerIndex < 0) break;
-      continue;
-    }
-
-    renderGameState(state);
-
-    // Get action from player
-    let actionChoice;
-    if (player.isHuman) {
-      showNotification(`Dein Zug, ${player.name}!`, 1500);
-      actionChoice = await showActionSelection(state, player);
-    } else {
-      // Slower AI actions with announcement delay
-      showNotification(`${player.name} überlegt...`, 1200);
-      await delay(1200 + Math.random() * 800);
-      actionChoice = aiChooseAction(state, player);
-    }
-
-    if (!actionChoice) {
-      state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
-      if (state.currentPlayerIndex < 0) break;
-      continue;
-    }
-
-    // Announce action
-    const info = ACTION_INFO[actionChoice.actionId];
-    const target = actionChoice.targetId ? getPlayerById(state, actionChoice.targetId) : null;
-    let announcement = `${player.name} spielt: ${info.name}`;
-    if (target) announcement += ` gegen ${target.name}`;
-    if (actionChoice.roleGuess) announcement += ` (vermutet: ${actionChoice.roleGuess})`;
-    addLog(state, announcement);
-
-    // AI comment
-    if (player.isBot) {
-      const comment = getAiComment('action_taken', player.aiProfile);
-      if (comment) addLog(state, `  💬 ${player.name}: "${comment}"`);
-    }
-
-    // Pay upfront costs
-    payActionCost(state, player.id, actionChoice.actionId);
-    renderGameState(state);
-
-    // Create pending action and start reaction flow
-    const pending = createPendingAction(
-      player.id,
-      actionChoice.actionId,
-      actionChoice.targetId,
-      actionChoice.roleGuess,
-      info.requiresRole
-    );
-    state.pendingAction = pending;
-    startReactionFlow(state, pending);
-
-    // Process reactions
-    await processReactionChain(pending);
-
-    // Resolve action
-    if (pending.actionSucceeds) {
-      if (actionChoice.actionId === ACTIONS.KARTEN_TAUSCHEN) {
-        await handlePolitikerSwap(player);
-      } else if (actionChoice.actionId === ACTIONS.AUFTRAG) {
-        await handleAuftragLoseCard(state, actionChoice.targetId);
-      } else {
-        executeAction(state, player.id, actionChoice.actionId, actionChoice.targetId, actionChoice.roleGuess);
-      }
-    } else {
-      addLog(state, `Aktion von ${player.name} schlägt fehl.`);
-      // Auftrag: refund 3 coins from bank IF the Gangster claim was correctly challenged
-      // PRD: "Wenn Anzeige des Gangster-Anspruchs korrekt ist, gehen die 3 Münzen zurück"
-      if (actionChoice.actionId === ACTIONS.AUFTRAG && pending._targetMustLoseCard && !pending.blocked) {
-        transferCoins(state, 'bank', player.id, AUFTRAG_COST);
-        addLog(state, `${player.name} erhält 3 Münzen zurück (Gangster-Anspruch widerlegt).`);
-      }
-    }
-
-    // Handle pending card losses from Anzeige
-    // (Doppelgefahr: challenger loses card here, target already lost card
-    //  from the Auftrag execution above since actionSucceeds=true)
-    if (pending._challengerMustLoseCard) {
-      await handleLoseCard(state, pending.challengePlayerId);
-    }
-    if (pending._targetMustLoseCard) {
-      await handleLoseCard(state, pending.challengeTarget);
-    }
-
-    state.pendingAction = null;
-    state.reactionState = REACTION_STATES.IDLE;
-    renderGameState(state);
-
-    // Mark ALL players who lost their last card as eliminated this round
-    for (const p of state.players) {
-      if (!state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) === 0) {
-        p.eliminated = true;
-        addLog(state, `${p.name} hat beide Karten verloren und ist raus aus dieser Runde!`);
-      }
-    }
-
-    // Check: how many players still have cards?
-    const withCards = state.players.filter(p =>
-      !state.metaEliminated.includes(p.id) && !p.eliminated && getInfluence(p) > 0
-    );
-
-    if (withCards.length <= 1) {
-      // Round over — last player with cards wins
-      state.roundWinner = withCards[0]?.id ?? null;
-      if (state.roundWinner !== null) {
-        addLog(state, `${getPlayerById(state, state.roundWinner).name} gewinnt die Runde!`);
-      }
-      state.phase = 'pot_distribution';
-      renderGameState(state);
-      return;
-    }
-
-    // Next player (clockwise, loops around)
-    state.currentPlayerIndex = findNextActivePlayer(state, state.currentPlayerIndex + 1);
-    if (state.currentPlayerIndex < 0) {
-      // No active player found — shouldn't happen, but end round safely
-      state.phase = 'pot_distribution';
-      return;
-    }
-
-    await delay(500);
-  }
-}
-
-async function processReactionChain(pending) {
-  while (state.reactionState !== REACTION_STATES.RESOLVING) {
-    const reactors = getReactorsForCurrentState(pending);
-
-    if (reactors.length === 0) {
-      // No one can react → resolve
-      if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
-        pending.actionSucceeds = true;
-      }
-      state.reactionState = REACTION_STATES.RESOLVING;
-      break;
-    }
-
-    let reactionOccurred = false;
-
-    for (const reactor of reactors) {
-      const reactions = getAvailableReactions(state, pending, reactor.id);
-      if (reactions.length === 0) continue;
-
-      let choice;
-      if (reactor.isHuman) {
-        choice = await showReactionSelection(state, pending, reactor);
-      } else {
-        await delay(getAiDelay());
-        choice = aiChooseReaction(state, pending, reactor);
-      }
-
-      if (!choice) continue;
-
-      processReaction(state, pending, reactor.id, choice.reaction, choice.params || {});
-      renderGameState(state);
-
-      if (choice.reaction !== 'pass') {
-        reactionOccurred = true;
-        // Pause so player can read what happened
-        await delay(1500);
-        break; // First reactor claims the reaction
-      }
-    }
-
-    if (!reactionOccurred && state.reactionState !== REACTION_STATES.RESOLVING) {
-      // Everyone passed
-      if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
-        pending.actionSucceeds = true;
-      } else if (state.reactionState === REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK) {
-        pending.actionSucceeds = false; // Block stands
-      }
-      state.reactionState = REACTION_STATES.RESOLVING;
-    }
-
-    await delay(800);
-  }
-}
-
-function getReactorsForCurrentState(pending) {
-  if (state.reactionState === REACTION_STATES.AWAITING_REACTIONS) {
-    return getReactingPlayers(state, pending);
-  }
-  if (state.reactionState === REACTION_STATES.AWAITING_ANZEIGE_ON_BLOCK) {
-    const actor = getPlayerById(state, pending.playerId);
-    return actor && getInfluence(actor) > 0 ? [actor] : [];
-  }
-  if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG) {
-    const target = getPlayerById(state, pending.challengeTarget);
-    return target && getInfluence(target) > 0 ? [target] : [];
-  }
-  if (state.reactionState === REACTION_STATES.AWAITING_BESTECHUNG_DECISION) {
-    const challenger = getPlayerById(state, pending.challengePlayerId);
-    return challenger ? [challenger] : [];
-  }
-  if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG) {
-    const target = getPlayerById(state, pending.targetId);
-    return target && getInfluence(target) > 0 ? [target] : [];
-  }
-  if (state.reactionState === REACTION_STATES.AWAITING_STURZ_BESTECHUNG_DECISION) {
-    const attacker = getPlayerById(state, pending.playerId);
-    return attacker ? [attacker] : [];
-  }
-  return [];
-}
-
-async function handlePolitikerSwap(player) {
-  const currentRoles = player.cards.filter(c => !c.revealed).map(c => c.role);
-  const drawnRoles = drawCardsForPolitiker(state, player.id);
-
-  if (drawnRoles.length === 0) {
-    addLog(state, 'Kein Kartenstapel vorhanden zum Tauschen.');
-    return;
-  }
-
-  let result;
-  if (player.isHuman) {
-    result = await showPolitikerSwap(player, drawnRoles);
+function revealChallenge(s) {
+  const pd = s.pending; const acc = s.players[pd.accused]; const ch = s.players[pd.challenger];
+  const has = acc.cards.indexOf(pd.role);
+  s.pending = null;
+  if (has >= 0) {
+    // Anzeige FALSCH
+    const extra = Math.min(1, ch.coins); ch.coins -= extra; s.pot += extra;
+    const card = acc.cards.splice(has, 1)[0];
+    s.deck.push(card); s.deck = shuffle(s.deck); acc.cards.push(draw(s));
+    log(s, `${acc.name} zeigt ${ROLES[pd.role].name}! Anzeige falsch: ${ch.name} verliert eine Karte und 1 weitere Münze. ${acc.name} tauscht die Karte.`, 'bad');
+    const after = pd.kind === 'action'
+      ? [{ type: 'resolve', action: pd.action, actor: pd.actor, target: pd.target }, { type: 'endTurn' }]
+      : [{ type: 'fail', action: pd.action }, { type: 'endTurn' }];
+    s.steps = [{ type: 'lose', player: pd.challenger, by: pd.accused }, ...after];
   } else {
-    await delay(getAiDelay());
-    result = aiChoosePolitikerCards(player, currentRoles, drawnRoles);
+    log(s, `${acc.name} hat keinen ${ROLES[pd.role].name}! Anzeige richtig: ${acc.name} verliert eine Karte.`, 'good');
+    const after = pd.kind === 'action'
+      ? [{ type: 'fail', action: pd.action }, { type: 'endTurn' }]
+      : [{ type: 'resolve', action: pd.action, actor: pd.actor, target: pd.target, note: 'Block aufgehoben.' }, { type: 'endTurn' }];
+    s.steps = [{ type: 'lose', player: pd.accused, by: pd.challenger }, ...after];
   }
-
-  completePolitikerSwap(state, player.id, result.kept, result.returned);
-  renderGameState(state);
+  runSteps(s);
 }
 
-async function handleAuftragLoseCard(state, targetId) {
-  const target = getPlayerById(state, targetId);
-  if (!target || getInfluence(target) === 0) return;
-
-  await handleLoseCard(state, targetId);
-}
-
-async function handleLoseCard(state, playerId) {
-  const player = getPlayerById(state, playerId);
-  if (!player || getInfluence(player) === 0) return;
-
-  let cardIndex;
-  if (player.isHuman) {
-    cardIndex = await showCardSelection(player, `${player.name}: Welche Karte verlieren?`);
+function revealSturz(s) {
+  const pd = s.pending; const t = s.players[pd.target];
+  s.pending = null;
+  const idx = t.cards.indexOf(pd.role);
+  if (idx >= 0) {
+    log(s, `Treffer! ${t.name} hatte ${ROLES[pd.role].name} und verliert die Karte.`, 'good');
+    s.steps = [{ type: 'loseSpecific', player: pd.target, cardIdx: idx, by: pd.actor }, { type: 'endTurn' }];
   } else {
-    await delay(getAiDelay());
-    cardIndex = aiChooseCardToLose(player);
+    log(s, `Daneben! ${t.name} hat keinen ${ROLES[pd.role].name}. Die 7 Münzen bleiben im Pot.`, 'bad');
+    s.steps = [{ type: 'endTurn' }];
   }
-
-  loseCard(state, playerId, cardIndex);
-  renderGameState(state);
+  runSteps(s);
 }
 
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function runSteps(s) {
+  while (s.steps.length && !s.pending && s.phase === 'playing') {
+    const st = s.steps.shift();
+    if (st.type === 'endTurn') { nextTurn(s); }
+    else if (st.type === 'fail') { log(s, `${ACTIONS[st.action].name} schlägt fehl.`); }
+    else if (st.type === 'resolve') { resolveAction(s, st); }
+    else if (st.type === 'loseSpecific') { applyLose(s, st.player, st.cardIdx, st.by); }
+    else if (st.type === 'lose') {
+      const p = s.players[st.player];
+      if (p.cards.length === 0) continue;
+      if (p.cards.length === 1) applyLose(s, st.player, 0, st.by);
+      else s.pending = { type: 'lose', player: st.player, by: st.by };
+    }
+  }
 }
 
-// Export for online mode
+function applyLose(s, pIdx, cardIdx, by) {
+  const p = s.players[pIdx];
+  const card = p.cards.splice(cardIdx, 1)[0];
+  p.revealed.push(card);
+  log(s, `${p.name} deckt ${ROLES[card].name} auf.`, 'bad');
+  if (p.cards.length === 0) {
+    log(s, `${p.name} hat keine Karten mehr. Die Hand endet.`, 'sys');
+    endHand(s, by);
+  }
+}
+
+function chooseLose(s, meIdx, cardIdx) {
+  const pd = s.pending; if (!pd || pd.type !== 'lose' || pd.player !== meIdx) return 'x';
+  if (!s.players[meIdx].cards[cardIdx]) return 'x';
+  s.pending = null; applyLose(s, meIdx, cardIdx, pd.by); runSteps(s); return null;
+}
+
+function resolveAction(s, st) {
+  const p = s.players[st.actor]; const t = st.target != null ? s.players[st.target] : null;
+  if (st.note) log(s, st.note);
+  switch (st.action) {
+    case 'subvention': { const a = Math.min(2, s.pot); p.coins += a; s.pot -= a; log(s, `${p.name} erhält Subvention (+${a}).`); break; }
+    case 'steuern': { const a = Math.min(3, s.pot); p.coins += a; s.pot -= a; log(s, `${p.name} treibt Steuern ein (+${a}).`); break; }
+    case 'stehlen': { const a = Math.min(2, t.coins); t.coins -= a; p.coins += a; log(s, `${p.name} stiehlt ${a} Münzen von ${t.name}.`); break; }
+    case 'auftrag': { log(s, `Auftrag geht durch: ${t.name} verliert eine Karte.`); s.steps.unshift({ type: 'lose', player: st.target, by: st.actor }); break; }
+    case 'tauschen': {
+      const opts = p.cards.concat([draw(s), draw(s)]);
+      s.pending = { type: 'exchange', player: st.actor, options: opts };
+      log(s, `${p.name} sieht 4 Karten und behält 2.`); break;
+    }
+  }
+}
+
+function chooseExchange(s, meIdx, keepIdx) {
+  const pd = s.pending; if (!pd || pd.type !== 'exchange' || pd.player !== meIdx) return 'x';
+  if (!Array.isArray(keepIdx) || keepIdx.length !== 2 || keepIdx[0] === keepIdx[1]) return 'Genau 2 Karten wählen.';
+  const keep = keepIdx.map(i => pd.options[i]); if (keep.some(c => !c)) return 'x';
+  const back = pd.options.filter((c, i) => !keepIdx.includes(i));
+  s.players[meIdx].cards = keep; s.deck.push(...back); s.deck = shuffle(s.deck);
+  s.pending = null; runSteps(s); return null;
+}
+
+function nextHand(s) {
+  if (!s.pending || s.pending.type !== 'handEnd') return 'x';
+  startHand(s); return null;
+}
 
 
+</script>
+<script>
+// ===================== NETZWERK & UI =====================
+const SB_URL = 'https://ixgjcgjrdpoxjwfnmhlq.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4Z2pjZ2pyZHBveGp3Zm5taGxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5MzM5MjcsImV4cCI6MjA2NzUwOTkyN30.tuJ349X8t4yD4IJ9-Dn40UiSJXBWy_HY6zHJ2ZkI8dA';
+const sb = supabase.createClient(SB_URL, SB_KEY, { realtime: { params: { eventsPerSecond: 5 } } });
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-document.getElementById("btn-online").addEventListener("click", function() { alert("Online-Multiplayer nur im Server-Modus (npm start)."); });
-  </script>
+let pid = localStorage.getItem('min_pid'); if (!pid) { pid = 'p_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem('min_pid', pid); }
+$('name').value = localStorage.getItem('min_name') || '';
+let code = null, cur = null, channel = null, pollTimer = null, tickTimer = null, busy = false;
+let ui = { sel: null, target: null, role: null, keep: [] };
+
+function toast(msg, ok) { const t = $('toast'); t.textContent = msg; t.className = 'toast' + (ok ? ' ok' : ''); t.style.display = 'block'; clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', 2600); }
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('on')); $(id).classList.add('on'); window.scrollTo(0, 0); }
+function myIdx() { return cur ? cur.state.players.findIndex(p => p.id === pid) : -1; }
+function gameUrl() { return location.origin + location.pathname + '?r=' + code; }
+function genCode() { const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; let c = ''; for (let i = 0; i < 4; i++) c += A[Math.floor(Math.random() * A.length)]; return c; }
+function getName() { const n = $('name').value.trim().slice(0, 16); if (!n) { toast('Bitte zuerst deinen Namen eingeben.'); $('name').focus(); return null; } localStorage.setItem('min_name', n); return n; }
+
+// ---- Supabase ----
+async function createGame() {
+  const name = getName(); if (!name) return;
+  for (let i = 0; i < 5; i++) {
+    const c = genCode(); const state = newState(pid, name);
+    const { data, error } = await sb.from('ministerium_games').insert({ code: c, state, version: 1 }).select().single();
+    if (!error) { code = c; setGame(data); enter(); return; }
+    if (error.code !== '23505') { toast('Fehler: ' + error.message); return; }
+  }
+  toast('Konnte kein Spiel anlegen, bitte nochmal.');
+}
+async function joinGame(c) {
+  const name = getName(); if (!name) return;
+  c = (c || '').toUpperCase().trim(); if (c.length !== 4) { toast('Code hat 4 Buchstaben.'); return; }
+  const { data, error } = await sb.from('ministerium_games').select('*').eq('code', c).maybeSingle();
+  if (error) { toast('Fehler: ' + error.message); return; }
+  if (!data) { toast('Spiel ' + c + ' nicht gefunden.'); return; }
+  code = c; cur = data;
+  const st = data.state;
+  if (st.players.some(p => p.id === pid)) { enter(); return; }
+  if (st.phase !== 'lobby') { toast('Dieses Spiel läuft bereits.'); code = null; cur = null; return; }
+  if (st.players.length >= 6) { toast('Das Spiel ist voll (6 Spieler).'); code = null; cur = null; return; }
+  const ok = await commit(s => {
+    if (s.phase !== 'lobby') return 'Spiel läuft bereits.';
+    if (s.players.length >= 6) return 'Spiel ist voll.';
+    if (!s.players.some(p => p.id === pid)) s.players.push({ id: pid, name, coins: 10, cards: [], revealed: [], out: false });
+    return null;
+  });
+  if (ok) enter();
+}
+function enter() {
+  localStorage.setItem('min_last', code);
+  history.replaceState(null, '', location.pathname + '?r=' + code);
+  subscribe(); render();
+}
+function leaveGame() { unsubscribe(); code = null; cur = null; localStorage.removeItem('min_last'); history.replaceState(null, '', location.pathname); $('joinbox').style.display = 'none'; $('createbox').style.display = ''; show('s-start'); }
+
+function setGame(row) {
+  if (!row) return;
+  if (cur && row.version <= cur.version) return; // alte oder gleiche Version
+  cur = row; render();
+}
+async function refresh(manual) {
+  if (!code) return;
+  const { data, error } = await sb.from('ministerium_games').select('*').eq('code', code).maybeSingle();
+  if (error) { if (manual) toast('Keine Verbindung: ' + error.message); return; }
+  if (!data) { toast('Spiel existiert nicht mehr.'); leaveGame(); return; }
+  setGame(data); if (manual) toast('Aktualisiert', true);
+}
+function subscribe() {
+  unsubscribe();
+  channel = sb.channel('game-' + code)
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'ministerium_games', filter: 'code=eq.' + code }, payload => setGame(payload.new))
+    .subscribe();
+  pollTimer = setInterval(() => { if (document.visibilityState === 'visible') refresh(); }, 5000);
+  tickTimer = setInterval(tick, 1000);
+}
+function unsubscribe() { if (channel) { sb.removeChannel(channel); channel = null; } clearInterval(pollTimer); clearInterval(tickTimer); }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refresh(); });
+
+async function commit(fn, retry) {
+  if (!cur || busy) return false; busy = true;
+  try {
+    for (let attempt = 0; attempt < (retry ? 3 : 1); attempt++) {
+      const base = cur; const s = JSON.parse(JSON.stringify(base.state));
+      const err = fn(s);
+      if (err) { if (err !== 'x') toast(err); return false; }
+      const { data, error } = await sb.from('ministerium_games').update({ state: s, version: base.version + 1, updated_at: new Date().toISOString() }).eq('code', code).eq('version', base.version).select();
+      if (error) { toast('Fehler: ' + error.message); return false; }
+      if (!data || !data.length) { await refresh(); if (retry) continue; toast('Der Spielstand hat sich gerade geändert.'); return false; }
+      ui = { sel: null, target: null, role: null, keep: [] };
+      setGame(data[0]); return true;
+    }
+    return false;
+  } finally { busy = false; }
+}
+
+// ---- Buttons Start/Lobby ----
+$('btn-create').onclick = createGame;
+$('btn-join2').onclick = () => joinGame($('codein').value);
+$('btn-join').onclick = () => joinGame($('joincode').textContent);
+$('btn-start').onclick = () => commit(s => { if (s.host !== pid) return 'Nur der Host kann starten.'; if (s.players.length < 2) return 'Mindestens 2 Spieler nötig.'; startGame(s); return null; });
+$('btn-copy').onclick = async () => { try { await navigator.clipboard.writeText(gameUrl()); toast('Link kopiert', true); } catch { prompt('Link kopieren:', gameUrl()); } };
+$('btn-share').onclick = async () => { const d = { title: 'Das Ministerium', text: 'Spiel mit – Code ' + code, url: gameUrl() }; if (navigator.share) { try { await navigator.share(d); } catch { } } else $('btn-copy').onclick(); };
+
+// ---- Render ----
+function render() {
+  if (!cur) return;
+  const s = cur.state;
+  if (s.phase === 'lobby') return renderLobby(s);
+  renderGame(s);
+}
+function renderLobby(s) {
+  show('s-lobby');
+  $('lcode').textContent = code;
+  $('lcount').textContent = `(${s.players.length}/6)`;
+  $('lplayers').innerHTML = s.players.map(p => `<li><span>${esc(p.name)}${p.id === pid ? ' <span class="muted">(du)</span>' : ''}</span><span class="muted">${p.id === s.host ? '👑 Host' : ''}</span></li>`).join('');
+  const host = s.host === pid;
+  $('hostctl').style.display = host ? '' : 'none'; $('waitctl').style.display = host ? 'none' : '';
+  $('btn-start').disabled = s.players.length < 2;
+}
+
+function renderGame(s) {
+  show('s-game');
+  const me = myIdx(); const mp = s.players[me];
+  $('ghand').textContent = s.phase === 'over' ? 'Spiel beendet' : `Hand ${s.hand}`;
+  $('gpot').textContent = s.pot; $('gbank').textContent = s.bank; $('gdeck').textContent = s.deck.length;
+  // Spieler
+  $('gplayers').innerHTML = s.players.map((p, i) => {
+    const cls = ['pl', i === s.turn && s.phase === 'playing' && !p.out ? 'turn' : '', i === me ? 'me' : '', p.out ? 'out' : ''].join(' ');
+    const badge = p.out ? '<span class="badge" style="background:var(--bad);color:#fff">raus</span>' : (i === s.turn && s.phase === 'playing' ? '<span class="badge">am Zug</span>' : '');
+    const cards = p.cards.map(() => '<span class="cb" title="verdeckt"></span>').join('') + p.revealed.map(r => `<span class="rv">${ROLES[r].icon} ${ROLES[r].name}</span>`).join('');
+    return `<div class="${cls}">${badge}<div class="nm">${p.id === s.host ? '👑 ' : ''}${esc(p.name)}${i === me ? ' <span class="muted">(du)</span>' : ''}</div><div class="co">🪙 ${p.coins}</div><div class="cards">${cards}</div></div>`;
+  }).join('');
+  // Meine Hand
+  const pd = s.pending;
+  if (mp && mp.cards.length) {
+    const picking = pd && pd.type === 'lose' && pd.player === me;
+    $('myhand').innerHTML = `<div class="muted" style="margin-top:4px">${picking ? 'Welche Karte willst du aufdecken?' : 'Deine verdeckten Karten'}</div><div class="hand">` + mp.cards.map((c, i) => `<div class="hc ${picking ? 'pick' : ''}" ${picking ? `onclick="act('lose',${i})"` : ''}><div class="ic">${ROLES[c].icon}</div><div class="rn" style="color:${ROLES[c].color}">${ROLES[c].name}</div><div class="ra">${ROLES[c].action}<br>${ROLES[c].blocks}</div></div>`).join('') + '</div>';
+  } else if (mp && mp.out) { $('myhand').innerHTML = '<div class="card muted" style="text-align:center">Du bist ausgeschieden. Du kannst weiter zuschauen.</div>'; }
+  else $('myhand').innerHTML = '';
+  // Aktion
+  $('action').innerHTML = renderAction(s, me);
+  // Log
+  $('glog').innerHTML = s.log.slice(-14).reverse().map(l => `<div class="${l.k}">${esc(l.m)}</div>`).join('');
+}
+
+function nameOf(s, i) { return i == null ? '' : esc(s.players[i].name); }
+function roleBtns(roles, fn) { return roles.map(r => `<button class="btn sec sm" onclick="${fn}('${r}')">${ROLES[r].icon} ${ROLES[r].name}</button>`).join(''); }
+
+function renderAction(s, me) {
+  const pd = s.pending; const mp = s.players[me];
+  if (s.phase === 'over') {
+    const w = s.winner != null ? s.players[s.winner] : null;
+    return `<div class="panel win"><div class="t">🏆</div><h2>${w ? esc(w.name) + ' gewinnt!' : 'Unentschieden'}</h2><div class="muted">${w ? 'Letzter Spieler mit Münzen.' : 'Niemand hat mehr Münzen.'}</div>${s.host === pid ? '<button class="btn" onclick="act(\'again\')">Nochmal spielen</button>' : '<div class="muted" style="margin-top:10px">Der Host kann eine Revanche starten.</div>'}<button class="btn sec" onclick="leaveGame()">Verlassen</button></div>`;
+  }
+  if (!pd) {
+    if (s.turn === me) return renderMyTurn(s, me);
+    return `<div class="panel"><h3><span class="spin"></span>${nameOf(s, s.turn)} ist am Zug</h3><div class="muted">Warte auf die Ankündigung …</div></div>`;
+  }
+  if (pd.type === 'handEnd') {
+    const r = s.handResult; const w = s.players[r.winner];
+    return `<div class="panel"><h3>Hand ${s.hand} beendet</h3><p>🏆 <b>${esc(w.name)}</b> gewinnt die Hand und nimmt <b>${r.winAmt}</b> Münzen aus dem Pot${r.each ? ', alle anderen bekommen je 1 Münze' : ''}. Im Pot bleiben ${r.pot}.</p><button class="btn" onclick="act('nextHand')">Nächste Hand</button></div>`;
+  }
+  if (pd.type === 'react') {
+    const left = Math.max(0, Math.ceil((pd.deadline - Date.now()) / 1000));
+    const A = ACTIONS[pd.action];
+    const desc = pd.kind === 'action'
+      ? `<b>${nameOf(s, pd.actor)}</b> kündigt an: <b>${A.name}</b>${pd.target != null ? ' gegen <b>' + nameOf(s, pd.target) + '</b>' : ''}${pd.role ? ` und beansprucht <b>${ROLES[pd.role].name}</b>` : ''}.`
+      : `<b>${nameOf(s, pd.blocker)}</b> blockiert <b>${A.name}</b> von ${nameOf(s, pd.actor)} und beansprucht <b>${ROLES[pd.role].name}</b>.`;
+    const o = reactOptions(s, me);
+    const el = reactEligible(s);
+    const waiting = el.filter(i => !pd.passed[s.players[i].id]).map(i => `<span class="chip">${nameOf(s, i)}</span>`).join('') || '<span class="muted">–</span>';
+    let body = '';
+    if (o && !pd.passed[pid]) {
+      body += '<div style="margin-top:10px">';
+      if (o.challenge) body += `<button class="btn bad sm" onclick="act('challenge')">⚖️ Anzeige (1 Münze)</button>`;
+      if (o.blocks.length) body += o.blocks.map(r => `<button class="btn sec sm" onclick="act('block','${r}')">🛡️ Blocken als ${ROLES[r].name}</button>`).join('');
+      body += `<button class="btn good sm" onclick="act('pass')">✓ Passen</button></div>`;
+    } else body += `<div class="muted" style="margin-top:8px">Warten auf: ${waiting}</div>`;
+    return `<div class="panel"><h3>Reaktion? <span class="timer">⏱ ${left}s</span></h3><div>${desc}</div>${body}</div>`;
+  }
+  if (pd.type === 'challenge') {
+    const acc = pd.accused, ch = pd.challenger;
+    const head = `<b>${nameOf(s, ch)}</b> zeigt <b>${nameOf(s, acc)}</b> an: „Du hast keinen ${ROLES[pd.role].name}!"`;
+    if (pd.stage === 'bribe') {
+      if (me === acc) {
+        const max = mp.coins;
+        return `<div class="panel"><h3>Du wurdest angezeigt</h3><div>${head}</div><p class="muted">Du kannst ${nameOf(s, ch)} bestechen (mindestens 2 Münzen), damit die Anzeige fallen gelassen wird. Oder du lässt es auf die Karte ankommen.</p>` +
+          (max >= 2 ? `<div class="row"><input type="number" id="bribe" min="2" max="${max}" value="2" inputmode="numeric"><button class="btn sec" style="margin-top:0" onclick="act('bribe')">💰 Bestechen</button></div>` : '<div class="muted">Du hast nicht genug Münzen für eine Bestechung.</div>') +
+          `<button class="btn" onclick="act('refuse')">🃏 Keine Bestechung, Karte zeigen</button></div>`;
+      }
+      return `<div class="panel"><h3><span class="spin"></span>Anzeige läuft</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, acc)} überlegt, ob er eine Bestechung anbietet …</div></div>`;
+    }
+    if (me === ch) return `<div class="panel"><h3>Bestechungsangebot</h3><div>${head}</div><p>${nameOf(s, acc)} bietet dir <b>${pd.bribe} Münzen</b>, damit du die Anzeige zurückziehst.</p><div class="row"><button class="btn good" onclick="act('decide',true)">💰 Annehmen (+${pd.bribe})</button><button class="btn bad" onclick="act('decide',false)">Ablehnen, Karte aufdecken</button></div></div>`;
+    return `<div class="panel"><h3><span class="spin"></span>Bestechung angeboten</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, acc)} bietet ${pd.bribe} Münzen. ${nameOf(s, ch)} entscheidet …</div></div>`;
+  }
+  if (pd.type === 'sturz') {
+    const head = `<b>${nameOf(s, pd.actor)}</b> stürzt <b>${nameOf(s, pd.target)}</b> und rät: <b>${ROLES[pd.role].name}</b>. (7 Münzen liegen im Pot.)`;
+    if (pd.stage === 'bribe') {
+      if (me === pd.target) {
+        const max = mp.coins;
+        return `<div class="panel"><h3>Sturz gegen dich</h3><div>${head}</div><p class="muted">Du kannst ${nameOf(s, pd.actor)} bestechen (mindestens 1 Münze), um den Sturz abzuwenden. Die 7 Münzen bleiben in jedem Fall im Pot.</p>` +
+          (max >= 1 ? `<div class="row"><input type="number" id="bribe" min="1" max="${max}" value="1" inputmode="numeric"><button class="btn sec" style="margin-top:0" onclick="act('bribe')">💰 Bestechen</button></div>` : '<div class="muted">Du hast keine Münzen für eine Bestechung.</div>') +
+          `<button class="btn" onclick="act('refuse')">🃏 Keine Bestechung, aufdecken lassen</button></div>`;
+      }
+      return `<div class="panel"><h3><span class="spin"></span>Sturz läuft</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, pd.target)} überlegt, ob er eine Bestechung anbietet …</div></div>`;
+    }
+    if (me === pd.actor) return `<div class="panel"><h3>Bestechungsangebot</h3><div>${head}</div><p>${nameOf(s, pd.target)} bietet dir <b>${pd.bribe} Münzen</b>, damit du den Sturz abbrichst.</p><div class="row"><button class="btn good" onclick="act('decide',true)">💰 Annehmen (+${pd.bribe})</button><button class="btn bad" onclick="act('decide',false)">Ablehnen, aufdecken</button></div></div>`;
+    return `<div class="panel"><h3><span class="spin"></span>Bestechung angeboten</h3><div>${head}</div><div class="muted" style="margin-top:6px">${nameOf(s, pd.target)} bietet ${pd.bribe} Münzen. ${nameOf(s, pd.actor)} entscheidet …</div></div>`;
+  }
+  if (pd.type === 'lose') {
+    if (pd.player === me) return `<div class="panel"><h3>Du verlierst eine Karte</h3><div class="muted">Tippe oben auf die Karte, die du aufdecken willst.</div></div>`;
+    return `<div class="panel"><h3><span class="spin"></span>${nameOf(s, pd.player)} verliert eine Karte</h3><div class="muted">… und wählt, welche aufgedeckt wird.</div></div>`;
+  }
+  if (pd.type === 'exchange') {
+    if (pd.player !== me) return `<div class="panel"><h3><span class="spin"></span>${nameOf(s, pd.player)} tauscht Karten</h3><div class="muted">Sieht 4 Karten an und behält 2.</div></div>`;
+    const cards = pd.options.map((c, i) => `<div class="hc pick ${ui.keep.includes(i) ? 'sel' : ''}" onclick="toggleKeep(${i})"><div class="ic">${ROLES[c].icon}</div><div class="rn" style="color:${ROLES[c].color}">${ROLES[c].name}</div><div class="ra">${ROLES[c].action}</div></div>`).join('');
+    return `<div class="panel"><h3>Karten tauschen</h3><div class="muted">Wähle die 2 Karten, die du behalten willst.</div><div class="hand" style="flex-wrap:wrap">${cards}</div><button class="btn" ${ui.keep.length === 2 ? '' : 'disabled'} onclick="act('exchange')">Behalten</button></div>`;
+  }
+  return '';
+}
+
+function renderMyTurn(s, me) {
+  const mp = s.players[me]; const others = inHand(s).filter(i => i !== me);
+  if (ui.sel) {
+    const A = ACTIONS[ui.sel];
+    let html = `<div class="panel"><h3>${A.name}</h3><div class="muted">${A.desc}</div>`;
+    if (A.needsTarget) {
+      html += `<div style="margin-top:10px"><label>Ziel</label>` + others.map(i => `<button class="btn ${ui.target === i ? '' : 'sec'} sm" onclick="pickTarget(${i})">${nameOf(s, i)} (🪙 ${s.players[i].coins}, ${s.players[i].cards.length} Karten)</button>`).join('') + '</div>';
+    }
+    if (ui.sel === 'sturz') {
+      html += `<div style="margin-top:10px"><label>Welche Rolle hat das Ziel verdeckt?</label>` + ROLE_KEYS.map(r => `<button class="btn ${ui.role === r ? '' : 'sec'} sm" onclick="pickRole('${r}')">${ROLES[r].icon} ${ROLES[r].name}</button>`).join('') + '</div>';
+    }
+    const ready = (!A.needsTarget || ui.target != null) && (ui.sel !== 'sturz' || ui.role);
+    html += `<div class="row"><button class="btn sec" onclick="selAction(null)">Zurück</button><button class="btn" ${ready ? '' : 'disabled'} onclick="act('do')">Ausführen</button></div></div>`;
+    return html;
+  }
+  const can = a => validateAction(s, me, a, others[0], 'finanzamt') === null || (ACTIONS[a].needsTarget && others.some(t => validateAction(s, me, a, t, 'finanzamt') === null));
+  const b = (a, extra) => `<button class="ab ${extra || ''}" ${can(a) ? '' : 'disabled'} onclick="selAction('${a}')"><b>${ACTIONS[a].name}</b><small>${ACTIONS[a].desc}</small></button>`;
+  return `<div class="panel"><h3>Du bist am Zug</h3><div class="muted" style="margin-bottom:8px">Wähle genau eine Aktion. Du darfst jede Rolle beanspruchen, egal was du hast.</div><div class="acts">${b('buergergeld')}${b('subvention')}${b('steuern')}${b('tauschen')}${b('stehlen')}${b('auftrag')}${b('sturz', 'wide')}</div></div>`;
+}
+function selAction(a) { ui.sel = a; ui.target = null; ui.role = null; render(); }
+function pickTarget(i) { ui.target = i; render(); }
+function pickRole(r) { ui.role = r; render(); }
+function toggleKeep(i) { if (ui.keep.includes(i)) ui.keep = ui.keep.filter(x => x !== i); else if (ui.keep.length < 2) ui.keep.push(i); render(); }
+
+// ---- Aktionen ausführen ----
+async function act(kind, arg) {
+  const me = myIdx(); if (me < 0) return;
+  const bribeVal = () => { const el = $('bribe'); return el ? el.value : 0; };
+  const sel = { ...ui };
+  const amount = bribeVal();
+  await commit(s => {
+    switch (kind) {
+      case 'do': return doAction(s, me, sel.sel, sel.target, sel.role);
+      case 'pass': return pass(s, me);
+      case 'challenge': return challenge(s, me);
+      case 'block': return block(s, me, arg);
+      case 'bribe': return offerBribe(s, me, amount);
+      case 'refuse': return refuseBribe(s, me);
+      case 'decide': return decideBribe(s, me, arg);
+      case 'lose': return chooseLose(s, me, arg);
+      case 'exchange': return chooseExchange(s, me, sel.keep);
+      case 'nextHand': return nextHand(s);
+      case 'again': if (s.host !== pid) return 'Nur der Host.'; s.phase = 'lobby'; s.players.forEach(p => { p.coins = 10; p.cards = []; p.revealed = []; p.out = false; }); s.pot = 0; s.bank = 0; s.pending = null; s.steps = []; s.log = []; s.winner = null; s.hand = 0; return null;
+    }
+    return 'x';
+  }, kind === 'pass' || kind === 'nextHand');
+}
+let lastTimeout = 0;
+function tick() {
+  if (!cur) return; const pd = cur.state.pending;
+  if (pd && pd.type === 'react') {
+    const left = pd.deadline - Date.now();
+    const t = document.querySelector('.timer'); if (t) t.textContent = '⏱ ' + Math.max(0, Math.ceil(left / 1000)) + 's';
+    // Nach Ablauf: der Spieler am Zug (oder nach 5 s jeder) löst auf
+    const me = myIdx();
+    const grace = me === cur.state.turn ? 0 : 5000;
+    if (left < -grace && Date.now() - lastTimeout > 4000) { lastTimeout = Date.now(); commit(s => timeoutReact(s), true); }
+  }
+}
+
+// ---- Regeln ----
+function openRules() {
+  $('sheet').innerHTML = `<h3>Das Ministerium – Regeln</h3><div class="rules">
+  <p><b>Ziel:</b> Als letzter Spieler mit Münzen übrig bleiben. Jeder startet mit 10 Münzen und 2 verdeckten Karten. Du darfst jede Rolle beanspruchen, egal was du wirklich hast.</p>
+  <h4>Rollen</h4><table class="rl"><tr><th>Karte</th><th>Aktion</th><th>Blockiert</th></tr>
+  <tr><td>🏛️ Finanzamt</td><td>Steuern: +3 aus dem Pot</td><td>Subvention (jeder)</td></tr>
+  <tr><td>🎩 Politiker</td><td>Karten tauschen: 4 sehen, 2 behalten</td><td>Diebstahl (nur Ziel)</td></tr>
+  <tr><td>🕶️ Dieb</td><td>Stehlen: 2 Münzen von einem Spieler</td><td>Diebstahl (nur Ziel)</td></tr>
+  <tr><td>🔫 Gangster</td><td>Auftrag: 3 Münzen in die Bank, Ziel verliert 1 Karte</td><td>—</td></tr>
+  <tr><td>🚔 Polizist</td><td>keine</td><td>Auftrag (nur Ziel)</td></tr></table>
+  <h4>Hand-Ablauf</h4>
+  <p><b>1. Abgabe:</b> Jeder zahlt 1 Münze in den Pot. Wer danach 0 Münzen hat, scheidet aus.<br>
+  <b>2. Aktionen:</b> Reihum genau eine Aktion. Bürgergeld (+1), Subvention (+2, blockierbar), Steuern (+3, Finanzamt), Tauschen (Politiker), Stehlen (Dieb), Auftrag (Gangster, 3 Münzen), Sturz (7 Münzen in den Pot, Rolle einer verdeckten Karte raten, nicht anzeigbar). Einkommen kommt nur aus dem Pot.<br>
+  <b>3. Pot-Verteilung:</b> Die Hand endet, sobald ein Spieler seine letzte Karte verliert. Wer das verursacht hat, gewinnt die Hand: max. 10 Münzen aus dem Pot, alle anderen je 1, der Rest bleibt im Pot. Wer dann 0 Münzen hat, ist raus.</p>
+  <h4>Anzeige</h4>
+  <p>Jede beanspruchte Rolle (auch ein Block) kann angezeigt werden. Kostet 1 Münze in den Pot. Der Angezeigte kann eine Bestechung (min. 2 Münzen) anbieten, der Anzeigende nimmt an oder lehnt ab.<br>
+  <b>Richtig:</b> Angezeigter verliert eine Karte, Aktion schlägt fehl.<br>
+  <b>Falsch:</b> Anzeigender verliert eine Karte + 1 weitere Münze, der Angezeigte tauscht die gezeigte Karte, die Aktion geht durch.<br>
+  <b>Doppelgefahr:</b> Wer den Gangster (oder einen Polizist-Block) falsch anzeigt, verliert eine Karte, und der Auftrag geht trotzdem durch.</p>
+  <h4>Sturz und Bestechung</h4>
+  <p>Beim Sturz zahlst du 7 Münzen in den Pot und nennst eine Rolle. Das Ziel kann dich bestechen (min. 1 Münze). Lehnst du ab: Richtig geraten → Ziel verliert die Karte. Falsch → nichts passiert, die 7 Münzen bleiben im Pot.</p>
+  <p class="muted">Reaktionen haben 30 Sekunden Zeit, danach gilt „keine Reaktion".</p>
+  </div><button class="btn sec" onclick="closeSheet()">Schließen</button>`;
+  $('ov').classList.add('on');
+}
+function closeSheet() { $('ov').classList.remove('on'); }
+$('ov').addEventListener('click', e => { if (e.target === $('ov')) closeSheet(); });
+
+// ---- Init ----
+(async function init() {
+  const params = new URLSearchParams(location.search);
+  const r = (params.get('r') || '').toUpperCase();
+  const last = localStorage.getItem('min_last');
+  const target = r || last;
+  if (target) {
+    const { data } = await sb.from('ministerium_games').select('*').eq('code', target).maybeSingle();
+    if (data && data.state.players.some(p => p.id === pid) && !(data.state.phase === 'over' && !r)) { code = target; cur = data; enter(); return; }
+    if (r && data && data.state.phase === 'lobby') { $('joincode').textContent = r; $('joinbox').style.display = ''; $('createbox').style.display = 'none'; }
+    else if (r) { toast(data ? 'Dieses Spiel läuft schon oder ist beendet.' : 'Spiel ' + r + ' nicht gefunden.'); history.replaceState(null, '', location.pathname); }
+    else localStorage.removeItem('min_last');
+  }
+  show('s-start');
+})();
+</script>
 </body>
 </html>
