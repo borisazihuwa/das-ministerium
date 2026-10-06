@@ -191,12 +191,20 @@ function newState(hostId, hostName) {
     players: [{ id: hostId, name: hostName, coins: 10, cards: [], revealed: [], out: false }],
     deck: [], pot: 0, bank: 0, hand: 0, turn: 0, startIdx: 0,
     pending: null, steps: [], log: [], winner: null, handResult: null, created: Date.now(),
-    settings: { seed: 5, auftragToPot: false },
+    settings: { auto: true, seed: 5, auftragToPot: false },
   };
 }
 
+function recommendedSettings(n) {
+  return { seed: n >= 5 ? 10 : 5, auftragToPot: false };
+}
+function effectiveSettings(s) {
+  const st = Object.assign({ auto: true, seed: 5, auftragToPot: false }, s.settings || {});
+  if (st.auto) Object.assign(st, recommendedSettings(alive(s).length));
+  return st;
+}
 function startGame(s) {
-  s.settings = Object.assign({ seed: 5, auftragToPot: false }, s.settings || {});
+  s.settings = effectiveSettings(s);
   s.phase = 'playing'; s.hand = 0; s.pot = s.settings.seed; s.bank = 0; s.winner = null;
   s.players.forEach(p => { p.coins = 10; p.out = false; p.cards = []; p.revealed = []; });
   s.startIdx = -1; s.log = [];
@@ -249,7 +257,7 @@ function endHand(s, winnerIdx) {
   const others = alive(s).filter(i => i !== winnerIdx);
   let winAmt = 0, each = 0;
   if (s.pot <= 10 || others.length === 0) { winAmt = s.pot; }
-  else if (alive(s).length === 2) { winAmt = 10; } // Bei 2 Spielern: keine Redistribution, Rest bleibt im Pot
+  else if (alive(s).length === 2) { winAmt = s.pot; } // Bei 2 Spielern: Gewinner nimmt den ganzen Pot (kein Rest, der den Verlierer wieder aufbaut)
   else {
     winAmt = 10;
     const rest = s.pot - 10;
@@ -554,10 +562,12 @@ function chooseExchange(s, meIdx, keepIdx) {
 function setSetting(s, meIdx, key, value) {
   if (s.phase !== 'lobby') return 'Nur in der Lobby änderbar.';
   if (s.players[meIdx].id !== s.host) return 'Nur der Host kann Einstellungen ändern.';
-  s.settings = Object.assign({ seed: 5, auftragToPot: false }, s.settings || {});
+  s.settings = effectiveSettings(s);
+  if (key === 'auto') { s.settings.auto = !!value; return null; }
   if (key === 'seed') { if (![0, 5, 10].includes(value)) return 'x'; s.settings.seed = value; }
   else if (key === 'auftragToPot') s.settings.auftragToPot = !!value;
   else return 'x';
+  s.settings.auto = false;
   return null;
 }
 function nextHand(s) {
@@ -687,10 +697,11 @@ function renderLobby(s) {
   $('lcount').textContent = `(${s.players.length}/6)`;
   $('lplayers').innerHTML = s.players.map(p => `<li><span>${esc(p.name)}${p.id === pid ? ' <span class="muted">(du)</span>' : ''}</span><span class="muted">${p.id === s.host ? '👑 Host' : ''}</span></li>`).join('');
   const host = s.host === pid;
-  const st = Object.assign({ seed: 5, auftragToPot: false }, s.settings || {});
+  const st = effectiveSettings(s);
   const opt = (key, val, label) => `<button class="btn ${String(st[key]) === String(val) ? '' : 'sec'} sm" ${host ? `onclick="act('setting','${key}',${JSON.stringify(val)})"` : 'disabled="disabled"'}>${label}</button>`;
   $('lsettings').innerHTML = `<div class="muted">Spielvarianten${host ? '' : ' (stellt der Host ein)'}</div>
-    <div style="margin-top:8px"><label>Startkapital im Pot (legt die Bank zu Spielbeginn ein)</label>${opt('seed', 0, '0')}${opt('seed', 5, '5')}${opt('seed', 10, '10')}</div>
+    <div style="margin-top:8px">${opt('auto', true, st.auto ? '✓ Automatisch nach Spielerzahl' : 'Automatisch nach Spielerzahl')}${st.auto ? '<span class="muted" style="font-size:12px">2 bis 4 Spieler: Start 5 · 5 bis 6 Spieler: Start 10 · Auftrag in die Bank</span>' : ''}</div>
+    <div style="margin-top:10px"><label>Startkapital im Pot (legt die Bank zu Spielbeginn ein)</label>${opt('seed', 0, '0')}${opt('seed', 5, '5')}${opt('seed', 10, '10')}</div>
     <div style="margin-top:10px"><label>Auftrag-Kosten (3 Münzen) gehen …</label>${opt('auftragToPot', false, 'in die Bank')}${opt('auftragToPot', true, 'in den Pot')}</div>`;
   $('hostctl').style.display = host ? '' : 'none'; $('waitctl').style.display = host ? 'none' : '';
   $('btn-start').disabled = s.players.length < 2;
@@ -901,7 +912,7 @@ function openRules() {
   <h4>Hand-Ablauf</h4>
   <p><b>1. Abgabe:</b> Jeder zahlt 1 Münze in den Pot. Wer danach 0 Münzen hat, scheidet aus.<br/>
   <b>2. Aktionen:</b> Reihum genau eine Aktion. Bürgergeld (+1), Subvention (+2, blockierbar), Steuern (+3, Finanzamt), Tauschen (Politiker), Stehlen (Dieb), Auftrag (Gangster, 3 Münzen), Sturz (7 Münzen in den Pot, Rolle einer verdeckten Karte raten, nicht anzeigbar). Einkommen kommt nur aus dem Pot.<br/>
-  <b>3. Pot-Verteilung:</b> Wer beide Karten verliert, ist aus der laufenden Hand raus. Die Hand endet, sobald nur noch ein Spieler Karten hat: Er gewinnt die Hand und nimmt max. 10 Münzen aus dem Pot, alle anderen bekommen je 1 (bei 2 Spielern nichts), der Rest bleibt im Pot. Wer dann 0 Münzen hat, scheidet aus dem Spiel aus.</p>
+  <b>3. Pot-Verteilung:</b> Wer beide Karten verliert, ist aus der laufenden Hand raus. Die Hand endet, sobald nur noch ein Spieler Karten hat: Er gewinnt die Hand und nimmt max. 10 Münzen aus dem Pot, alle anderen bekommen je 1, der Rest bleibt im Pot. Bei 2 Spielern nimmt der Gewinner den ganzen Pot. Wer dann 0 Münzen hat, scheidet aus dem Spiel aus.</p>
   <h4>Anzeige</h4>
   <p>Jede beanspruchte Rolle (auch ein Block) kann angezeigt werden. Kostet 1 Münze in den Pot. Der Angezeigte kann eine Bestechung (min. 2 Münzen) anbieten, der Anzeigende nimmt an, lehnt ab oder fordert einmalig mehr (Gegenangebot). Lehnt der Angezeigte die Forderung ab, steht sein ursprüngliches Angebot wieder zur Entscheidung.<br/>
   <b>Richtig:</b> Angezeigter verliert eine Karte, Aktion schlägt fehl.<br/>
