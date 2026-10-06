@@ -131,7 +131,7 @@ table.rl{width:100%;border-collapse:collapse;font-size:13px}.rl td,.rl th{border
   <div id="myhand"></div>
   <div id="action"></div>
   <div class="log" id="glog"></div>
-  <p style="text-align:center;margin-top:10px"><button class="btn sec sm" onclick="openRules()">Regeln</button> <button class="btn sec sm" onclick="refresh(true)">Aktualisieren</button></p>
+  <p style="text-align:center;margin-top:10px"><button class="btn sec sm" onclick="openRules()">Regeln</button> <button class="btn sec sm" onclick="refresh(true)">Aktualisieren</button> <button class="btn sec sm" id="btn-newgame" onclick="newGame()">Neues Spiel</button> <button class="btn sec sm" onclick="leaveGame()">Verlassen</button></p>
 </section>
 
 </div>
@@ -658,6 +658,7 @@ function renderGame(s) {
   show('s-game');
   const me = myIdx(); const mp = s.players[me];
   $('ghand').textContent = s.phase === 'over' ? 'Spiel beendet' : `Hand ${s.hand}`;
+  $('btn-newgame').style.display = s.host === pid ? '' : 'none';
   $('gpot').textContent = s.pot; $('gbank').textContent = s.bank; $('gdeck').textContent = s.deck.length;
   // Spieler
   $('gplayers').innerHTML = s.players.map((p, i) => {
@@ -776,6 +777,12 @@ function renderMyTurn(s, me) {
   const can = a => validateAction(s, me, a, others[0], 'finanzamt') === null || (ACTIONS[a].needsTarget && others.some(t => validateAction(s, me, a, t, 'finanzamt') === null));
   const b = (a, extra) => `<button class="ab ${extra || ''}" ${can(a) ? '' : 'disabled="disabled"'} onclick="selAction('${a}')"><b>${ACTIONS[a].name}</b><small>${ACTIONS[a].desc}</small></button>`;
   return `<div class="panel"><h3>Du bist am Zug</h3><div class="muted" style="margin-bottom:8px">Wähle genau eine Aktion. Du darfst jede Rolle beanspruchen, egal was du hast.</div><div class="acts">${b('buergergeld')}${b('subvention')}${b('steuern')}${b('tauschen')}${b('stehlen')}${b('auftrag')}${b('sturz', 'wide')}</div></div>`;
+}
+function newGame() {
+  if (!cur) return;
+  if (cur.state.host !== pid) { toast('Nur der Host kann ein neues Spiel starten.'); return; }
+  if (cur.state.phase === 'playing' && !confirm('Laufendes Spiel beenden und ein neues Spiel starten? Alle Spieler kommen zurück in die Lobby.')) return;
+  act('again');
 }
 function selAction(a) { ui.sel = a; ui.target = null; ui.role = null; render(); }
 function pickTarget(i) { ui.target = i; render(); }
