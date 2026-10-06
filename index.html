@@ -230,7 +230,7 @@ function nextTurn(s) {
   if (ih.length === 0) return;
   // Sackgasse: niemand hat Münzen und der Pot ist leer → Hand endet ohne Gewinner
   if (s.pot === 0 && ih.every(i => s.players[i].coins === 0)) {
-    log(s, 'Niemand hat mehr Münzen und der Pot ist leer. Die Hand endet unentschieden.', 'sys');
+    log(s, 'Kein Spieler mit Karten hat noch Münzen und der Pot ist leer. Die Hand endet unentschieden.', 'sys');
     s.steps = []; s.pending = null;
     s.players.forEach(p => { if (!p.out && p.coins === 0) p.out = true; });
     gameOver(s, null); return;
@@ -480,8 +480,13 @@ function applyLose(s, pIdx, cardIdx, by) {
   p.revealed.push(card);
   log(s, `${p.name} deckt ${ROLES[card].name} auf.`, 'bad');
   if (p.cards.length === 0) {
-    log(s, `${p.name} hat keine Karten mehr. Die Hand endet.`, 'sys');
-    endHand(s, by);
+    log(s, `${p.name} hat keine Karten mehr und ist aus dieser Hand raus.`, 'sys');
+    const ih = inHand(s);
+    if (ih.length <= 1) {
+      // Hand-Gewinner: wer als Letzter noch Karten hat
+      if (ih.length === 1) log(s, `${pname(s, ih[0])} hat als Einziger noch Karten. Die Hand endet.`, 'sys');
+      endHand(s, ih.length === 1 ? ih[0] : by);
+    }
   }
 }
 
@@ -656,8 +661,9 @@ function renderGame(s) {
   $('gpot').textContent = s.pot; $('gbank').textContent = s.bank; $('gdeck').textContent = s.deck.length;
   // Spieler
   $('gplayers').innerHTML = s.players.map((p, i) => {
-    const cls = ['pl', i === s.turn && s.phase === 'playing' && !p.out ? 'turn' : '', i === me ? 'me' : '', p.out ? 'out' : ''].join(' ');
-    const badge = p.out ? '<span class="badge" style="background:var(--bad);color:#fff">raus</span>' : (i === s.turn && s.phase === 'playing' ? '<span class="badge">am Zug</span>' : '');
+    const outOfHand = !p.out && s.phase === 'playing' && p.cards.length === 0;
+    const cls = ['pl', i === s.turn && s.phase === 'playing' && !p.out ? 'turn' : '', i === me ? 'me' : '', p.out || outOfHand ? 'out' : ''].join(' ');
+    const badge = p.out ? '<span class="badge" style="background:var(--bad);color:#fff">raus</span>' : outOfHand ? '<span class="badge" style="background:var(--line);color:var(--text)">Hand verloren</span>' : (i === s.turn && s.phase === 'playing' ? '<span class="badge">am Zug</span>' : '');
     const cards = p.cards.map(() => '<span class="cb" title="verdeckt"></span>').join('') + p.revealed.map(r => `<span class="rv">${ROLES[r].icon} ${ROLES[r].name}</span>`).join('');
     return `<div class="${cls}">${badge}<div class="nm">${p.id === s.host ? '👑 ' : ''}${esc(p.name)}${i === me ? ' <span class="muted">(du)</span>' : ''}</div><div class="co">🪙 ${p.coins}</div><div class="cards">${cards}</div></div>`;
   }).join('');
@@ -667,6 +673,7 @@ function renderGame(s) {
     const picking = pd && pd.type === 'lose' && pd.player === me;
     $('myhand').innerHTML = `<div class="muted" style="margin-top:4px">${picking ? 'Welche Karte willst du aufdecken?' : 'Deine verdeckten Karten'}</div><div class="hand">` + mp.cards.map((c, i) => `<div class="hc ${picking ? 'pick' : ''}" ${picking ? `onclick="act('lose',${i})"` : ''}><div class="ic">${ROLES[c].icon}</div><div class="rn" style="color:${ROLES[c].color}">${ROLES[c].name}</div><div class="ra">${ROLES[c].action}<br/>${ROLES[c].blocks}</div></div>`).join('') + '</div>';
   } else if (mp && mp.out) { $('myhand').innerHTML = '<div class="card muted" style="text-align:center">Du bist ausgeschieden. Du kannst weiter zuschauen.</div>'; }
+  else if (mp && s.phase === 'playing') { $('myhand').innerHTML = '<div class="card muted" style="text-align:center">Du hast beide Karten verloren und bist aus dieser Hand raus. Bei der nächsten Hand bist du wieder dabei.</div>'; }
   else $('myhand').innerHTML = '';
   // Aktion
   $('action').innerHTML = renderAction(s, me);
@@ -824,7 +831,7 @@ function openRules() {
   <h4>Hand-Ablauf</h4>
   <p><b>1. Abgabe:</b> Jeder zahlt 1 Münze in den Pot. Wer danach 0 Münzen hat, scheidet aus.<br/>
   <b>2. Aktionen:</b> Reihum genau eine Aktion. Bürgergeld (+1), Subvention (+2, blockierbar), Steuern (+3, Finanzamt), Tauschen (Politiker), Stehlen (Dieb), Auftrag (Gangster, 3 Münzen), Sturz (7 Münzen in den Pot, Rolle einer verdeckten Karte raten, nicht anzeigbar). Einkommen kommt nur aus dem Pot.<br/>
-  <b>3. Pot-Verteilung:</b> Die Hand endet, sobald ein Spieler seine letzte Karte verliert. Wer das verursacht hat, gewinnt die Hand: max. 10 Münzen aus dem Pot, alle anderen je 1, der Rest bleibt im Pot. Wer dann 0 Münzen hat, ist raus.</p>
+  <b>3. Pot-Verteilung:</b> Wer beide Karten verliert, ist aus der laufenden Hand raus. Die Hand endet, sobald nur noch ein Spieler Karten hat: Er gewinnt die Hand und nimmt max. 10 Münzen aus dem Pot, alle anderen bekommen je 1 (bei 2 Spielern nichts), der Rest bleibt im Pot. Wer dann 0 Münzen hat, scheidet aus dem Spiel aus.</p>
   <h4>Anzeige</h4>
   <p>Jede beanspruchte Rolle (auch ein Block) kann angezeigt werden. Kostet 1 Münze in den Pot. Der Angezeigte kann eine Bestechung (min. 2 Münzen) anbieten, der Anzeigende nimmt an oder lehnt ab.<br/>
   <b>Richtig:</b> Angezeigter verliert eine Karte, Aktion schlägt fehl.<br/>
