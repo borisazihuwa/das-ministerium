@@ -868,7 +868,7 @@ async function act(kind, arg, arg2) {
       case 'exchange': return chooseExchange(s, me, sel.keep);
       case 'nextHand': return nextHand(s);
       case 'setting': return setSetting(s, me, arg, arg2);
-      case 'again': if (s.host !== pid) return 'Nur der Host.'; s.phase = 'lobby'; s.players.forEach(p => { p.coins = 10; p.cards = []; p.revealed = []; p.out = false; }); s.pot = 0; s.bank = 0; s.pending = null; s.steps = []; s.log = []; s.winner = null; s.hand = 0; return null;
+      case 'again': if (s.host !== pid) return 'Nur der Host.'; s.archive = (s.archive || []).concat([{ ended: Date.now(), hand: s.hand, log: s.log }]).slice(-3); s.phase = 'lobby'; s.players.forEach(p => { p.coins = 10; p.cards = []; p.revealed = []; p.out = false; }); s.pot = 0; s.bank = 0; s.pending = null; s.steps = []; s.log = []; s.winner = null; s.hand = 0; return null;
     }
     return 'x';
   }, kind === 'pass' || kind === 'nextHand');
