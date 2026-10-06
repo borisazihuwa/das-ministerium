@@ -246,6 +246,7 @@ function endHand(s, winnerIdx) {
   const others = alive(s).filter(i => i !== winnerIdx);
   let winAmt = 0, each = 0;
   if (s.pot <= 10 || others.length === 0) { winAmt = s.pot; }
+  else if (alive(s).length === 2) { winAmt = 10; } // Bei 2 Spielern: keine Redistribution, Rest bleibt im Pot
   else {
     winAmt = 10;
     const rest = s.pot - 10;
@@ -295,6 +296,7 @@ function doAction(s, actorIdx, action, target, role) {
   const claim = A.role ? ` (beansprucht ${ROLES[A.role].name})` : '';
   log(s, `${p.name}: ${A.name}${tn ? ' gegen ' + tn : ''}${claim}.`, A.role ? 'claim' : '');
   s.pending = { type: 'react', kind: 'action', actor: actorIdx, action, target: target ?? null, role: A.role, passed: {}, deadline: Date.now() + REACT_SECONDS * 1000 };
+  if (reactEligible(s).length === 0) resolveReact(s);
   return null;
 }
 
@@ -351,6 +353,7 @@ function block(s, meIdx, role) {
   if (!o || !o.blocks.includes(role)) return 'Du kannst nicht blockieren.';
   log(s, `${pname(s, meIdx)} blockiert ${ACTIONS[pd.action].name} (beansprucht ${ROLES[role].name}).`, 'claim');
   s.pending = { type: 'react', kind: 'block', actor: pd.actor, action: pd.action, target: pd.target, role: role, blocker: meIdx, passed: {}, deadline: Date.now() + REACT_SECONDS * 1000 };
+  if (reactEligible(s).length === 0) resolveReact(s);
   return null;
 }
 
@@ -425,7 +428,7 @@ function revealChallenge(s) {
     // Anzeige FALSCH
     const extra = Math.min(1, ch.coins); ch.coins -= extra; s.pot += extra;
     const card = acc.cards.splice(has, 1)[0];
-    s.deck.push(card); s.deck = shuffle(s.deck); acc.cards.push(draw(s));
+    s.deck.push(card); s.deck = shuffle(s.deck); acc.cards.push(draw(s) || card);
     log(s, `${acc.name} zeigt ${ROLES[pd.role].name}! Anzeige falsch: ${ch.name} verliert eine Karte und 1 weitere Münze. ${acc.name} tauscht die Karte.`, 'bad');
     const after = pd.kind === 'action'
       ? [{ type: 'resolve', action: pd.action, actor: pd.actor, target: pd.target }, { type: 'endTurn' }]
@@ -498,7 +501,7 @@ function resolveAction(s, st) {
     case 'auftrag': { log(s, `Auftrag geht durch: ${t.name} verliert eine Karte.`); s.steps.unshift({ type: 'lose', player: st.target, by: st.actor }); break; }
     case 'tauschen': {
       const keep = p.cards.length;
-      const opts = p.cards.concat([draw(s), draw(s)]);
+      const opts = p.cards.concat([draw(s), draw(s)].filter(Boolean));
       s.pending = { type: 'exchange', player: st.actor, options: opts, keep };
       log(s, `${p.name} sieht ${opts.length} Karten und behält ${keep}.`); break;
     }
